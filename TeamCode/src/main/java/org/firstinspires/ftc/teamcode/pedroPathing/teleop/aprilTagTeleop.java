@@ -27,14 +27,17 @@ public class aprilTagTeleop extends LinearOpMode {
             follower.update();
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) {
-                double tx = Math.toRadians(result.getTx());
-                double desiredHeading = follower.getHeading() + tx;
-                follower.turnTo(desiredHeading);
-                telemetry.addData("desiredHeading", Math.toDegrees(desiredHeading));
-                telemetry.addData("tx", Math.toDegrees(tx));
+                double desiredHeading = follower.getHeading() + Math.toRadians(result.getTx());
+                Pose current = follower.getPose();
+                follower.setPose(new Pose(current.getX(), current.getY(), desiredHeading));
+                telemetry.addData("Heading (rad)", desiredHeading);
+                telemetry.addData("tx (rad)", Math.toRadians(result.getTx()));
             }
-            telemetry.addData("isBusy", follower.isBusy());
-            telemetry.addData("actualHeading", Math.toDegrees(follower.getHeading()));
+
+            Pose pose = follower.getPose();
+            telemetry.addData("pose X", String.format("%.3f", pose.getX()));
+            telemetry.addData("pose Y", String.format("%.3f", pose.getY()));
+            telemetry.addData("pose Heading (deg)", String.format("%.3f", Math.toDegrees(pose.getHeading())));
             telemetry.update();
         }
     }
