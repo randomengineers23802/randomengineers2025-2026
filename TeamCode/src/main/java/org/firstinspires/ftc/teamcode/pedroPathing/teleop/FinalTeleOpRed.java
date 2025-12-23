@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.datalogging.Datalog;
-import org.firstinspires.ftc.teamcode.pedroPathing.passthrough;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 
 import java.util.function.Supplier;
 
@@ -93,16 +93,16 @@ public class FinalTeleOpRed extends OpMode {
     }
 
     private void Shoot() {
+        belt.setPower(0.8);
         if (follower.isBusy())
             timer.reset();
         else {
             double t = timer.seconds();
-            if (t <= 0.5)
-                BlueBoi.setPosition(0.65);
-            else if (t <= 2.5)
+            if (t <= 2.5)
                 BlueBoi.setPosition(1.0);
             else {
                 BlueBoi.setPosition(0.65);
+                belt.setPower(0.0);
                 shooting = false;
             }
         }
@@ -120,9 +120,9 @@ public class FinalTeleOpRed extends OpMode {
     public void start() {
         follower.startTeleopDrive();
         intake.setPower(0.0);
-        ShooterL.setVelocity(1000);
-        ShooterR.setVelocity(1000);
-        belt.setPower(0.5);
+        ShooterL.setVelocity(1040);
+        ShooterR.setVelocity(1040);
+        belt.setPower(0.0);
     }
 
     @Override
@@ -148,42 +148,37 @@ public class FinalTeleOpRed extends OpMode {
         }
 
         if (gamepad1.dpad_left) {
-            ShooterL.setVelocity(1200);
-            ShooterR.setVelocity(1200);
-        }
-
-        if (gamepad1.dpad_up) {
-            ShooterL.setVelocity(1000);
-            ShooterR.setVelocity(1000);
+            ShooterL.setVelocity(1260);
+            ShooterR.setVelocity(1260);
         }
 
         if (gamepad1.dpad_right) {
-            ShooterL.setVelocity(900);
-            ShooterR.setVelocity(900);
+            ShooterL.setVelocity(1040);
+            ShooterR.setVelocity(1040);
         }
 
-        if (gamepad1.xWasPressed() && !shooting && !automatedDrive) {
-            follower.followPath(closeShoot.get());
-            timer.reset();
-            ShooterL.setVelocity(1000);
-            ShooterR.setVelocity(1000);
-            shooting = true;
-            automatedDrive = true;
-        }
-
-        if (gamepad1.aWasPressed() && !shooting && !automatedDrive) {
-            follower.followPath(farShoot.get());
-            timer.reset();
-            ShooterL.setVelocity(1200);
-            ShooterR.setVelocity(1200);
-            shooting = true;
-            automatedDrive = true;
-        }
-
-        if (gamepad1.yWasPressed() && !shooting && !automatedDrive) {
-            follower.followPath(endgamePark.get());
-            automatedDrive = true;
-        }
+//        if (gamepad1.xWasPressed() && !shooting && !automatedDrive) {
+//            follower.followPath(closeShoot.get());
+//            timer.reset();
+//            ShooterL.setVelocity(1000);
+//            ShooterR.setVelocity(1000);
+//            shooting = true;
+//            automatedDrive = true;
+//        }
+//
+//        if (gamepad1.aWasPressed() && !shooting && !automatedDrive) {
+//            follower.followPath(farShoot.get());
+//            timer.reset();
+//            ShooterL.setVelocity(1200);
+//            ShooterR.setVelocity(1200);
+//            shooting = true;
+//            automatedDrive = true;
+//        }
+//
+//        if (gamepad1.yWasPressed() && !shooting && !automatedDrive) {
+//            follower.followPath(endgamePark.get());
+//            automatedDrive = true;
+//        }
 
         if (shooting)
             Shoot();
@@ -199,10 +194,14 @@ public class FinalTeleOpRed extends OpMode {
             slowMode = !slowMode;
         }
 
-        if (gamepad1.right_bumper)
+        if (gamepad1.right_bumper) {
             intake.setPower(0.75);
-        else
+            belt.setPower(0.8);
+        }
+        else if (!shooting) {
             intake.setPower(0.0);
+            belt.setPower(0.0);
+        }
 
         if (gamepad1.left_trigger > 0.2 && !shooting && !automatedDrive) {
             autoAim();

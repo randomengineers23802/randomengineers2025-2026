@@ -11,6 +11,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,11 +22,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.datalogging.Datalog;
-import org.firstinspires.ftc.teamcode.pedroPathing.passthrough;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 
 import java.util.function.Supplier;
 
 @Configurable
+@Disabled
 @TeleOp(name = "FinalTeleOpBlueButNotBuns", group = "TeleOp")
 public class FinalTeleOpBlueButNotBuns extends OpMode {
     private Follower follower;

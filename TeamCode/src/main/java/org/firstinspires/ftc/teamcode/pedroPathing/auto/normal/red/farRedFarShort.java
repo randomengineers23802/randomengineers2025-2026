@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.passthrough;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 
 @Autonomous(name = "farRedFarShort", group = "Autonomous")
 @Configurable // Panels
@@ -97,16 +97,11 @@ public class farRedFarShort extends OpMode {
             timer.reset();
         else {
             double t = timer.seconds();
-            if (t <= 0.5)
-                BlueBoi.setPosition(0.65);
-            else if (t <= 1.25)
+            if (t <= 2.5)
                 BlueBoi.setPosition(1.0);
-            else if (t <= 3.0)
-                intake.setPower(0.75);
             else {
                 BlueBoi.setPosition(0.65);
                 shooting = false;
-                pathState++;
             }
         }
     }

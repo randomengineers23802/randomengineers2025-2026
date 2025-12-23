@@ -4,7 +4,6 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -16,7 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.passthrough;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 
 @Autonomous(name = "farRedFar", group = "Autonomous")
 @Configurable // Panels
@@ -92,16 +91,11 @@ public class farRedFar extends OpMode {
             timer.reset();
         else {
             double t = timer.seconds();
-            if (t <= 0.5)
-                BlueBoi.setPosition(0.65);
-            else if (t <= 1.25)
+            if (t <= 2.5)
                 BlueBoi.setPosition(1.0);
-            else if (t <= 3.0)
-                intake.setPower(0.75);
             else {
                 BlueBoi.setPosition(0.65);
                 shooting = false;
-                pathState++;
             }
         }
     }
@@ -187,7 +181,6 @@ public class farRedFar extends OpMode {
     public int autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.setMaxPower(1);
                 follower.followPath(paths.Path1, true);
                 pathState++;
                 break;
@@ -198,7 +191,6 @@ public class farRedFar extends OpMode {
 
             case 2:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(1);
                     follower.followPath(paths.Path2, true);
                     pathState++;
                 }
@@ -206,7 +198,6 @@ public class farRedFar extends OpMode {
 
             case 3:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.3);
                     follower.followPath(paths.Path3, true);
                     pathState++;
                 }
@@ -215,7 +206,6 @@ public class farRedFar extends OpMode {
             case 4:
                 if (!follower.isBusy()) {
                     intake.setPower(0.0);
-                    follower.setMaxPower(1);
                     follower.followPath(paths.Path4, true);
                     pathState++;
                 }
@@ -227,7 +217,6 @@ public class farRedFar extends OpMode {
 
             case 6:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(1);
                     follower.followPath(paths.Path5, true);
                     pathState++;
                 }
@@ -235,7 +224,6 @@ public class farRedFar extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.3);
                     follower.followPath(paths.Path6, true);
                     pathState++;
                 }
@@ -244,7 +232,6 @@ public class farRedFar extends OpMode {
             case 8:
                 if (!follower.isBusy()) {
                     intake.setPower(0.0);
-                    follower.setMaxPower(1);
                     follower.followPath(paths.Path7, true);
                     pathState++;
                 }
@@ -256,7 +243,6 @@ public class farRedFar extends OpMode {
 
             case 10:
                 if (!pathStarted) {
-                    follower.setMaxPower(1);
                     follower.followPath(paths.Path8, true);
                     pathStarted = true;
                 }

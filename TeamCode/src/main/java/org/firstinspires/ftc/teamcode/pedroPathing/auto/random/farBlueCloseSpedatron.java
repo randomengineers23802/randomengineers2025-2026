@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.passthrough;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 
 @Autonomous(name = "farBlueCloseSpedatron", group = "Autonomous")
 @Configurable
