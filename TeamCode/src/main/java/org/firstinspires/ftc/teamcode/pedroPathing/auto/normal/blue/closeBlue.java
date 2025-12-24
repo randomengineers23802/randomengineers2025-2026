@@ -16,11 +16,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
 
 @Autonomous(name = "closeBlue", group = "Autonomous")
 @Configurable
 public class closeBlue extends OpMode {
 
+    private shooterControl shooter;
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
@@ -40,6 +42,7 @@ public class closeBlue extends OpMode {
 
     @Override
     public void init() {
+        shooter = new shooterControl(hardwareMap);
         ShooterL = hardwareMap.get(DcMotorEx.class, "ShooterL");
         ShooterR = hardwareMap.get(DcMotorEx.class, "ShooterR");
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -64,9 +67,8 @@ public class closeBlue extends OpMode {
     @Override
     public void start() {
         intake.setPower(0.0);
-        ShooterL.setVelocity(1000);
-        ShooterR.setVelocity(1000);
-        belt.setPower(0.5);
+        shooter.setShooterVelocity(1060);
+        belt.setPower(1.0);
         BlueBoi.setPosition(0.65);
     }
 
@@ -92,9 +94,12 @@ public class closeBlue extends OpMode {
             timer.reset();
         else {
             double t = timer.seconds();
-            if (t <= 2.5)
+            if (t <= 1.0) {
+                intake.setPower(0.75);
                 BlueBoi.setPosition(1.0);
+            }
             else {
+                intake.setPower(0.0);
                 BlueBoi.setPosition(0.65);
                 shooting = false;
                 pathState++;
@@ -188,6 +193,7 @@ public class closeBlue extends OpMode {
     public int autonomousPathUpdate() {
         switch (pathState) {
             case 0:
+                intake.setPower(0.0);
                 follower.followPath(paths.Path1, true);
                 pathState++;
                 break;
@@ -197,6 +203,7 @@ public class closeBlue extends OpMode {
                 break;
 
             case 2:
+                intake.setPower(0.0);
                 if (!follower.isBusy()) {
                     follower.followPath(paths.Path2, true);
                     pathState++;
@@ -205,6 +212,7 @@ public class closeBlue extends OpMode {
 
             case 3:
                 if (!follower.isBusy()) {
+                    intake.setPower(0.75);
                     follower.followPath(paths.Path3, true);
                     pathState++;
                 }
@@ -224,6 +232,7 @@ public class closeBlue extends OpMode {
 
             case 6:
                 if (!follower.isBusy()) {
+                    intake.setPower(0.0);
                     follower.followPath(paths.Path5, true);
                     pathState++;
                 }
@@ -231,6 +240,7 @@ public class closeBlue extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
+                    intake.setPower(0.75);
                     follower.followPath(paths.Path6, true);
                     pathState++;
                 }
@@ -250,6 +260,7 @@ public class closeBlue extends OpMode {
 
             case 10:
                 if (!pathStarted) {
+                    intake.setPower(0.0);
                     follower.followPath(paths.Path8, true);
                     pathStarted = true;
                 }

@@ -12,7 +12,7 @@ public class shooterControl {
     public double targetVelocity;
 
     // Tune these
-    PIDFCoefficients shooterPIDF = new PIDFCoefficients(200.0, 0.0, 80.0, 12.3);
+    PIDFCoefficients shooterPIDF = new PIDFCoefficients(200.0, 0.0, 10.0, 12.3);
 
     public shooterControl(HardwareMap hardwareMap) {
 

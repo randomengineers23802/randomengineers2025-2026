@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.tests;
 
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,10 +11,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
 
+@Configurable
 @TeleOp(name = "Shooter Test", group = "Test")
 public class ShooterTestTeleOp extends OpMode {
 
     private shooterControl shooter;
+    private TelemetryManager telemetryM;
 
     private DcMotor belt;
 
@@ -31,12 +36,13 @@ public class ShooterTestTeleOp extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
         BlueBoi.setPosition(0.65);
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
     private void Shoot() {
         belt.setPower(1.0);
         double t = timer.seconds();
-        if (t <= 1.5)
+        if (t <= 1.0)
             BlueBoi.setPosition(1.0);
         else {
             BlueBoi.setPosition(0.65);
@@ -75,6 +81,11 @@ public class ShooterTestTeleOp extends OpMode {
 
         telemetry.addData("Shooter L Velocity", shooter.shooterL.getVelocity());
         telemetry.addData("Shooter R Velocity", shooter.shooterR.getVelocity());
+        telemetryM.debug("tpsL", shooter.shooterL.getVelocity());
+        telemetryM.debug("tpsR", shooter.shooterR.getVelocity());
+        telemetryM.addData("tpsL", shooter.shooterL.getVelocity());
+        telemetryM.addData("tpsR", shooter.shooterR.getVelocity());
         telemetry.update();
+        telemetryM.update();
     }
 }
