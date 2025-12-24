@@ -3,10 +3,9 @@ package org.firstinspires.ftc.teamcode.pedroPathing.tests; // make sure this ali
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 
 
 @Autonomous(name = "LocationTest")
