@@ -1,14 +1,16 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.teleop;
+package org.firstinspires.ftc.teamcode.pedroPathing.tests;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 
+@Disabled
 @TeleOp(name="aprilTagTeleop")
 public class aprilTagTeleop extends OpMode {
 
