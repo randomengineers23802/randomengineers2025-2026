@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
 
 @Configurable
-@TeleOp(name = "FinalTeleOpBlue", group = "TeleOp")
-public class FinalTeleOpBlue extends OpMode {
+@TeleOp(name = "finalTeleOpBlue", group = "TeleOp")
+public class finalTeleOpBlue extends OpMode {
     private Follower follower;
     private boolean automatedDrive;
     private TelemetryManager telemetryM;
@@ -27,7 +27,6 @@ public class FinalTeleOpBlue extends OpMode {
 
     private DcMotor intake = null;
     private DcMotor belt = null;
-    private Servo LinearServo = null;
     private Servo BlueBoi = null;
     private ElapsedTime timer = new ElapsedTime();
 
@@ -42,9 +41,6 @@ public class FinalTeleOpBlue extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);
-
-        LinearServo = hardwareMap.get(Servo.class, "LinearServo");
-        LinearServo.setPosition(0.1);
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
         BlueBoi.setPosition(0.65);
 
@@ -139,7 +135,6 @@ public class FinalTeleOpBlue extends OpMode {
 
         telemetryM.debug("velocity", follower.getVelocity());
         telemetryM.debug("automatedDrive", automatedDrive);
-        telemetryM.debug("LinearServo", LinearServo.getPosition());
         telemetryM.debug("busy", follower.isBusy());
         telemetryM.debug("BlueBoi", BlueBoi.getPosition());
         telemetryM.debug("ShooterLvelocity", shooter.ShooterL.getVelocity());

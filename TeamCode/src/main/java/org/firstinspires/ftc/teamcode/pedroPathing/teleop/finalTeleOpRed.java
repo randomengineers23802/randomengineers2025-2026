@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
 
 @Configurable
-@TeleOp(name = "FinalTeleOpRed", group = "TeleOp")
-public class FinalTeleOpRed extends OpMode {
+@TeleOp(name = "finalTeleOpRed", group = "TeleOp")
+public class finalTeleOpRed extends OpMode {
     private Follower follower;
     private boolean automatedDrive;
     private TelemetryManager telemetryM;
@@ -27,7 +27,6 @@ public class FinalTeleOpRed extends OpMode {
 
     private DcMotor intake = null;
     private DcMotor belt = null;
-    private Servo LinearServo = null;
     private Servo BlueBoi = null;
     private ElapsedTime timer = new ElapsedTime();
     private boolean prevRightTrigger = false;
@@ -39,9 +38,6 @@ public class FinalTeleOpRed extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);
-
-        LinearServo = hardwareMap.get(Servo.class, "LinearServo");
-        LinearServo.setPosition(0.1);
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
         BlueBoi.setPosition(0.65);
 
@@ -141,7 +137,6 @@ public class FinalTeleOpRed extends OpMode {
                         Math.toDegrees(follower.getPose().getHeading())));
         telemetryM.debug("velocity", follower.getVelocity());
         telemetryM.debug("automatedDrive", automatedDrive);
-        telemetryM.debug("LinearServo", LinearServo.getPosition());
         telemetryM.debug("busy", follower.isBusy());
         telemetryM.debug("BlueBoi", BlueBoi.getPosition());
         telemetryM.debug("ShooterLvelocity", shooter.ShooterL.getVelocity());
