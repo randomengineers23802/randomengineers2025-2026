@@ -17,13 +17,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.datalogging.Datalog;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-
 import java.util.function.Supplier;
 
 @Configurable
@@ -59,15 +55,10 @@ public class FinalTeleOpRedNotBuns extends OpMode {
     private boolean prevRightTrigger = false;
 
     private boolean leftTriggerPressed = false;
-
-    Datalog datalog;
-    int loopCounter = 0;
-    VoltageSensor battery;
     private Limelight3A limelight;
     private final double kP = 0.04;
     private final double kI = 0.0;
     private final double kD = 0.025;
-
     private double aimIntegral = 0;
     private double previousError = 0;
 
@@ -90,16 +81,9 @@ public class FinalTeleOpRedNotBuns extends OpMode {
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
         BlueBoi.setPosition(0.65);
 
-        battery = hardwareMap.voltageSensor.get("Control Hub");
-
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(1);
         limelight.start();
-
-        datalog = new Datalog("datalog_01");
-        datalog.opModeStatus.set("RUNNING");
-        datalog.battery.set(battery.getVoltage());
-        datalog.writeLine();
 
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(passthrough.startPose);
@@ -274,11 +258,6 @@ public class FinalTeleOpRedNotBuns extends OpMode {
         downPreviouslyPressed = downPressed;
 
         prevRightTrigger = rightTriggerPressed;
-
-        datalog.loopCounter.set(loopCounter++);
-        datalog.battery.set(battery.getVoltage());
-        datalog.shooterLvel.set(ShooterL.getVelocity());
-        datalog.shooterRvel.set(ShooterR.getVelocity());
 
         telemetryM.debug("velocity", follower.getVelocity());
         telemetryM.debug("automatedDrive", automatedDrive);

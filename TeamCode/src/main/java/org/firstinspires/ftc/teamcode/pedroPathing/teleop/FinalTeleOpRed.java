@@ -14,13 +14,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.datalogging.Datalog;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-
 import java.util.function.Supplier;
 
 @Configurable
@@ -46,10 +42,6 @@ public class FinalTeleOpRed extends OpMode {
     boolean downPreviouslyPressed;
     private boolean prevRightTrigger = false;
 
-    Datalog datalog;
-    int loopCounter = 0;
-    VoltageSensor battery;
-
     @Override
     public void init() {
         ShooterL = hardwareMap.get(DcMotorEx.class, "ShooterL");
@@ -62,14 +54,8 @@ public class FinalTeleOpRed extends OpMode {
         ShooterR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         LinearServo = hardwareMap.get(Servo.class, "LinearServo");
         LinearServo.setPosition(0.1);
-        battery = hardwareMap.voltageSensor.get("Control Hub");
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
         BlueBoi.setPosition(0.65);
-
-        datalog = new Datalog("datalog_01");
-        datalog.opModeStatus.set("RUNNING");
-        datalog.battery.set(battery.getVoltage());
-        datalog.writeLine();
 
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(passthrough.startPose); //uses pose from auto
@@ -223,12 +209,6 @@ public class FinalTeleOpRed extends OpMode {
             follower.update();
         }
         downPreviouslyPressed = downPressed;
-
-        datalog.loopCounter.set(loopCounter);
-        loopCounter++;
-        datalog.battery.set(battery.getVoltage());
-        datalog.shooterLvel.set(ShooterL.getVelocity());
-        datalog.shooterRvel.set(ShooterR.getVelocity());
 
         telemetryM.debug("position",
                 String.format("(%.2f, %.2f, %.2f)",

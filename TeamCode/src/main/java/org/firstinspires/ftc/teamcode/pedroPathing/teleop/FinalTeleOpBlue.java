@@ -14,13 +14,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.datalogging.Datalog;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-
 import java.util.function.Supplier;
 
 @Configurable
@@ -48,10 +44,6 @@ public class FinalTeleOpBlue extends OpMode {
     boolean rightTriggerWasPressed;
     boolean prevRightTrigger;
 
-    Datalog datalog;
-    int loopCounter = 0;
-    VoltageSensor battery;
-
     @Override
     public void init() {
         ShooterL = hardwareMap.get(DcMotorEx.class, "ShooterL");
@@ -64,14 +56,8 @@ public class FinalTeleOpBlue extends OpMode {
         ShooterR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         LinearServo = hardwareMap.get(Servo.class, "LinearServo");
         LinearServo.setPosition(0.1);
-        battery = hardwareMap.voltageSensor.get("Control Hub");
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
         BlueBoi.setPosition(0.65);
-
-        datalog = new Datalog("datalog_01");
-        datalog.opModeStatus.set("RUNNING");
-        datalog.battery.set(battery.getVoltage());
-        datalog.writeLine();
 
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(passthrough.startPose); //uses pose from auto
@@ -231,11 +217,6 @@ public class FinalTeleOpBlue extends OpMode {
         downPreviouslyPressed = downPressed;
         prevRightTrigger = rightTriggerPressed;
 
-        datalog.loopCounter.set(loopCounter);
-        loopCounter++;
-        datalog.battery.set(battery.getVoltage());
-        datalog.shooterLvel.set(ShooterL.getVelocity());
-        datalog.shooterRvel.set(ShooterR.getVelocity());
         telemetryM.debug("velocity", follower.getVelocity());
         telemetryM.debug("automatedDrive", automatedDrive);
         telemetryM.debug("LinearServo", LinearServo.getPosition());
