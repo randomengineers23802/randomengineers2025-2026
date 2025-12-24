@@ -44,7 +44,7 @@ public class closeRed extends OpMode {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(119.5, 128.0, Math.toRadians(143.5)));
+        follower.setStartingPose(new Pose(119.5, 128.0, Math.toRadians(216.5)));
 
         paths = new Paths(follower);
 
@@ -107,12 +107,12 @@ public class closeRed extends OpMode {
         public Paths(Follower follower) {
             Path1 = follower.pathBuilder()
                     .addPath(new BezierLine(new Pose(119.5, 128.0), new Pose(86.0, 80.0)))
-                    .setLinearHeadingInterpolation(Math.toRadians(143.5), Math.toRadians(49))
+                    .setLinearHeadingInterpolation(Math.toRadians(216.5), Math.toRadians(229))
                     .build();
 
             Path2 = follower.pathBuilder()
                     .addPath(new BezierLine(new Pose(86.0, 80.0), new Pose(95.0, 84.0)))
-                    .setLinearHeadingInterpolation(Math.toRadians(49), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(Math.toRadians(229), Math.toRadians(0))
                     .build();
 
             Path3 = follower.pathBuilder()
@@ -134,13 +134,13 @@ public class closeRed extends OpMode {
 
             Path5 = follower.pathBuilder()
                     .addPath(new BezierLine(new Pose(129.0, 75.0), new Pose(86.0, 80.0)))
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(49))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(229))
                     .setReversed()
                     .build();
 
             Path6 = follower.pathBuilder()
                     .addPath(new BezierLine(new Pose(86.0, 80.0), new Pose(95.0, 58.0)))
-                    .setLinearHeadingInterpolation(Math.toRadians(49), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(Math.toRadians(229), Math.toRadians(0))
                     .build();
 
             Path7 = follower.pathBuilder()
@@ -150,12 +150,12 @@ public class closeRed extends OpMode {
 
             Path8 = follower.pathBuilder()
                     .addPath(new BezierLine(new Pose(129.0, 58.0), new Pose(86.0, 80.0)))
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(49))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(229))
                     .build();
 
             Path9 = follower.pathBuilder()
                     .addPath(new BezierLine(new Pose(86.0, 80.0), new Pose(95.0, 35.5)))
-                    .setLinearHeadingInterpolation(Math.toRadians(49), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(Math.toRadians(229), Math.toRadians(0))
                     .build();
 
             Path10 = follower.pathBuilder()
@@ -165,12 +165,12 @@ public class closeRed extends OpMode {
 
             Path11 = follower.pathBuilder()
                     .addPath(new BezierLine(new Pose(129.0, 35.5), new Pose(86.0, 80.0)))
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(49))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(229))
                     .build();
 
             Path12 = follower.pathBuilder()
                     .addPath(new BezierLine(new Pose(86.0, 80.0), new Pose(70.0, 128.0)))
-                    .setLinearHeadingInterpolation(Math.toRadians(49), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(Math.toRadians(229), Math.toRadians(0))
                     .build();
         }
     }
