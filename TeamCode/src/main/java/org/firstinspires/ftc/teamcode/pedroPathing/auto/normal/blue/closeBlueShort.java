@@ -55,7 +55,7 @@ public class closeBlueShort extends OpMode {
     public void start() {
         intake.setPower(0.0);
         shooter.setShooterVelocity(1060);
-        belt.setPower(0.5);
+        belt.setPower(1.0);
         BlueBoi.setPosition(0.65);
     }
 
@@ -99,7 +99,7 @@ public class closeBlueShort extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(24.500, 128.000), new Pose(58.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(323.5), Math.toRadians(311))
+                    .setLinearHeadingInterpolation(Math.toRadians(323.5), Math.toRadians(311), 0.8)
                     .build();
 
             Path2 = follower
@@ -107,7 +107,7 @@ public class closeBlueShort extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(58.000, 80.000), new Pose(50.000, 128.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(311), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(311), Math.toRadians(180), 0.8)
                     .build();
         }
     }

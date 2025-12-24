@@ -16,9 +16,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
 
-@Autonomous(name = "farBlueFarShort", group = "Autonomous")
+@Autonomous(name = "farBlueShort", group = "Autonomous")
 @Configurable
-public class farBlueFarShort extends OpMode {
+public class farBlueShort extends OpMode {
 
     private shooterControl shooter;
     private TelemetryManager panelsTelemetry;
@@ -57,8 +57,9 @@ public class farBlueFarShort extends OpMode {
     public void start() {
         intake.setPower(0.0);
         shooter.setShooterVelocity(1300);
-        belt.setPower(0.5);
+        belt.setPower(1.0);
         BlueBoi.setPosition(0.65);
+        timer.reset();
     }
 
     @Override
@@ -96,14 +97,20 @@ public class farBlueFarShort extends OpMode {
         public PathChain Path2;
 
         public Paths(Follower follower) {
-            Path1 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(56.875, 8.563), new Pose(60.000, 15.000)))
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(291.5))
+            Path1 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(56.875, 8.563), new Pose(58.000, 15.000))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(289))
                     .build();
 
-            Path2 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(60.000, 15.000), new Pose(36.000, 13.000)))
-                    .setLinearHeadingInterpolation(Math.toRadians(291.5), Math.toRadians(180))
+            Path2 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(58.000, 15.000), new Pose(36.000, 15.000))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(289), Math.toRadians(180))
                     .build();
         }
     }
