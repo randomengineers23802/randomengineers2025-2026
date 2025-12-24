@@ -10,44 +10,34 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
 
 @Autonomous(name = "closeBlueShort", group = "Autonomous")
 @Configurable
 public class closeBlueShort extends OpMode {
 
-    private TelemetryManager panelsTelemetry; // Panels Telemetry instance
-    public Follower follower; // Pedro Pathing follower instance
-    private int pathState; // Current autonomous path state (state machine)
-    private Paths paths; // Paths defined in the Paths class
+    private shooterControl shooter;
+    private TelemetryManager panelsTelemetry;
+    public Follower follower;
+    private int pathState;
+    private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
 
-    private DcMotorEx ShooterL = null;
-    private DcMotorEx ShooterR = null;
     private DcMotor intake = null;
-
     private DcMotor belt = null;
     private Servo BlueBoi = null;
-    private boolean shooting = false;
     private boolean pathStarted = false;
-
-
 
     @Override
     public void init() {
-        ShooterL = hardwareMap.get(DcMotorEx.class, "ShooterL");
-        ShooterR = hardwareMap.get(DcMotorEx.class, "ShooterR");
+        shooter = new shooterControl(hardwareMap);
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
-        ShooterL.setDirection(DcMotorEx.Direction.REVERSE);
         belt.setDirection(DcMotor.Direction.REVERSE);
-        ShooterL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        ShooterR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
 
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -55,7 +45,7 @@ public class closeBlueShort extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(24.500, 128.000, Math.toRadians(323.5)));
 
-        paths = new Paths(follower); // Build paths
+        paths = new Paths(follower);
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
@@ -64,27 +54,21 @@ public class closeBlueShort extends OpMode {
     @Override
     public void start() {
         intake.setPower(0.0);
-        ShooterL.setVelocity(1000);
-        ShooterR.setVelocity(1000);
+        shooter.setShooterVelocity(1060);
         belt.setPower(0.5);
         BlueBoi.setPosition(0.65);
     }
 
     @Override
     public void loop() {
-        follower.update(); // Update Pedro Pathing
-        pathState = autonomousPathUpdate(); // Update autonomous state machine
+        follower.update();
+        pathState = autonomousPathUpdate();
 
-        // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());
         panelsTelemetry.debug("Heading", follower.getPose().getHeading());
-        panelsTelemetry.debug("Current Path", pathState);
         panelsTelemetry.update(telemetry);
-
-        if (shooting)
-            Shoot();
     }
 
     private void Shoot() {
@@ -92,11 +76,14 @@ public class closeBlueShort extends OpMode {
             timer.reset();
         else {
             double t = timer.seconds();
-            if (t <= 2.5)
+            if (t <= 1.0) {
+                intake.setPower(0.75);
                 BlueBoi.setPosition(1.0);
+            }
             else {
+                intake.setPower(0.0);
                 BlueBoi.setPosition(0.65);
-                shooting = false;
+                pathState++;
             }
         }
     }
@@ -110,26 +97,25 @@ public class closeBlueShort extends OpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(24.500, 128.000), new Pose(60.000, 95.000))
+                            new BezierLine(new Pose(24.500, 128.000), new Pose(58.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(323.5), Math.toRadians(320))
+                    .setLinearHeadingInterpolation(Math.toRadians(323.5), Math.toRadians(311))
                     .build();
 
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(60.000, 95.000), new Pose(60.000, 128.000))
+                            new BezierLine(new Pose(58.000, 80.000), new Pose(50.000, 128.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(320), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(311), Math.toRadians(180))
                     .build();
         }
     }
 
-
     public int autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.setMaxPower(1);
+                intake.setPower(0.0);
                 follower.followPath(paths.Path1, true);
                 pathState++;
                 break;
@@ -140,7 +126,7 @@ public class closeBlueShort extends OpMode {
 
             case 2:
                 if (!pathStarted) {
-                    follower.setMaxPower(1);
+                    intake.setPower(0.0);
                     follower.followPath(paths.Path2, true);
                     pathStarted = true;
                 }
@@ -149,8 +135,7 @@ public class closeBlueShort extends OpMode {
                 break;
 
             default:
-                ShooterL.setPower(0);
-                ShooterR.setPower(0);
+                shooter.shooterStop();
                 intake.setPower(0);
                 belt.setPower(0);
                 follower.breakFollowing();

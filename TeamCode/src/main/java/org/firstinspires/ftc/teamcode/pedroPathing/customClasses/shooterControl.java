@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class shooterControl {
 
-    public DcMotorEx shooterL;
-    public DcMotorEx shooterR;
+    public DcMotorEx ShooterL;
+    public DcMotorEx ShooterR;
 
     public double targetVelocity;
 
@@ -16,24 +16,29 @@ public class shooterControl {
 
     public shooterControl(HardwareMap hardwareMap) {
 
-        shooterL = hardwareMap.get(DcMotorEx.class, "ShooterL");
-        shooterR = hardwareMap.get(DcMotorEx.class, "ShooterR");
-        shooterL.setDirection(DcMotorEx.Direction.REVERSE);
-        shooterR.setDirection(DcMotorEx.Direction.FORWARD);
-        shooterL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        shooterR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        shooterL.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
-        shooterR.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
+        ShooterL = hardwareMap.get(DcMotorEx.class, "ShooterL");
+        ShooterR = hardwareMap.get(DcMotorEx.class, "ShooterR");
+        ShooterL.setDirection(DcMotorEx.Direction.REVERSE);
+        ShooterR.setDirection(DcMotorEx.Direction.FORWARD);
+        ShooterL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        ShooterR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        ShooterL.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
+        ShooterR.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
     }
 
     public void setShooterVelocity(double targetVelocity) {
-        shooterL.setVelocity(targetVelocity);
-        shooterR.setVelocity(targetVelocity);
+        ShooterL.setVelocity(targetVelocity);
+        ShooterR.setVelocity(targetVelocity);
 
-        double currentVelocityL = shooterL.getVelocity();
-        double currentVelocityR = shooterR.getVelocity();
+        double currentVelocityL = ShooterL.getVelocity();
+        double currentVelocityR = ShooterR.getVelocity();
 
         double errorL = targetVelocity - currentVelocityL;
         double errorR = targetVelocity - currentVelocityR;
+    }
+
+    public void shooterStop() {
+        ShooterL.setPower(0);
+        ShooterR.setPower(0);
     }
 }

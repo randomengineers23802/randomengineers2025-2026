@@ -12,40 +12,38 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
 
 @Autonomous(name = "farBlueFar", group = "Autonomous")
 @Configurable
 public class farBlueFar extends OpMode {
+
+    private shooterControl shooter;
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;
     private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
-    private DcMotorEx ShooterL = null;
-    private DcMotorEx ShooterR = null;
+
     private DcMotor intake = null;
     private DcMotor belt = null;
     private Servo LinearServo = null;
     private Servo BlueBoi = null;
-    private boolean shooting = false;
     private boolean pathStarted = false;
 
     @Override
     public void init() {
-        ShooterL = hardwareMap.get(DcMotorEx.class, "ShooterL");
-        ShooterR = hardwareMap.get(DcMotorEx.class, "ShooterR");
+        shooter = new shooterControl(hardwareMap);
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
-        ShooterL.setDirection(DcMotorEx.Direction.REVERSE);
         belt.setDirection(DcMotor.Direction.REVERSE);
-        ShooterL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        ShooterR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
         LinearServo = hardwareMap.get(Servo.class, "LinearServo");
         LinearServo.setPosition(0.1);
+
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
         BlueBoi.setPosition(0.65);
 
@@ -63,8 +61,7 @@ public class farBlueFar extends OpMode {
     @Override
     public void start() {
         intake.setPower(0.0);
-        ShooterL.setVelocity(1300);
-        ShooterR.setVelocity(1300);
+        shooter.setShooterVelocity(1300);
         belt.setPower(0.5);
         BlueBoi.setPosition(0.65);
     }
@@ -78,11 +75,7 @@ public class farBlueFar extends OpMode {
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());
         panelsTelemetry.debug("Heading", follower.getPose().getHeading());
-        panelsTelemetry.debug("Current Path", pathState);
         panelsTelemetry.update(telemetry);
-
-        if (shooting)
-            Shoot();
     }
 
     private void Shoot() {
@@ -90,11 +83,14 @@ public class farBlueFar extends OpMode {
             timer.reset();
         else {
             double t = timer.seconds();
-            if (t <= 2.5)
+            if (t <= 1.0) {
+                intake.setPower(0.75);
                 BlueBoi.setPosition(1.0);
+            }
             else {
+                intake.setPower(0.0);
                 BlueBoi.setPosition(0.65);
-                shooting = false;
+                pathState++;
             }
         }
     }
@@ -111,67 +107,43 @@ public class farBlueFar extends OpMode {
         public PathChain Path8;
 
         public Paths(Follower follower) {
-            Path1 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(56.875, 8.563), new Pose(60.000, 15.000))
-                    )
+            Path1 = follower.pathBuilder()
+                    .addPath(new BezierLine(new Pose(56.875, 8.563), new Pose(60.000, 15.000)))
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(291.5))
                     .build();
 
-            Path2 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(60.000, 15.000), new Pose(49.000, 35.500))
-                    )
+            Path2 = follower.pathBuilder()
+                    .addPath(new BezierLine(new Pose(60.000, 15.000), new Pose(49.000, 35.500)))
                     .setLinearHeadingInterpolation(Math.toRadians(291.5), Math.toRadians(180))
                     .build();
 
-            Path3 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(49.000, 35.500), new Pose(12.000, 36.000))
-                    )
+            Path3 = follower.pathBuilder()
+                    .addPath(new BezierLine(new Pose(49.000, 35.500), new Pose(12.000, 36.000)))
                     .setTangentHeadingInterpolation()
                     .build();
 
-            Path4 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(12.000, 36.000), new Pose(60.000, 15.000))
-                    )
+            Path4 = follower.pathBuilder()
+                    .addPath(new BezierLine(new Pose(12.000, 36.000), new Pose(60.000, 15.000)))
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(291.5))
                     .build();
 
-            Path5 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(60.000, 15.000), new Pose(49.000, 57.000))
-                    )
+            Path5 = follower.pathBuilder()
+                    .addPath(new BezierLine(new Pose(60.000, 15.000), new Pose(49.000, 57.000)))
                     .setLinearHeadingInterpolation(Math.toRadians(291.5), Math.toRadians(180))
                     .build();
 
-            Path6 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(49.000, 57.000), new Pose(12.000, 57.000))
-                    )
+            Path6 = follower.pathBuilder()
+                    .addPath(new BezierLine(new Pose(49.000, 57.000), new Pose(12.000, 57.000)))
                     .setTangentHeadingInterpolation()
                     .build();
 
-            Path7 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(12.000, 57.000), new Pose(60.000, 15.000))
-                    )
+            Path7 = follower.pathBuilder()
+                    .addPath(new BezierLine(new Pose(12.000, 57.000), new Pose(60.000, 15.000)))
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(291.5))
                     .build();
 
-            Path8 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(60.000, 15.000), new Pose(36.000, 13.000))
-                    )
+            Path8 = follower.pathBuilder()
+                    .addPath(new BezierLine(new Pose(60.000, 15.000), new Pose(36.000, 13.000)))
                     .setLinearHeadingInterpolation(Math.toRadians(291.5), Math.toRadians(180))
                     .build();
         }
@@ -250,8 +222,7 @@ public class farBlueFar extends OpMode {
                 break;
 
             default:
-                ShooterL.setPower(0);
-                ShooterR.setPower(0);
+                shooter.shooterStop();
                 intake.setPower(0);
                 belt.setPower(0);
                 follower.breakFollowing();
