@@ -79,12 +79,12 @@ public class ShooterTestTeleOp extends OpMode {
             intake.setPower(0.0);
         }
 
-        telemetry.addData("Shooter L Velocity", shooter.shooterL.getVelocity());
-        telemetry.addData("Shooter R Velocity", shooter.shooterR.getVelocity());
-        telemetryM.debug("tpsL", shooter.shooterL.getVelocity());
-        telemetryM.debug("tpsR", shooter.shooterR.getVelocity());
-        telemetryM.addData("tpsL", shooter.shooterL.getVelocity());
-        telemetryM.addData("tpsR", shooter.shooterR.getVelocity());
+        telemetry.addData("Shooter L Velocity", shooter.ShooterL.getVelocity());
+        telemetry.addData("Shooter R Velocity", shooter.ShooterR.getVelocity());
+        telemetryM.debug("tpsL", shooter.ShooterL.getVelocity());
+        telemetryM.debug("tpsR", shooter.ShooterR.getVelocity());
+        telemetryM.addData("tpsL", shooter.ShooterL.getVelocity());
+        telemetryM.addData("tpsR", shooter.ShooterR.getVelocity());
         telemetry.update();
         telemetryM.update();
     }
