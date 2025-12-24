@@ -12,10 +12,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
+import com.pedropathing.geometry.BezierCurve;
 
 @Autonomous(name = "farRed", group = "Autonomous")
 @Configurable
@@ -45,7 +45,7 @@ public class farRed extends OpMode {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(87.125, 8.5625, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(87.125, 8.5625, Math.toRadians(180))); // flipped X, heading converted
 
         paths = new Paths(follower);
 
@@ -103,62 +103,111 @@ public class farRed extends OpMode {
         public PathChain Path9;
         public PathChain Path10;
         public PathChain Path11;
+        public PathChain Path12;
 
         public Paths(Follower follower) {
-            Path1 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(87.125, 8.563), new Pose(86.000, 15.000)))
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(251))
+            Path1 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(87.125, 8.563), new Pose(86.0, 15.0))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(341))
                     .build();
 
-            Path2 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(86.000, 15.000), new Pose(95.000, 35.500)))
-                    .setLinearHeadingInterpolation(Math.toRadians(251), Math.toRadians(0))
+            Path2 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(86.0, 15.0), new Pose(95.0, 84.0))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(341), Math.toRadians(90))
                     .build();
 
-            Path3 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(95.000, 35.500), new Pose(129.000, 36.000)))
+            Path3 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(95.0, 84.0), new Pose(129.0, 84.0))
+                    )
                     .setTangentHeadingInterpolation()
                     .build();
 
-            Path4 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(129.000, 36.000), new Pose(86.000, 15.000)))
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(251))
+            Path4 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierCurve(
+                                    new Pose(129.0, 84.0),
+                                    new Pose(117.0, 79.5),
+                                    new Pose(129.0, 75.0)
+                            )
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
                     .build();
 
-            Path5 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(86.000, 15.000), new Pose(95.000, 63.000)))
-                    .setLinearHeadingInterpolation(Math.toRadians(251), Math.toRadians(0))
+            Path5 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierCurve(
+                                    new Pose(129.0, 75.0),
+                                    new Pose(82.0, 88.0),
+                                    new Pose(86.0, 15.0)
+                            )
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(341))
                     .build();
 
-            Path6 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(95.000, 63.000), new Pose(129.000, 63.000)))
+            Path6 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(86.0, 15.0), new Pose(95.0, 35.5))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(341), Math.toRadians(90))
+                    .build();
+
+            Path7 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(95.0, 35.5), new Pose(129.0, 35.5))
+                    )
                     .setTangentHeadingInterpolation()
                     .build();
 
-            Path7 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(129.000, 63.000), new Pose(86.000, 15.000)))
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(251))
-                    .setReversed()
+            Path8 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(129.0, 35.5), new Pose(86.0, 15.0))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(341))
                     .build();
 
-            Path8 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(86.000, 15.000), new Pose(95.000, 84.000)))
-                    .setLinearHeadingInterpolation(Math.toRadians(251), Math.toRadians(0))
+            Path9 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(86.0, 15.0), new Pose(95.0, 58.0))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(341), Math.toRadians(90))
                     .build();
 
-            Path9 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(95.000, 84.000), new Pose(129.000, 84.000)))
+            Path10 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(95.0, 58.0), new Pose(129.0, 58.0))
+                    )
                     .setTangentHeadingInterpolation()
                     .build();
 
-            Path10 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(129.000, 84.000), new Pose(86.000, 15.000)))
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(251))
+            Path11 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(129.0, 58.0), new Pose(86.0, 15.0))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(341))
                     .build();
 
-            Path11 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(86.000, 15.000), new Pose(108.000, 15.000)))
-                    .setLinearHeadingInterpolation(Math.toRadians(251), Math.toRadians(0))
+            Path12 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(86.0, 15.0), new Pose(108.0, 15.0))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(341), Math.toRadians(90))
                     .build();
         }
     }
@@ -170,9 +219,11 @@ public class farRed extends OpMode {
                 follower.followPath(paths.Path1, true);
                 pathState++;
                 break;
+
             case 1:
                 Shoot();
                 break;
+
             case 2:
                 intake.setPower(0.0);
                 if (!follower.isBusy()) {
@@ -180,6 +231,7 @@ public class farRed extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 3:
                 if (!follower.isBusy()) {
                     intake.setPower(0.75);
@@ -187,6 +239,7 @@ public class farRed extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 4:
                 if (!follower.isBusy()) {
                     intake.setPower(0.0);
@@ -194,66 +247,85 @@ public class farRed extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 5:
-                Shoot();
-                break;
-            case 6:
                 if (!follower.isBusy()) {
                     intake.setPower(0.0);
                     follower.followPath(paths.Path5, true);
                     pathState++;
                 }
                 break;
+
+            case 6:
+                Shoot();
+                break;
+
             case 7:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.75);
+                    intake.setPower(0.0);
                     follower.followPath(paths.Path6, true);
                     pathState++;
                 }
                 break;
+
             case 8:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.0);
+                    intake.setPower(0.75);
                     follower.followPath(paths.Path7, true);
                     pathState++;
                 }
                 break;
+
             case 9:
-                Shoot();
-                break;
-            case 10:
                 if (!follower.isBusy()) {
                     intake.setPower(0.0);
                     follower.followPath(paths.Path8, true);
                     pathState++;
                 }
                 break;
+
+            case 10:
+                Shoot();
+                break;
+
             case 11:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.75);
+                    intake.setPower(0.0);
                     follower.followPath(paths.Path9, true);
                     pathState++;
                 }
                 break;
+
             case 12:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.0);
+                    intake.setPower(0.75);
                     follower.followPath(paths.Path10, true);
                     pathState++;
                 }
                 break;
+
             case 13:
-                Shoot();
-                break;
-            case 14:
-                if (!pathStarted) {
+                if (!follower.isBusy()) {
                     intake.setPower(0.0);
                     follower.followPath(paths.Path11, true);
+                    pathState++;
+                }
+                break;
+
+            case 14:
+                Shoot();
+                break;
+
+            case 15:
+                if (!pathStarted) {
+                    intake.setPower(0.0);
+                    follower.followPath(paths.Path12, true);
                     pathStarted = true;
                 }
                 if (!follower.isBusy())
                     pathState++;
                 break;
+
             default:
                 shooter.shooterStop();
                 intake.setPower(0);
