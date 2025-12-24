@@ -151,6 +151,7 @@ public class closeBlue extends OpMode {
                             new BezierLine(new Pose(15.000, 75.000), new Pose(58.000, 80.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(311))
+                    .setReversed()
                     .build();
 
             Path6 = follower

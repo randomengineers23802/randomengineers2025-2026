@@ -152,6 +152,7 @@ public class farRed extends OpMode {
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(251))
+                    .setReversed()
                     .build();
 
             Path6 = follower
