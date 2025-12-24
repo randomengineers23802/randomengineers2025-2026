@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
@@ -22,7 +21,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
 public class closeRedShort extends OpMode {
 
     private shooterControl shooter;
-
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;
@@ -32,23 +30,20 @@ public class closeRedShort extends OpMode {
     private DcMotor intake = null;
     private DcMotor belt = null;
     private Servo BlueBoi = null;
-
     private boolean pathStarted = false;
 
     @Override
     public void init() {
         shooter = new shooterControl(hardwareMap);
-
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);
-
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
 
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(119.5, 128, Math.toRadians(216.5)));
+        follower.setStartingPose(new Pose(119.500, 128.000, Math.toRadians(216.5)));
 
         paths = new Paths(follower);
 
@@ -59,8 +54,8 @@ public class closeRedShort extends OpMode {
     @Override
     public void start() {
         intake.setPower(0.0);
-        shooter.setShooterVelocity(1000);
-        belt.setPower(0.5);
+        shooter.setShooterVelocity(1060);
+        belt.setPower(1.0);
         BlueBoi.setPosition(0.65);
     }
 
@@ -73,7 +68,6 @@ public class closeRedShort extends OpMode {
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());
         panelsTelemetry.debug("Heading", follower.getPose().getHeading());
-        panelsTelemetry.debug("Current Path", pathState);
         panelsTelemetry.update(telemetry);
     }
 
@@ -100,22 +94,20 @@ public class closeRedShort extends OpMode {
         public PathChain Path2;
 
         public Paths(Follower follower) {
-            Path1 = follower.pathBuilder()
-                    .addPath(new BezierLine(
-                            new Pose(119.500, 128.000),
-                            new Pose(84.000, 95.000)))
-                    .setLinearHeadingInterpolation(
-                            Math.toRadians(216.5),
-                            Math.toRadians(220))
+            Path1 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(119.500, 128.000), new Pose(86.000, 80.000))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(216.5), Math.toRadians(229), 0.8)
                     .build();
 
-            Path2 = follower.pathBuilder()
-                    .addPath(new BezierLine(
-                            new Pose(84.000, 95.000),
-                            new Pose(84.000, 128.000)))
-                    .setLinearHeadingInterpolation(
-                            Math.toRadians(220),
-                            Math.toRadians(0))
+            Path2 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(86.000, 80.000), new Pose(94.000, 128.000))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(229), Math.toRadians(0), 0.8)
                     .build();
         }
     }
@@ -123,7 +115,7 @@ public class closeRedShort extends OpMode {
     public int autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.setMaxPower(1);
+                intake.setPower(0.0);
                 follower.followPath(paths.Path1, true);
                 pathState++;
                 break;
@@ -134,7 +126,7 @@ public class closeRedShort extends OpMode {
 
             case 2:
                 if (!pathStarted) {
-                    follower.setMaxPower(1);
+                    intake.setPower(0.0);
                     follower.followPath(paths.Path2, true);
                     pathStarted = true;
                 }

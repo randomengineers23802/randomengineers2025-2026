@@ -12,14 +12,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
 
-@Autonomous(name = "farRedFarShort", group = "Autonomous")
+@Autonomous(name = "farRedShort", group = "Autonomous")
 @Configurable
-public class farRedFarShort extends OpMode {
+public class farRedShort extends OpMode {
 
     private shooterControl shooter;
     private TelemetryManager panelsTelemetry;
@@ -31,13 +30,11 @@ public class farRedFarShort extends OpMode {
     private DcMotor intake = null;
     private DcMotor belt = null;
     private Servo BlueBoi = null;
-
     private boolean pathStarted = false;
 
     @Override
     public void init() {
         shooter = new shooterControl(hardwareMap);
-
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);
@@ -60,7 +57,7 @@ public class farRedFarShort extends OpMode {
     public void start() {
         intake.setPower(0.0);
         shooter.setShooterVelocity(1300);
-        belt.setPower(0.5);
+        belt.setPower(1.0);
         BlueBoi.setPosition(0.65);
         timer.reset();
     }
@@ -95,17 +92,25 @@ public class farRedFarShort extends OpMode {
     }
 
     public static class Paths {
-        public PathChain Path1, Path2;
+
+        public PathChain Path1;
+        public PathChain Path2;
 
         public Paths(Follower follower) {
-            Path1 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(87.125, 8.563), new Pose(84.000, 15.000)))
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(248.5))
+            Path1 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(87.125, 8.563), new Pose(86.000, 15.000))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(251))
                     .build();
 
-            Path2 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(84.000, 15.000), new Pose(108.000, 13.000)))
-                    .setLinearHeadingInterpolation(Math.toRadians(248.5), Math.toRadians(0))
+            Path2 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(86.000, 15.000), new Pose(108.000, 15.000))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(251), Math.toRadians(0))
                     .build();
         }
     }
