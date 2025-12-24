@@ -9,9 +9,6 @@ public class shooterControl {
     public DcMotorEx ShooterL;
     public DcMotorEx ShooterR;
 
-    public double targetVelocity;
-
-    // Tune these
     PIDFCoefficients shooterPIDF = new PIDFCoefficients(200.0, 0.0, 10.0, 12.3);
 
     public shooterControl(HardwareMap hardwareMap) {
@@ -29,12 +26,6 @@ public class shooterControl {
     public void setShooterVelocity(double targetVelocity) {
         ShooterL.setVelocity(targetVelocity);
         ShooterR.setVelocity(targetVelocity);
-
-        double currentVelocityL = ShooterL.getVelocity();
-        double currentVelocityR = ShooterR.getVelocity();
-
-        double errorL = targetVelocity - currentVelocityL;
-        double errorR = targetVelocity - currentVelocityR;
     }
 
     public void shooterStop() {
