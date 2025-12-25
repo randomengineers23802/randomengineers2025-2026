@@ -4,6 +4,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,14 +23,12 @@ public class finalTeleOpBlue extends OpMode {
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.25;
     private boolean shooting = false;
-
+    private Pose currentPose;
     private shooterControl shooter;
-
     private DcMotor intake = null;
     private DcMotor belt = null;
     private Servo BlueBoi = null;
     private ElapsedTime timer = new ElapsedTime();
-
     boolean rightTriggerPressed;
     boolean rightTriggerWasPressed;
     boolean prevRightTrigger;
@@ -52,6 +51,9 @@ public class finalTeleOpBlue extends OpMode {
 
     private void Shoot() {
         belt.setPower(1.0);
+        if (currentPose != null) {
+            follower.holdPoint(currentPose);
+        }
         double t = timer.seconds();
         if (t <= 1.0)
             BlueBoi.setPosition(1.0);
@@ -59,6 +61,7 @@ public class finalTeleOpBlue extends OpMode {
             BlueBoi.setPosition(0.65);
             belt.setPower(0.0);
             shooting = false;
+            automatedDrive = false;
         }
     }
 
@@ -114,6 +117,8 @@ public class finalTeleOpBlue extends OpMode {
 
         if (rightTriggerWasPressed && !shooting) {
             timer.reset();
+            currentPose = follower.getPose();
+            automatedDrive = true;
             shooting = true;
         }
 
