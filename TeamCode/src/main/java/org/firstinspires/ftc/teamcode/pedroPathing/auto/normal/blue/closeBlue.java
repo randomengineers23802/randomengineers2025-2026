@@ -48,7 +48,7 @@ public class closeBlue extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(24.500, 128.000, Math.toRadians(323.5)));
 
-        paths = new Paths(follower); // Build paths
+        paths = new Paths(follower);
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
@@ -64,8 +64,8 @@ public class closeBlue extends OpMode {
 
     @Override
     public void loop() {
-        follower.update(); // Update Pedro Pathing
-        pathState = autonomousPathUpdate(); // Update autonomous state machine
+        follower.update();
+        pathState = autonomousPathUpdate();
 
         // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);

@@ -22,10 +22,10 @@ import com.pedropathing.geometry.BezierCurve;
 public class closeRed extends OpMode {
 
     private shooterControl shooter;
-    private TelemetryManager panelsTelemetry; // Panels Telemetry instance
-    public Follower follower; // Pedro Pathing follower instance
-    private int pathState; // Current autonomous path state (state machine)
-    private Paths paths; // Paths defined in the Paths class
+    private TelemetryManager panelsTelemetry;
+    public Follower follower;
+    private int pathState;
+    private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
     private DcMotor intake = null;
 
