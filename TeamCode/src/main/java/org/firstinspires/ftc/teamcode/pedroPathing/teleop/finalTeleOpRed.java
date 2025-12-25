@@ -23,8 +23,12 @@ public class finalTeleOpRed extends OpMode {
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.25;
     private boolean shooting = false;
+
+    // FIX 1: Declare currentPose here so the whole class can see it
     private Pose currentPose;
+
     private shooterControl shooter;
+
     private DcMotor intake = null;
     private DcMotor belt = null;
     private Servo BlueBoi = null;
