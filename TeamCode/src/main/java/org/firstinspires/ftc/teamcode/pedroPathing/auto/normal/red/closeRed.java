@@ -169,8 +169,8 @@ public class closeRed extends OpMode {
                     .build();
 
             Path12 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(86.0, 80.0), new Pose(70.0, 128.0)))
-                    .setLinearHeadingInterpolation(Math.toRadians(229), Math.toRadians(0))
+                    .addPath(new BezierLine(new Pose(86.0, 80.0), new Pose(119.0, 70.0)))
+                    .setLinearHeadingInterpolation(Math.toRadians(229), Math.toRadians(270))
                     .build();
         }
     }

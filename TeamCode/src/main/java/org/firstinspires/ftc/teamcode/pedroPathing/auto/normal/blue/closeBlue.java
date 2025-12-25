@@ -205,9 +205,9 @@ public class closeBlue extends OpMode {
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(58.000, 80.000), new Pose(50.000, 128.000))
+                            new BezierLine(new Pose(58.000, 80.000), new Pose(25.000, 70.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(311), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(311), Math.toRadians(270))
                     .build();
         }
     }
