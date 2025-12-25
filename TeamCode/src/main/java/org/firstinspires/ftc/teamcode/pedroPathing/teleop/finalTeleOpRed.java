@@ -4,6 +4,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose; // Import was missing or unused previously
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,6 +23,9 @@ public class finalTeleOpRed extends OpMode {
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.25;
     private boolean shooting = false;
+
+    // FIX 1: Declare currentPose here so the whole class can see it
+    private Pose currentPose;
 
     private shooterControl shooter;
 
@@ -49,6 +53,9 @@ public class finalTeleOpRed extends OpMode {
 
     private void Shoot() {
         belt.setPower(1.0);
+        if (currentPose != null) {
+            follower.holdPoint(currentPose);
+        }
         double t = timer.seconds();
         if (t <= 1.0)
             BlueBoi.setPosition(1.0);
@@ -56,6 +63,7 @@ public class finalTeleOpRed extends OpMode {
             BlueBoi.setPosition(0.65);
             belt.setPower(0.0);
             shooting = false;
+            automatedDrive = false;
         }
     }
 
@@ -111,7 +119,9 @@ public class finalTeleOpRed extends OpMode {
 
         if (rightTriggerWasPressed && !shooting) {
             timer.reset();
+            currentPose = follower.getPose();
             shooting = true;
+            automatedDrive = true;
         }
 
         prevRightTrigger = rightTriggerPressed;
@@ -130,11 +140,6 @@ public class finalTeleOpRed extends OpMode {
             slowMode = !slowMode;
         }
 
-        telemetryM.debug("position",
-                String.format("(%.2f, %.2f, %.2f)",
-                        follower.getPose().getX(),
-                        follower.getPose().getY(),
-                        Math.toDegrees(follower.getPose().getHeading())));
         telemetryM.debug("velocity", follower.getVelocity());
         telemetryM.debug("automatedDrive", automatedDrive);
         telemetryM.debug("busy", follower.isBusy());
