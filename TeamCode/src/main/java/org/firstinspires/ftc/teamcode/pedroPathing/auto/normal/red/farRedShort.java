@@ -56,7 +56,7 @@ public class farRedShort extends OpMode {
     @Override
     public void start() {
         intake.setPower(0.0);
-        shooter.setShooterVelocity(1300);
+        shooter.setShooterVelocity("far");
         belt.setPower(1.0);
         BlueBoi.setPosition(0.65);
         timer.reset();

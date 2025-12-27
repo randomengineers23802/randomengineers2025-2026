@@ -28,7 +28,6 @@ public class closeBlue extends OpMode {
     private Paths paths; // Paths defined in the Paths class
     private ElapsedTime timer = new ElapsedTime();
     private DcMotor intake = null;
-
     private DcMotor belt = null;
     private Servo BlueBoi = null;
     private boolean pathStarted = false;
@@ -57,7 +56,7 @@ public class closeBlue extends OpMode {
     @Override
     public void start() {
         intake.setPower(0.0);
-        shooter.setShooterVelocity(1060);
+        shooter.setShooterVelocity("close");
         belt.setPower(1.0);
         BlueBoi.setPosition(0.65);
     }
@@ -67,7 +66,6 @@ public class closeBlue extends OpMode {
         follower.update();
         pathState = autonomousPathUpdate();
 
-        // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());

@@ -55,7 +55,7 @@ public class closeRed extends OpMode {
     @Override
     public void start() {
         intake.setPower(0.0);
-        shooter.setShooterVelocity(1060);
+        shooter.setShooterVelocity("close");
         belt.setPower(1.0);
         BlueBoi.setPosition(0.65);
     }

@@ -21,7 +21,7 @@ public class finalTeleOpBlue extends OpMode {
     private boolean automatedDrive;
     private TelemetryManager telemetryM;
     private boolean slowMode = false;
-    private double slowModeMultiplier = 0.25;
+    private final double slowModeMultiplier = 0.25;
     private boolean shooting = false;
     private Pose currentPose;
     private shooterControl shooter;
@@ -51,6 +51,7 @@ public class finalTeleOpBlue extends OpMode {
 
     private void Shoot() {
         belt.setPower(1.0);
+        intake.setPower(0.75);
         if (currentPose != null) {
             follower.holdPoint(currentPose);
         }
@@ -69,7 +70,7 @@ public class finalTeleOpBlue extends OpMode {
     public void start() {
         follower.startTeleopDrive();
         intake.setPower(0.0);
-        shooter.setShooterVelocity(1060);
+        shooter.setShooterVelocity("close");
         belt.setPower(0.0);
     }
 
@@ -96,11 +97,11 @@ public class finalTeleOpBlue extends OpMode {
         }
 
         if (gamepad1.dpad_left) {
-            shooter.setShooterVelocity(1300);
+            shooter.setShooterVelocity("far");
         }
 
         if (gamepad1.dpad_right) {
-            shooter.setShooterVelocity(1060);
+            shooter.setShooterVelocity("close");
         }
 
         if (gamepad1.right_bumper) {

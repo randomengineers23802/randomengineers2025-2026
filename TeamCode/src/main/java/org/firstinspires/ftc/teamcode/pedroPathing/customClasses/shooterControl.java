@@ -12,7 +12,6 @@ public class shooterControl {
     PIDFCoefficients shooterPIDF = new PIDFCoefficients(200.0, 0.0, 10.0, 12.3);
 
     public shooterControl(HardwareMap hardwareMap) {
-
         ShooterL = hardwareMap.get(DcMotorEx.class, "ShooterL");
         ShooterR = hardwareMap.get(DcMotorEx.class, "ShooterR");
         ShooterL.setDirection(DcMotorEx.Direction.REVERSE);
@@ -23,7 +22,16 @@ public class shooterControl {
         ShooterR.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
     }
 
-    public void setShooterVelocity(double targetVelocity) {
+    public void setShooterVelocity(String range) {
+        double targetVelocity = 0;
+        switch (range) {
+            case "close":
+                targetVelocity = 1060;
+                break;
+            case "far":
+                targetVelocity = 1300;
+                break;
+        }
         ShooterL.setVelocity(targetVelocity);
         ShooterR.setVelocity(targetVelocity);
     }
