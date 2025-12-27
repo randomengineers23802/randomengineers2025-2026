@@ -63,6 +63,7 @@ public class finalTeleOpBlue extends OpMode {
             belt.setPower(0.0);
             shooting = false;
             automatedDrive = false;
+            follower.startTeleopDrive();
         }
     }
 
