@@ -26,10 +26,10 @@ public class shooterControl {
         double targetVelocity = 0;
         switch (range) {
             case "close":
-                targetVelocity = 1060;
+                targetVelocity = 1100;
                 break;
             case "far":
-                targetVelocity = 1300;
+                targetVelocity = 1200;
                 break;
         }
         ShooterL.setVelocity(targetVelocity);

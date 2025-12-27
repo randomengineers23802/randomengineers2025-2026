@@ -126,7 +126,7 @@ public class closeBlue extends OpMode {
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(49.000, 84.000), new Pose(15.000, 84.000))
+                            new BezierLine(new Pose(49.000, 84.000), new Pose(18.000, 84.000))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -135,9 +135,9 @@ public class closeBlue extends OpMode {
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(15.000, 84.000),
-                                    new Pose(27.000, 79.500),
-                                    new Pose(15.000, 75.000)
+                                    new Pose(18.000, 84.000),
+                                    new Pose(37.000, 79.500),
+                                    new Pose(18.000, 75.000)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
@@ -146,10 +146,9 @@ public class closeBlue extends OpMode {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(15.000, 75.000), new Pose(58.000, 80.000))
+                            new BezierLine(new Pose(18.000, 75.000), new Pose(58.000, 80.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(311))
-                    .setReversed()
                     .build();
 
             Path6 = follower
@@ -163,7 +162,7 @@ public class closeBlue extends OpMode {
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(49.000, 58.000), new Pose(15.000, 58.000))
+                            new BezierLine(new Pose(49.000, 58.000), new Pose(18.000, 58.000))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -171,7 +170,7 @@ public class closeBlue extends OpMode {
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(15.000, 58.000), new Pose(58.000, 80.000))
+                            new BezierLine(new Pose(18.000, 58.000), new Pose(58.000, 80.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(311))
                     .build();
@@ -187,7 +186,7 @@ public class closeBlue extends OpMode {
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(49.000, 35.500), new Pose(15.000, 35.500))
+                            new BezierLine(new Pose(49.000, 35.500), new Pose(18.000, 35.500))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -195,7 +194,7 @@ public class closeBlue extends OpMode {
             Path11 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(15.000, 35.500), new Pose(58.000, 80.000))
+                            new BezierLine(new Pose(18.000, 35.500), new Pose(58.000, 80.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(311))
                     .build();

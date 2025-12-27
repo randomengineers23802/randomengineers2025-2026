@@ -102,7 +102,7 @@ public class farRedShort extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(87.125, 8.563), new Pose(86.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(251))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(247))
                     .build();
 
             Path2 = follower
@@ -110,7 +110,7 @@ public class farRedShort extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(86.000, 15.000), new Pose(108.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(251), Math.toRadians(0))
+                    .setLinearHeadingInterpolation(Math.toRadians(247), Math.toRadians(0))
                     .build();
         }
     }

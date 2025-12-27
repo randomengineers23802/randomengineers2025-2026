@@ -58,7 +58,7 @@ public class ShooterTestTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        shooter.setShooterVelocity(1100);
+        shooter.setShooterVelocity("close");
         if (gamepad1.right_trigger > 0.2 && !shooting) {
             timer.reset();
             shooting = true;

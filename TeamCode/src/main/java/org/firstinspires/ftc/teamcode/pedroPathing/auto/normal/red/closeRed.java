@@ -116,7 +116,7 @@ public class closeRed extends OpMode {
                     .build();
 
             Path3 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(95.0, 84.0), new Pose(129.0, 84.0)))
+                    .addPath(new BezierLine(new Pose(95.0, 84.0), new Pose(126.0, 84.0)))
                     .setTangentHeadingInterpolation()
                     .build();
 
@@ -124,18 +124,17 @@ public class closeRed extends OpMode {
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(129.000, 84.000),
-                                    new Pose(117.000, 79.500),
-                                    new Pose(129.000, 75.000)
+                                    new Pose(126.000, 84.000),
+                                    new Pose(107.000, 79.500),
+                                    new Pose(126.000, 75.000)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
                     .build();
 
             Path5 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(129.0, 75.0), new Pose(86.0, 80.0)))
+                    .addPath(new BezierLine(new Pose(126.0, 75.0), new Pose(86.0, 80.0)))
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(229))
-                    .setReversed()
                     .build();
 
             Path6 = follower.pathBuilder()
@@ -144,12 +143,12 @@ public class closeRed extends OpMode {
                     .build();
 
             Path7 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(95.0, 58.0), new Pose(129.0, 58.0)))
+                    .addPath(new BezierLine(new Pose(95.0, 58.0), new Pose(126.0, 58.0)))
                     .setTangentHeadingInterpolation()
                     .build();
 
             Path8 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(129.0, 58.0), new Pose(86.0, 80.0)))
+                    .addPath(new BezierLine(new Pose(126.0, 58.0), new Pose(86.0, 80.0)))
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(229))
                     .build();
 
@@ -159,12 +158,12 @@ public class closeRed extends OpMode {
                     .build();
 
             Path10 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(95.0, 35.5), new Pose(129.0, 35.5)))
+                    .addPath(new BezierLine(new Pose(95.0, 35.5), new Pose(126.0, 35.5)))
                     .setTangentHeadingInterpolation()
                     .build();
 
             Path11 = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(129.0, 35.5), new Pose(86.0, 80.0)))
+                    .addPath(new BezierLine(new Pose(126.0, 35.5), new Pose(86.0, 80.0)))
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(229))
                     .build();
 
