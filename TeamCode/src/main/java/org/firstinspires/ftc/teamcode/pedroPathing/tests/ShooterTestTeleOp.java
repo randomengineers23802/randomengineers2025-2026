@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing.tests;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,6 +18,7 @@ public class ShooterTestTeleOp extends OpMode {
 
     private shooterControl shooter;
     private TelemetryManager telemetryM;
+    private Follower follower;
 
     private DcMotor belt;
 
@@ -30,7 +32,7 @@ public class ShooterTestTeleOp extends OpMode {
 
     @Override
     public void init() {
-        shooter = new shooterControl(hardwareMap);
+        shooter = new shooterControl(hardwareMap, follower);
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);
         intake = hardwareMap.get(DcMotor.class, "intake");

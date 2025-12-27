@@ -36,7 +36,7 @@ public class closeBlue extends OpMode {
 
     @Override
     public void init() {
-        shooter = new shooterControl(hardwareMap);
+        shooter = new shooterControl(hardwareMap, follower);
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);

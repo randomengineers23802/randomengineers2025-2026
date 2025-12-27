@@ -29,14 +29,10 @@ public class finalTeleOpBlue extends OpMode {
     private DcMotor belt = null;
     private Servo BlueBoi = null;
     private ElapsedTime timer = new ElapsedTime();
-    boolean rightTriggerPressed;
-    boolean rightTriggerWasPressed;
-    boolean prevRightTrigger;
+    private boolean prevRightTrigger = false;
 
     @Override
     public void init() {
-        shooter = new shooterControl(hardwareMap);
-
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);
@@ -46,6 +42,10 @@ public class finalTeleOpBlue extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(passthrough.startPose);
         follower.update();
+
+        shooter = new shooterControl(hardwareMap, follower);
+        shooter.setPipeline("blue");
+
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
@@ -84,7 +84,9 @@ public class finalTeleOpBlue extends OpMode {
         double y = gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
 
-        if (!automatedDrive) {
+        if (gamepad1.left_trigger > 0.2) {
+            shooter.autoAim();
+        } else if (!automatedDrive) {
             if (!slowMode) {
                 follower.setTeleOpDrive(y, x, turn, false);
             } else {
@@ -114,8 +116,8 @@ public class finalTeleOpBlue extends OpMode {
             belt.setPower(0.0);
         }
 
-        rightTriggerPressed = gamepad1.right_trigger > 0.2;
-        rightTriggerWasPressed = rightTriggerPressed && !prevRightTrigger;
+        boolean rightTriggerPressed = gamepad1.right_trigger > 0.2;
+        boolean rightTriggerWasPressed = rightTriggerPressed && !prevRightTrigger;
 
         if (rightTriggerWasPressed && !shooting) {
             timer.reset();

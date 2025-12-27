@@ -4,7 +4,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose; // Import was missing or unused previously
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -33,8 +33,6 @@ public class finalTeleOpRed extends OpMode {
 
     @Override
     public void init() {
-        shooter = new shooterControl(hardwareMap);
-
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);
@@ -44,6 +42,10 @@ public class finalTeleOpRed extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(passthrough.startPose);
         follower.update();
+
+        shooter = new shooterControl(hardwareMap, follower);
+        shooter.setPipeline("red");
+
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
@@ -82,7 +84,9 @@ public class finalTeleOpRed extends OpMode {
         double y = -gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
 
-        if (!automatedDrive) {
+        if (gamepad1.left_trigger > 0.2) {
+            shooter.autoAim();
+        } else if (!automatedDrive) {
             if (!slowMode) {
                 follower.setTeleOpDrive(y, x, turn, false);
             } else {
