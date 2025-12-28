@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 
-//@Disabled
+@Disabled
 @TeleOp(name="aprilTagTeleop")
 public class aprilTagTeleop extends OpMode {
 

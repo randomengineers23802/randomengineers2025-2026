@@ -84,9 +84,9 @@ public class finalTeleOpBlue extends OpMode {
         double y = gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
 
-        if (gamepad1.left_trigger > 0.2) {
+        if (gamepad1.left_trigger > 0.2)
             shooter.autoAim();
-        } else if (!automatedDrive) {
+        else if (!automatedDrive) {
             if (!slowMode) {
                 follower.setTeleOpDrive(y, x, turn, false);
             } else {

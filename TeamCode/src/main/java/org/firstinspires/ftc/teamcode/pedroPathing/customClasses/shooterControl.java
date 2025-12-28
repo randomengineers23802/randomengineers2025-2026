@@ -21,7 +21,7 @@ public class shooterControl {
     private ElapsedTime timer = new ElapsedTime();
 
     PIDFCoefficients shooterPIDF = new PIDFCoefficients(200.0, 0.0, 10.0, 12.3);
-    PIDCoefficients autoAimPID = new PIDCoefficients(0.012, 0, 0.0);
+    public PIDCoefficients autoAimPID = new PIDCoefficients(0.02, 0, 0.0005);
 
     public shooterControl(HardwareMap hardwareMap, Follower follower) {
         this.follower = follower;
