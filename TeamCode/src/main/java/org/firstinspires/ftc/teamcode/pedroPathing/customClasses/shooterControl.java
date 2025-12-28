@@ -8,6 +8,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 
 public class shooterControl {
 
@@ -16,12 +17,15 @@ public class shooterControl {
     public Limelight3A limelight;
     private Follower follower;
 
+    public double targetGoalX;
+    public double targetGoalY;
+
     private double previousError = 0;
     private double totalError = 0;
     private ElapsedTime timer = new ElapsedTime();
 
     PIDFCoefficients shooterPIDF = new PIDFCoefficients(200.0, 0.0, 10.0, 12.3);
-    public PIDCoefficients autoAimPID = new PIDCoefficients(0.02, 0, 0.0005);
+    public PIDCoefficients limelightPID = new PIDCoefficients(0.01, 0, 0.0005);
 
     public shooterControl(HardwareMap hardwareMap, Follower follower) {
         this.follower = follower;
@@ -40,11 +44,19 @@ public class shooterControl {
         timer.reset();
     }
 
+    public void resetFollowerConstants() {
+        follower.setHeadingPIDFCoefficients(new com.pedropathing.control.PIDFCoefficients(0.8, 0, 0.02, 0.02));
+    }
+
     public void setShooterVelocity(String range) {
         double targetVelocity = 0;
         switch (range) {
-            case "close": targetVelocity = 1100; break;
-            case "far": targetVelocity = 1200; break;
+            case "close":
+                targetVelocity = 1100;
+                break;
+            case "far":
+                targetVelocity = 1200;
+                break;
         }
         ShooterL.setVelocity(targetVelocity);
         ShooterR.setVelocity(targetVelocity);
@@ -59,14 +71,20 @@ public class shooterControl {
         switch (goalColor) {
             case "blue":
                 limelight.pipelineSwitch(0);
+                targetGoalX = 16;
+                targetGoalY = 131;
                 break;
             case "red":
                 limelight.pipelineSwitch(1);
+                targetGoalX = 128;
+                targetGoalY = 131;
                 break;
         }
     }
 
     public void autoAim() {
+        follower.setHeadingPIDFCoefficients(new com.pedropathing.control.PIDFCoefficients(2.0, 0, 0.1, 0.02));
+
         LLResult result = limelight.getLatestResult();
 
         if (result != null && result.isValid()) {
@@ -77,20 +95,26 @@ public class shooterControl {
             if (deltaTime > 0.2)
                 deltaTime = 0.01;
 
-            double p = autoAimPID.p * error;
+            double p = limelightPID.p * error;
             totalError += error * deltaTime;
-            double i = autoAimPID.i * totalError;
-            double d = autoAimPID.d * ((error - previousError) / deltaTime);
+            double i = limelightPID.i * totalError;
+            double d = limelightPID.d * ((error - previousError) / deltaTime);
             previousError = error;
 
-            double motorOutput = Math.max(-1.0, Math.min(1.0, p + i + d));
-            follower.setTeleOpDrive(0,0, -motorOutput);
+            double rotationalPower = -Math.max(-1.0, Math.min(1.0, p + i + d));
+            follower.setTeleOpDrive(0, 0, rotationalPower);
         }
         else {
+            Pose currentAimPose = follower.getPose();
+            double errorX = targetGoalX - currentAimPose.getX();
+            double errorY = targetGoalY - currentAimPose.getY();
+            double targetAngle = Math.atan2(errorY, errorX) + Math.PI;
+
+            follower.turnTo(targetAngle);
+
             previousError = 0;
             totalError = 0;
             timer.reset();
-            follower.setTeleOpDrive(0, 0, 0);
         }
     }
 }

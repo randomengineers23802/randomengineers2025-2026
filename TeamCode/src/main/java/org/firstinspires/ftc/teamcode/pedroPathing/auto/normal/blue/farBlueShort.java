@@ -34,7 +34,6 @@ public class farBlueShort extends OpMode {
 
     @Override
     public void init() {
-        shooter = new shooterControl(hardwareMap, follower);
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);
@@ -48,6 +47,8 @@ public class farBlueShort extends OpMode {
         follower.setStartingPose(new Pose(56.875, 8.5625, Math.toRadians(90)));
 
         paths = new Paths(follower);
+
+        shooter = new shooterControl(hardwareMap, follower);
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);

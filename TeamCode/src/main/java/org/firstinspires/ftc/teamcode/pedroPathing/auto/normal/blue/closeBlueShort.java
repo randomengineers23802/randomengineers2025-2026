@@ -34,7 +34,6 @@ public class closeBlueShort extends OpMode {
 
     @Override
     public void init() {
-        shooter = new shooterControl(hardwareMap, follower);
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);
@@ -46,6 +45,8 @@ public class closeBlueShort extends OpMode {
         follower.setStartingPose(new Pose(24.500, 128.000, Math.toRadians(323.5)));
 
         paths = new Paths(follower);
+
+        shooter = new shooterControl(hardwareMap, follower);
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
