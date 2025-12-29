@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.pedroPathing.customClasses;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -19,13 +18,9 @@ public class shooterControl {
 
     public double targetGoalX;
     public double targetGoalY;
-
-    private double previousError = 0;
-    private double totalError = 0;
     private ElapsedTime timer = new ElapsedTime();
 
     PIDFCoefficients shooterPIDF = new PIDFCoefficients(200.0, 0.0, 10.0, 12.3);
-    public PIDCoefficients limelightPID = new PIDCoefficients(0.01, 0, 0.0005);
 
     public shooterControl(HardwareMap hardwareMap, Follower follower) {
         this.follower = follower;
@@ -83,38 +78,27 @@ public class shooterControl {
     }
 
     public void autoAim() {
-        follower.setHeadingPIDFCoefficients(new com.pedropathing.control.PIDFCoefficients(2.0, 0, 0.1, 0.02));
-
         LLResult result = limelight.getLatestResult();
+        follower.setHeadingPIDFCoefficients(new com.pedropathing.control.PIDFCoefficients(1.6, 0, 0.02, 0.02));
 
         if (result != null && result.isValid()) {
-            double error = result.getTx();
-            double deltaTime = timer.seconds();
-            timer.reset();
+            double tx = result.getTx();
 
-            if (deltaTime > 0.2)
-                deltaTime = 0.01;
+            double currentHeading = follower.getPose().getHeading();
 
-            double p = limelightPID.p * error;
-            totalError += error * deltaTime;
-            double i = limelightPID.i * totalError;
-            double d = limelightPID.d * ((error - previousError) / deltaTime);
-            previousError = error;
+            double targetHeading = currentHeading + Math.toRadians(tx);
 
-            double rotationalPower = -Math.max(-1.0, Math.min(1.0, p + i + d));
-            follower.setTeleOpDrive(0, 0, rotationalPower);
+            follower.turnTo(targetHeading);
+
         }
         else {
-            Pose currentAimPose = follower.getPose();
-            double errorX = targetGoalX - currentAimPose.getX();
-            double errorY = targetGoalY - currentAimPose.getY();
+            Pose currentPose = follower.getPose();
+
+            double errorX = targetGoalX - currentPose.getX();
+            double errorY = targetGoalY - currentPose.getY();
+
             double targetAngle = Math.atan2(errorY, errorX) + Math.PI;
-
             follower.turnTo(targetAngle);
-
-            previousError = 0;
-            totalError = 0;
-            timer.reset();
         }
     }
 }

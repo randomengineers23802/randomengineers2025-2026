@@ -84,9 +84,9 @@ public class finalTeleOpRed extends OpMode {
         double y = -gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
 
-        if (gamepad1.left_trigger > 0.2) {
+        if (gamepad1.left_trigger > 0.2)
             shooter.autoAim();
-        } else {
+        else {
             shooter.resetFollowerConstants();
             if (!automatedDrive) {
                 if (!slowMode) {
