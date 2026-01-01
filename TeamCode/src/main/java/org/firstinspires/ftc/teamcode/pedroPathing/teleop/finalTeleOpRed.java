@@ -30,6 +30,7 @@ public class finalTeleOpRed extends OpMode {
     private Servo BlueBoi = null;
     private ElapsedTime timer = new ElapsedTime();
     private boolean prevRightTrigger = false;
+    private boolean wasAiming = false;
 
     @Override
     public void init() {
@@ -84,10 +85,16 @@ public class finalTeleOpRed extends OpMode {
         double y = -gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
 
-        if (gamepad1.left_trigger > 0.2)
+        if (gamepad1.left_trigger > 0.2) {
             shooter.autoAim();
+            follower.setTeleOpDrive(y, x, 0, false);
+            wasAiming = true;
+        }
         else {
-            shooter.resetFollowerConstants();
+            if (wasAiming) {
+                shooter.resetFollower();
+                wasAiming = false;
+            }
             if (!automatedDrive) {
                 if (!slowMode) {
                     follower.setTeleOpDrive(y, x, turn, false);

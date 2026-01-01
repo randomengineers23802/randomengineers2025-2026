@@ -56,7 +56,7 @@ public class farRed extends OpMode {
 
     @Override
     public void start() {
-        intake.setPower(0.0);
+        intake.setPower(1.0);
         shooter.setShooterVelocity("far");
         belt.setPower(1.0);
         BlueBoi.setPosition(0.65);
@@ -80,11 +80,9 @@ public class farRed extends OpMode {
         else {
             double t = timer.seconds();
             if (t <= 1.0) {
-                intake.setPower(0.75);
                 BlueBoi.setPosition(1.0);
             }
             else {
-                intake.setPower(0.0);
                 BlueBoi.setPosition(0.65);
                 pathState++;
             }
@@ -216,7 +214,6 @@ public class farRed extends OpMode {
     public int autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                intake.setPower(0.0);
                 follower.followPath(paths.Path1, true);
                 pathState++;
                 break;
@@ -226,7 +223,6 @@ public class farRed extends OpMode {
                 break;
 
             case 2:
-                intake.setPower(0.0);
                 if (!follower.isBusy()) {
                     follower.followPath(paths.Path2, true);
                     pathState++;
@@ -235,7 +231,6 @@ public class farRed extends OpMode {
 
             case 3:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.75);
                     follower.followPath(paths.Path3, true);
                     pathState++;
                 }
@@ -243,7 +238,6 @@ public class farRed extends OpMode {
 
             case 4:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.0);
                     follower.followPath(paths.Path4, true);
                     pathState++;
                 }
@@ -251,7 +245,6 @@ public class farRed extends OpMode {
 
             case 5:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.0);
                     follower.followPath(paths.Path5, true);
                     pathState++;
                 }
@@ -263,7 +256,6 @@ public class farRed extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.0);
                     follower.followPath(paths.Path6, true);
                     pathState++;
                 }
@@ -271,7 +263,6 @@ public class farRed extends OpMode {
 
             case 8:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.75);
                     follower.followPath(paths.Path7, true);
                     pathState++;
                 }
@@ -279,7 +270,6 @@ public class farRed extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.0);
                     follower.followPath(paths.Path8, true);
                     pathState++;
                 }
@@ -291,7 +281,6 @@ public class farRed extends OpMode {
 
             case 11:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.0);
                     follower.followPath(paths.Path9, true);
                     pathState++;
                 }
@@ -299,7 +288,6 @@ public class farRed extends OpMode {
 
             case 12:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.75);
                     follower.followPath(paths.Path10, true);
                     pathState++;
                 }
@@ -307,7 +295,6 @@ public class farRed extends OpMode {
 
             case 13:
                 if (!follower.isBusy()) {
-                    intake.setPower(0.0);
                     follower.followPath(paths.Path11, true);
                     pathState++;
                 }
@@ -319,7 +306,6 @@ public class farRed extends OpMode {
 
             case 15:
                 if (!pathStarted) {
-                    intake.setPower(0.0);
                     follower.followPath(paths.Path12, true);
                     pathStarted = true;
                 }

@@ -56,7 +56,7 @@ public class farRedShort extends OpMode {
 
     @Override
     public void start() {
-        intake.setPower(0.0);
+        intake.setPower(1.0);
         shooter.setShooterVelocity("far");
         belt.setPower(1.0);
         BlueBoi.setPosition(0.65);
@@ -81,11 +81,9 @@ public class farRedShort extends OpMode {
         else {
             double t = timer.seconds();
             if (t <= 1.0) {
-                intake.setPower(0.75);
                 BlueBoi.setPosition(1.0);
             }
             else {
-                intake.setPower(0.0);
                 BlueBoi.setPosition(0.65);
                 pathState++;
             }
@@ -103,7 +101,7 @@ public class farRedShort extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(87.125, 8.563), new Pose(86.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(247))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(248))
                     .build();
 
             Path2 = follower
@@ -111,7 +109,7 @@ public class farRedShort extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(86.000, 15.000), new Pose(108.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(247), Math.toRadians(0))
+                    .setLinearHeadingInterpolation(Math.toRadians(248), Math.toRadians(0))
                     .build();
         }
     }

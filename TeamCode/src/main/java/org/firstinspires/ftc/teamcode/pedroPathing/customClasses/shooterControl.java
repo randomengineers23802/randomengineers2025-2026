@@ -39,15 +39,15 @@ public class shooterControl {
         timer.reset();
     }
 
-    public void resetFollowerConstants() {
-        follower.setHeadingPIDFCoefficients(new com.pedropathing.control.PIDFCoefficients(0.8, 0, 0.02, 0.02));
+    public void resetFollower() {
+        follower.breakFollowing();
     }
 
     public void setShooterVelocity(String range) {
         double targetVelocity = 0;
         switch (range) {
             case "close":
-                targetVelocity = 1100;
+                targetVelocity = 1080;
                 break;
             case "far":
                 targetVelocity = 1200;
@@ -79,26 +79,34 @@ public class shooterControl {
 
     public void autoAim() {
         LLResult result = limelight.getLatestResult();
-        follower.setHeadingPIDFCoefficients(new com.pedropathing.control.PIDFCoefficients(1.6, 0, 0.02, 0.02));
 
         if (result != null && result.isValid()) {
             double tx = result.getTx();
-
             double currentHeading = follower.getPose().getHeading();
 
             double targetHeading = currentHeading + Math.toRadians(tx);
-
             follower.turnTo(targetHeading);
-
         }
         else {
             Pose currentPose = follower.getPose();
-
             double errorX = targetGoalX - currentPose.getX();
             double errorY = targetGoalY - currentPose.getY();
 
             double targetAngle = Math.atan2(errorY, errorX) + Math.PI;
-            follower.turnTo(targetAngle);
+
+            double angularError = targetAngle - currentPose.getHeading();
+            while (angularError > Math.PI) angularError -= 2 * Math.PI;
+            while (angularError < -Math.PI) angularError += 2 * Math.PI;
+
+            if (Math.abs(angularError) > Math.toRadians(10.0)) {
+                double setPower = 0.5;
+
+                double rotationPower = Math.signum(angularError) * setPower;
+
+                follower.setTeleOpDrive(0, 0, rotationPower, false);
+            } else {
+                follower.setTeleOpDrive(0, 0, 0, false);
+            }
         }
     }
 }

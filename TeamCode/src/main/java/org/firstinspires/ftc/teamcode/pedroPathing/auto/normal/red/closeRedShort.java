@@ -54,7 +54,7 @@ public class closeRedShort extends OpMode {
 
     @Override
     public void start() {
-        intake.setPower(0.0);
+        intake.setPower(1.0);
         shooter.setShooterVelocity("close");
         belt.setPower(1.0);
         BlueBoi.setPosition(0.65);
@@ -78,11 +78,9 @@ public class closeRedShort extends OpMode {
         else {
             double t = timer.seconds();
             if (t <= 1.0) {
-                intake.setPower(0.75);
                 BlueBoi.setPosition(1.0);
             }
             else {
-                intake.setPower(0.0);
                 BlueBoi.setPosition(0.65);
                 pathState++;
             }
@@ -100,7 +98,7 @@ public class closeRedShort extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(119.500, 128.000), new Pose(86.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(216.5), Math.toRadians(229), 0.8)
+                    .setLinearHeadingInterpolation(Math.toRadians(216.5), Math.toRadians(225.0), 0.8)
                     .build();
 
             Path2 = follower
@@ -116,7 +114,6 @@ public class closeRedShort extends OpMode {
     public int autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                intake.setPower(0.0);
                 follower.followPath(paths.Path1, true);
                 pathState++;
                 break;
@@ -127,7 +124,6 @@ public class closeRedShort extends OpMode {
 
             case 2:
                 if (!pathStarted) {
-                    intake.setPower(0.0);
                     follower.followPath(paths.Path2, true);
                     pathStarted = true;
                 }
