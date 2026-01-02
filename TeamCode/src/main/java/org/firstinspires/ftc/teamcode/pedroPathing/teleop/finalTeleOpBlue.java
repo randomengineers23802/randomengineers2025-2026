@@ -30,7 +30,6 @@ public class finalTeleOpBlue extends OpMode {
     private Servo BlueBoi = null;
     private ElapsedTime timer = new ElapsedTime();
     private boolean prevRightTrigger = false;
-    private boolean wasAiming = false;
 
     @Override
     public void init() {
@@ -52,7 +51,7 @@ public class finalTeleOpBlue extends OpMode {
 
     private void Shoot() {
         belt.setPower(1.0);
-        intake.setPower(0.75);
+        intake.setPower(1.0);
         if (currentPose != null) {
             follower.holdPoint(currentPose);
         }
@@ -108,7 +107,7 @@ public class finalTeleOpBlue extends OpMode {
         }
 
         if (gamepad1.right_bumper) {
-            intake.setPower(0.75);
+            intake.setPower(1.0);
             belt.setPower(1.0);
         }
         else if (!shooting) {
