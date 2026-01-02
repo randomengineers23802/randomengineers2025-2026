@@ -85,27 +85,17 @@ public class finalTeleOpRed extends OpMode {
         double y = -gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
 
-        if (gamepad1.left_trigger > 0.2) {
-            shooter.autoAim();
-            follower.setTeleOpDrive(y, x, 0, false);
-            wasAiming = true;
-        }
-        else {
-            if (wasAiming) {
-                shooter.resetFollower();
-                wasAiming = false;
+        if (!automatedDrive) {
+            if (!slowMode) {
+                follower.setTeleOpDrive(y, x, turn, false);
             }
-            if (!automatedDrive) {
-                if (!slowMode) {
-                    follower.setTeleOpDrive(y, x, turn, false);
-                } else {
-                    follower.setTeleOpDrive(
-                            y * slowModeMultiplier,
-                            x * slowModeMultiplier,
-                            turn * slowModeMultiplier,
-                            false
-                    );
-                }
+            else {
+                follower.setTeleOpDrive(
+                        y * slowModeMultiplier,
+                        x * slowModeMultiplier,
+                        turn * slowModeMultiplier,
+                        false
+                );
             }
         }
 
