@@ -56,7 +56,7 @@ public class closeBlueShort extends OpMode {
     public void start() {
         intake.setPower(1.0);
         shooter.setShooterVelocity("close");
-        belt.setPower(1.0);
+        belt.setPower(0.8);
         BlueBoi.setPosition(0.65);
     }
 

@@ -50,7 +50,7 @@ public class finalTeleOpBlue extends OpMode {
     }
 
     private void Shoot() {
-        belt.setPower(1.0);
+        belt.setPower(0.8);
         intake.setPower(1.0);
         if (currentPose != null) {
             follower.holdPoint(currentPose);
@@ -108,7 +108,7 @@ public class finalTeleOpBlue extends OpMode {
 
         if (gamepad1.right_bumper) {
             intake.setPower(1.0);
-            belt.setPower(1.0);
+            belt.setPower(0.8);
         }
         else if (!shooting) {
             intake.setPower(0.0);
@@ -130,7 +130,7 @@ public class finalTeleOpBlue extends OpMode {
         if (shooting)
             Shoot();
 
-        if (automatedDrive && gamepad1.bWasPressed()) {
+        if (automatedDrive && (gamepad1.bWasPressed() || Math.abs(gamepad1.left_stick_x) > 0.4 || Math.abs(gamepad1.left_stick_y) > 0.4 || Math.abs(gamepad1.right_stick_x) > 0.4)) {
             follower.startTeleopDrive();
             automatedDrive = false;
             shooting = false;
@@ -149,5 +149,7 @@ public class finalTeleOpBlue extends OpMode {
         telemetryM.debug("ShooterRvelocity", shooter.ShooterR.getVelocity());
         telemetryM.debug("shooting", shooting);
         telemetryM.debug("automatedDrive", automatedDrive);
+        telemetryM.addData("ShooterLvelocity", shooter.ShooterL.getVelocity());
+        telemetryM.addData("ShooterRvelocity", shooter.ShooterR.getVelocity());
     }
 }

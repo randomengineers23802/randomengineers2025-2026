@@ -44,7 +44,7 @@ public class ShooterTestTeleOp extends OpMode {
     }
 
     private void Shoot() {
-        belt.setPower(1.0);
+        belt.setPower(0.8);
         double t = timer.seconds();
         if (t <= 1.0)
             BlueBoi.setPosition(1.0);
@@ -72,7 +72,7 @@ public class ShooterTestTeleOp extends OpMode {
             Shoot();
 
         if (gamepad1.left_trigger > 0.2) {
-            belt.setPower(1.0);
+            belt.setPower(0.8);
         } else if (!shooting) {
             belt.setPower(0.0);
         }
