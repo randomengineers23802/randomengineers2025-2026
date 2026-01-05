@@ -53,7 +53,7 @@ public class squareTest extends OpMode {
         LinearServo = hardwareMap.get(Servo.class, "LinearServo");
         LinearServo.setPosition(0.1);
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
-        BlueBoi.setPosition(0.65);
+        robot.blueBoiClosed();
 
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -98,11 +98,11 @@ public class squareTest extends OpMode {
         else {
             double t = timer.seconds();
             if (t <= 0.5)
-                BlueBoi.setPosition(0.65);
+                robot.blueBoiClosed();
             else if (t <= 2.5)
-                BlueBoi.setPosition(1.0);
+                robot.blueBoiOpen();
             else {
-                BlueBoi.setPosition(0.65);
+                robot.blueBoiClosed();
                 shooting = false;
                 pathState++;
             }
@@ -190,8 +190,8 @@ public class squareTest extends OpMode {
             default:
                     ShooterL.setPower(0);
                     ShooterR.setPower(0);
-                    intake.setPower(0);
-                    belt.setPower(0);
+                    robot.intakeOff();
+                    robot.beltOff();
                     follower.breakFollowing();
                     panelsTelemetry.debug("Status", "Autonomous Complete");
                     panelsTelemetry.update(telemetry);

@@ -1,28 +1,35 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.customClasses;
 
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
-public class shooterControl {
+public class robotControl {
 
     public DcMotorEx ShooterL;
     public DcMotorEx ShooterR;
     public Limelight3A limelight;
+    private DcMotor intake;
+    private DcMotor belt ;
+    private Servo BlueBoi;
     private Follower follower;
-
+    private TelemetryManager panelsTelemetry;
     public double targetGoalX;
     public double targetGoalY;
     private ElapsedTime timer = new ElapsedTime();
 
     PIDFCoefficients shooterPIDF = new PIDFCoefficients(80.0, 0.0, 0.0, 12.3);
 
-    public shooterControl(HardwareMap hardwareMap, Follower follower) {
+    public robotControl(HardwareMap hardwareMap, Follower follower) {
         this.follower = follower;
         ShooterL = hardwareMap.get(DcMotorEx.class, "ShooterL");
         ShooterR = hardwareMap.get(DcMotorEx.class, "ShooterR");
@@ -32,6 +39,11 @@ public class shooterControl {
         ShooterR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         ShooterL.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
         ShooterR.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        belt = hardwareMap.get(DcMotor.class, "belt");
+        belt.setDirection(DcMotor.Direction.REVERSE);
+        BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
+        BlueBoi.setPosition(0.65);
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0);
@@ -75,6 +87,30 @@ public class shooterControl {
                 targetGoalY = 131;
                 break;
         }
+    }
+
+    public void beltOn() {
+        belt.setPower(0.8);
+    }
+
+    public void beltOff() {
+        belt.setPower(0.0);
+    }
+
+    public void intakeOn() {
+        intake.setPower(1.0);
+    }
+
+    public void intakeOff() {
+        intake.setPower(0.0);
+    }
+
+    public void blueBoiOpen() {
+        BlueBoi.setPosition(1.0);
+    }
+
+    public void blueBoiClosed() {
+        BlueBoi.setPosition(0.65);
     }
 
     public void autoAim() {

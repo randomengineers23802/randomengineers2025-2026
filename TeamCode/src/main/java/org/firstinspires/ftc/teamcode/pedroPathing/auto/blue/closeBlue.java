@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.auto.normal.blue;
+package org.firstinspires.ftc.teamcode.pedroPathing.auto.blue;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -14,52 +14,38 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
 import com.pedropathing.geometry.BezierCurve;
 
 @Autonomous(name = "closeBlue", group = "Autonomous")
 @Configurable
 public class closeBlue extends OpMode {
 
-    private shooterControl shooter;
-    private TelemetryManager panelsTelemetry; // Panels Telemetry instance
-    public Follower follower; // Pedro Pathing follower instance
-    private int pathState; // Current autonomous path state (state machine)
-    private Paths paths; // Paths defined in the Paths class
+    private robotControl robot;
+    private TelemetryManager panelsTelemetry;
+    public Follower follower;
+    private int pathState;
+    private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
-    private DcMotor intake = null;
-    private DcMotor belt = null;
-    private Servo BlueBoi = null;
     private boolean pathStarted = false;
-
-
 
     @Override
     public void init() {
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        belt = hardwareMap.get(DcMotor.class, "belt");
-        belt.setDirection(DcMotor.Direction.REVERSE);
-        BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
-
-        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(24.500, 128.000, Math.toRadians(323.5)));
-
         paths = new Paths(follower);
-
-        shooter = new shooterControl(hardwareMap, follower);
-
+        robot = new robotControl(hardwareMap, follower);
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
     }
 
     @Override
     public void start() {
-        intake.setPower(1.0);
-        shooter.setShooterVelocity("close");
-        belt.setPower(0.8);
-        BlueBoi.setPosition(0.65);
+        robot.intakeOn();
+        robot.setShooterVelocity("close");
+        robot.beltOn();
+        robot.blueBoiClosed();
     }
 
     @Override
@@ -81,10 +67,10 @@ public class closeBlue extends OpMode {
         else {
             double t = timer.seconds();
             if (t <= 1.0) {
-                BlueBoi.setPosition(1.0);
+                robot.blueBoiOpen();
             }
             else {
-                BlueBoi.setPosition(0.65);
+                robot.blueBoiClosed();
                 pathState++;
             }
         }
@@ -312,9 +298,9 @@ public class closeBlue extends OpMode {
 
 
             default:
-                shooter.shooterStop();
-                intake.setPower(0);
-                belt.setPower(0);
+                robot.shooterStop();
+                robot.intakeOff();
+                robot.beltOff();
                 follower.breakFollowing();
                 panelsTelemetry.debug("Status", "Autonomous Complete");
                 panelsTelemetry.update(telemetry);

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.auto.normal.red;
+package org.firstinspires.ftc.teamcode.pedroPathing.auto.red;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -14,50 +14,38 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.shooterControl;
+import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
 
-@Autonomous(name = "closeRedShort", group = "Autonomous")
+@Autonomous(name = "farRedShort", group = "Autonomous")
 @Configurable
-public class closeRedShort extends OpMode {
+public class farRedShort extends OpMode {
 
-    private shooterControl shooter;
+    private robotControl robot;
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;
     private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
-
-    private DcMotor intake = null;
-    private DcMotor belt = null;
-    private Servo BlueBoi = null;
     private boolean pathStarted = false;
 
     @Override
     public void init() {
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        belt = hardwareMap.get(DcMotor.class, "belt");
-        belt.setDirection(DcMotor.Direction.REVERSE);
-        BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
-
-        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(119.500, 128.000, Math.toRadians(216.5)));
-
+        follower.setStartingPose(new Pose(87.125, 8.5625, Math.toRadians(90)));
         paths = new Paths(follower);
-
-        shooter = new shooterControl(hardwareMap, follower);
-
+        robot = new robotControl(hardwareMap, follower);
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
     }
 
     @Override
     public void start() {
-        intake.setPower(1.0);
-        shooter.setShooterVelocity("close");
-        belt.setPower(0.8);
-        BlueBoi.setPosition(0.65);
+        robot.intakeOn();
+        robot.setShooterVelocity("far");
+        robot.beltOn();
+        robot.blueBoiClosed();
+        timer.reset();
     }
 
     @Override
@@ -78,10 +66,10 @@ public class closeRedShort extends OpMode {
         else {
             double t = timer.seconds();
             if (t <= 1.0) {
-                BlueBoi.setPosition(1.0);
+                robot.blueBoiOpen();
             }
             else {
-                BlueBoi.setPosition(0.65);
+                robot.blueBoiClosed();
                 pathState++;
             }
         }
@@ -96,17 +84,17 @@ public class closeRedShort extends OpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(119.500, 128.000), new Pose(86.000, 80.000))
+                            new BezierLine(new Pose(87.125, 8.563), new Pose(86.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(216.5), Math.toRadians(225.0), 0.8)
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(248))
                     .build();
 
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(86.000, 80.000), new Pose(94.000, 128.000))
+                            new BezierLine(new Pose(86.000, 15.000), new Pose(108.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(229), Math.toRadians(0), 0.8)
+                    .setLinearHeadingInterpolation(Math.toRadians(248), Math.toRadians(0))
                     .build();
         }
     }
@@ -114,8 +102,11 @@ public class closeRedShort extends OpMode {
     public int autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(paths.Path1, true);
-                pathState++;
+                double t = timer.seconds();
+                if (t >= 2.5 && !follower.isBusy()) {
+                    follower.followPath(paths.Path1, true);
+                    pathState++;
+                }
                 break;
 
             case 1:
@@ -132,9 +123,9 @@ public class closeRedShort extends OpMode {
                 break;
 
             default:
-                shooter.shooterStop();
-                intake.setPower(0);
-                belt.setPower(0);
+                robot.shooterStop();
+                robot.intakeOff();
+                robot.beltOff();
                 follower.breakFollowing();
                 panelsTelemetry.debug("Status", "Autonomous Complete");
                 panelsTelemetry.update(telemetry);
