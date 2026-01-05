@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.customClasses;
 
-import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -22,7 +21,6 @@ public class robotControl {
     private DcMotor belt ;
     private Servo BlueBoi;
     private Follower follower;
-    private TelemetryManager panelsTelemetry;
     public double targetGoalX;
     public double targetGoalY;
     private ElapsedTime timer = new ElapsedTime();
