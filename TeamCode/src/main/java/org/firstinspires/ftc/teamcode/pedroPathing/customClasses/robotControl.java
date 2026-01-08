@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.customClasses;
 
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.pedropathing.follower.Follower;
@@ -15,7 +13,6 @@ public class robotControl {
 
     public DcMotorEx ShooterL;
     public DcMotorEx ShooterR;
-    public Limelight3A limelight;
     private DcMotorEx intake;
     private Servo BlueBoi;
     private DcMotorEx turret;
@@ -52,9 +49,6 @@ public class robotControl {
         turret.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0);
-        limelight.start();
         timer.reset();
     }
 
@@ -81,15 +75,13 @@ public class robotControl {
         ShooterR.setPower(0);
     }
 
-    public void setPipeline(String goalColor) {
+    public void setAlliance(String goalColor) {
         switch (goalColor) {
             case "blue":
-                limelight.pipelineSwitch(0);
                 targetGoalX = 10;
                 targetGoalY = 140;
                 break;
             case "red":
-                limelight.pipelineSwitch(1);
                 targetGoalX = 134;
                 targetGoalY = 140;
                 break;

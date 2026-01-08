@@ -32,7 +32,7 @@ public class turretTest extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.update();
         robot = new robotControl(hardwareMap, follower);
-        robot.setPipeline("blue");
+        robot.setAlliance("blue");
         follower.setStartingPose(startPose);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
