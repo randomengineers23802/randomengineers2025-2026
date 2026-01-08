@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.teleop;
+package org.firstinspires.ftc.teamcode.pedroPathing.tests;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -10,12 +10,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
 
 @Configurable
-@TeleOp(name = "finalTeleOpBlue", group = "TeleOp")
-public class teleOpBlue extends OpMode {
+@TeleOp(name = "turretTest", group = "TeleOp")
+public class turretTest extends OpMode {
     private Follower follower;
     private boolean automatedDrive;
     private TelemetryManager panelsTelemetry;
@@ -26,6 +25,7 @@ public class teleOpBlue extends OpMode {
     private robotControl robot;
     private ElapsedTime timer = new ElapsedTime();
     private boolean prevRightTrigger = false;
+    private final Pose startPose = new Pose(8.90625, 8.5625, Math.toRadians(90));
 
     @Override
     public void init() {
@@ -33,12 +33,11 @@ public class teleOpBlue extends OpMode {
         follower.update();
         robot = new robotControl(hardwareMap, follower);
         robot.setPipeline("blue");
-        follower.setStartingPose(passthrough.startPose);
+        follower.setStartingPose(startPose);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
     private void Shoot() {
-
         robot.intakeOn();
         follower.holdPoint(currentPose);
         double t = timer.seconds();
@@ -46,7 +45,6 @@ public class teleOpBlue extends OpMode {
             robot.blueBoiOpen();
         else {
             robot.blueBoiClosed();
-
             shooting = false;
             automatedDrive = false;
             follower.startTeleopDrive();
@@ -57,13 +55,12 @@ public class teleOpBlue extends OpMode {
     public void start() {
         follower.startTeleopDrive();
         robot.intakeOff();
-        robot.setShooterVelocity("close");
-
     }
 
     @Override
     public void loop() {
         follower.update();
+        robot.turretAim();
         panelsTelemetry.update();
 
         double x = gamepad1.left_stick_x;
@@ -94,11 +91,9 @@ public class teleOpBlue extends OpMode {
 
         if (gamepad1.right_bumper) {
             robot.intakeOn();
-
         }
         else if (!shooting) {
             robot.intakeOff();
-
         }
 
         boolean rightTriggerPressed = gamepad1.right_trigger > 0.2;

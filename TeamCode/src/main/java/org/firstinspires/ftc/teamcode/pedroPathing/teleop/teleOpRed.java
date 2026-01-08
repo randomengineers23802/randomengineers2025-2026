@@ -37,7 +37,7 @@ public class teleOpRed extends OpMode {
     }
 
     private void Shoot() {
-        robot.beltOn();
+
         robot.intakeOn();
         follower.holdPoint(currentPose);
         double t = timer.seconds();
@@ -45,7 +45,7 @@ public class teleOpRed extends OpMode {
             robot.blueBoiOpen();
         else {
             robot.blueBoiClosed();
-            robot.beltOff();
+
             shooting = false;
             automatedDrive = false;
             follower.startTeleopDrive();
@@ -57,7 +57,7 @@ public class teleOpRed extends OpMode {
         follower.startTeleopDrive();
         robot.intakeOff();
         robot.setShooterVelocity("close");
-        robot.beltOff();
+
     }
 
     @Override
@@ -93,11 +93,11 @@ public class teleOpRed extends OpMode {
 
         if (gamepad1.right_bumper) {
             robot.intakeOn();
-            robot.beltOn();
+
         }
         else if (!shooting) {
             robot.intakeOff();
-            robot.beltOff();
+
         }
 
         boolean rightTriggerPressed = gamepad1.right_trigger > 0.2;

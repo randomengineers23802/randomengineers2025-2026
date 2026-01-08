@@ -41,7 +41,7 @@ public class closeBlueShort extends OpMode {
     public void start() {
         robot.intakeOn();
         robot.setShooterVelocity("close");
-        robot.beltOn();
+
         robot.blueBoiClosed();
     }
 
@@ -119,7 +119,7 @@ public class closeBlueShort extends OpMode {
             default:
                 robot.shooterStop();
                 robot.intakeOff();
-                robot.beltOff();
+
                 follower.breakFollowing();
                 panelsTelemetry.debug("Status", "Autonomous Complete");
                 panelsTelemetry.update(telemetry);

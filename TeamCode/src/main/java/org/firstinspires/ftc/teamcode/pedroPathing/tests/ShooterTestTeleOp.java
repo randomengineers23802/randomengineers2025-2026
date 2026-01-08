@@ -34,7 +34,7 @@ public class ShooterTestTeleOp extends OpMode {
 
     @Override
     public void init() {
-        robot = new robotSetup(hardwareMap, follower);
+        robot = new robotControl(hardwareMap, follower);
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -44,25 +44,25 @@ public class ShooterTestTeleOp extends OpMode {
     }
 
     private void Shoot() {
-        robot.beltOn();
+
         double t = timer.seconds();
         if (t <= 1.0)
             robot.blueBoiOpen();
         else {
             robot.blueBoiClosed();
-            robot.beltOff();
+
             shooting = false;
         }
     }
 
     @Override
     public void start() {
-        robot.beltOff();
+
     }
 
     @Override
     public void loop() {
-        robot.setrobotVelocity("close");
+        robot.setShooterVelocity("close");
         if (gamepad1.right_trigger > 0.2 && !shooting) {
             timer.reset();
             shooting = true;
@@ -72,9 +72,9 @@ public class ShooterTestTeleOp extends OpMode {
             Shoot();
 
         if (gamepad1.left_trigger > 0.2) {
-            robot.beltOn();
+
         } else if (!shooting) {
-            robot.beltOff();
+
         }
 
         if (gamepad1.right_bumper) {

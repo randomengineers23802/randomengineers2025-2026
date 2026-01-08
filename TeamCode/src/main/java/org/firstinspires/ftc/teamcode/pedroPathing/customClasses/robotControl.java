@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.customClasses;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -8,21 +9,29 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.pedropathing.follower.Follower;
+import com.qualcomm.robotcore.util.Range;
 
 public class robotControl {
 
     public DcMotorEx ShooterL;
     public DcMotorEx ShooterR;
     public Limelight3A limelight;
-    private DcMotor intake;
-    private DcMotor belt ;
+    private DcMotorEx intake;
     private Servo BlueBoi;
+    private DcMotorEx turret;
+    public static final double motorTicksPerRev = 383.6;
+    public static final double turretGearRatio = 50.0 / 20.0; //turret gear / motor gear
+    public static final double turretTicksPerRadian = (motorTicksPerRev * turretGearRatio) / (2 * Math.PI);
+    public static PIDFCoefficients turretPIDF = new PIDFCoefficients(2.0, 0.0, 0.05, 0.02); // al guesses need to tune
+    private double lastError = 0;
+    private ElapsedTime turretTimer = new ElapsedTime();
     private Follower follower;
     public double targetGoalX;
     public double targetGoalY;
     private ElapsedTime timer = new ElapsedTime();
 
     PIDFCoefficients shooterPIDF = new PIDFCoefficients(80.0, 0.0, 0.0, 12.3);
+
 
     public robotControl(HardwareMap hardwareMap, Follower follower) {
         this.follower = follower;
@@ -34,11 +43,14 @@ public class robotControl {
         ShooterR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         ShooterL.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
         ShooterR.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        belt = hardwareMap.get(DcMotor.class, "belt");
-        belt.setDirection(DcMotor.Direction.REVERSE);
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
+        intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
         BlueBoi.setPosition(0.65);
+        turret = hardwareMap.get(DcMotorEx.class, "turret");
+        turret.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        turret.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        turret.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0);
@@ -73,23 +85,44 @@ public class robotControl {
         switch (goalColor) {
             case "blue":
                 limelight.pipelineSwitch(0);
-                targetGoalX = 16;
-                targetGoalY = 131;
+                targetGoalX = 10;
+                targetGoalY = 140;
                 break;
             case "red":
                 limelight.pipelineSwitch(1);
-                targetGoalX = 128;
-                targetGoalY = 131;
+                targetGoalX = 134;
+                targetGoalY = 140;
                 break;
         }
     }
 
-    public void beltOn() {
-        belt.setPower(0.8);
-    }
+    public void turretAim() {
+        Pose currentPose = follower.getPose();
+        double distanceX = targetGoalX - currentPose.getX();
+        double distanceY = targetGoalY - currentPose.getY();
+        double angleToGoal = Math.atan2(distanceY, distanceX);
+        double turretLocalTarget = angleToGoal - currentPose.getHeading();
+        double currentTurretAngle = turret.getCurrentPosition() / turretTicksPerRadian;
+        double error = turretLocalTarget - currentTurretAngle;
+        while (error > Math.PI) error -= 2 * Math.PI;
+        while (error < -Math.PI) error += 2 * Math.PI;
+        double dt = turretTimer.seconds();
+        turretTimer.reset();
 
-    public void beltOff() {
-        belt.setPower(0.0);
+        double derivative = 0;
+        if (dt > 0.001) {
+            derivative = (error - lastError) / dt;
+            lastError = error;
+        }
+        double feedforward = Math.signum(error) * turretPIDF.f;
+        double turretPower = (error * turretPIDF.p) + (derivative * turretPIDF.d) + feedforward;
+
+        if (Math.abs(error) < Math.toRadians(1.0)) //won't move if turret is within 1 degree
+            turret.setPower(0);
+        else {
+            turretPower = Range.clip(turretPower, -1.0, 1.0);
+            turret.setPower(turretPower);
+        }
     }
 
     public void intakeOn() {
