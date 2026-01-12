@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.customClasses;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -8,6 +9,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.pedropathing.follower.Follower;
+import com.qualcomm.robotcore.util.Range;
 
 public class robotControl {
 
@@ -21,8 +23,14 @@ public class robotControl {
     public double targetGoalX;
     public double targetGoalY;
     private ElapsedTime timer = new ElapsedTime();
+    public double aimTurn;
+
+    private double lastError = 0;
 
     PIDFCoefficients shooterPIDF = new PIDFCoefficients(80.0, 0.0, 0.0, 12.3);
+
+    PIDFCoefficients aimPIDF = new PIDFCoefficients(0.1, 0.0, 0.0, 0.02);
+
 
     public robotControl(HardwareMap hardwareMap, Follower follower) {
         this.follower = follower;
@@ -46,8 +54,31 @@ public class robotControl {
         timer.reset();
     }
 
-    public void resetFollower() {
-        follower.breakFollowing();
+    public void autoAim() {
+        Pose currentPose = follower.getPose();
+        double distanceX = targetGoalX - currentPose.getX();
+        double distanceY = targetGoalY - currentPose.getY();
+        double angleToGoal = Math.atan2(distanceY, distanceX) + Math.PI;;
+
+        double error = angleToGoal - currentPose.getHeading();
+        while (error > Math.PI) error -= 2 * Math.PI;
+        while (error < -Math.PI) error += 2 * Math.PI;
+        double dt = timer.seconds();
+        timer.reset();
+
+        double derivative = 0;
+        if (dt > 0.001) {
+            derivative = (error - lastError) / dt;
+            lastError = error;
+        }
+        double feedforward = Math.signum(error) * aimPIDF.f;
+        double turretPower = (error * aimPIDF.p) + (derivative * aimPIDF.d) + feedforward;
+
+        if (Math.abs(error) < Math.toRadians(1.0)) //won't move if robot is within 1 degree
+            aimTurn = 0;
+        else {
+            aimTurn = Range.clip(turretPower, -1.0, 1.0);
+        }
     }
 
     public void setShooterVelocity(String range) {
