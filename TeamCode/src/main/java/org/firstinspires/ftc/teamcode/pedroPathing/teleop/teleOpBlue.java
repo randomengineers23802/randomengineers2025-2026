@@ -65,6 +65,8 @@ public class teleOpBlue extends OpMode {
     public void loop() {
         follower.update();
         panelsTelemetry.update();
+        panelsTelemetry.addData("ShooterL", robot.ShooterL.getVelocity());
+        panelsTelemetry.addData("ShooterR", robot.ShooterR.getVelocity());
 
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y;

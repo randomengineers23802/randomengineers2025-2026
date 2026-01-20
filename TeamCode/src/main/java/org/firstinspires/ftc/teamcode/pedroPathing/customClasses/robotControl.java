@@ -27,9 +27,10 @@ public class robotControl {
 
     private double lastError = 0;
 
-    PIDFCoefficients shooterPIDF = new PIDFCoefficients(80.0, 0.0, 0.0, 12.3);
+    PIDFCoefficients shooterLPIDF = new PIDFCoefficients(65.0, 0.0, 0.0, 11.875);
+    PIDFCoefficients shooterRPIDF = new PIDFCoefficients(65.0, 0.0, 0.0, 11.62);
 
-    PIDFCoefficients aimPIDF = new PIDFCoefficients(0.1, 0.0, 0.0, 0.02);
+    PIDFCoefficients aimPIDF = new PIDFCoefficients(0.8, 0.0, 0.1, 0.02);
 
 
     public robotControl(HardwareMap hardwareMap, Follower follower) {
@@ -40,8 +41,8 @@ public class robotControl {
         ShooterR.setDirection(DcMotorEx.Direction.FORWARD);
         ShooterL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         ShooterR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        ShooterL.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
-        ShooterR.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
+        ShooterL.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterLPIDF);
+        ShooterR.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterRPIDF);
         intake = hardwareMap.get(DcMotor.class, "intake");
         belt = hardwareMap.get(DcMotor.class, "belt");
         belt.setDirection(DcMotor.Direction.REVERSE);
@@ -85,10 +86,10 @@ public class robotControl {
         double targetVelocity = 0;
         switch (range) {
             case "close":
-                targetVelocity = 1080;
+                targetVelocity = 1100;
                 break;
             case "far":
-                targetVelocity = 1200;
+                targetVelocity = 1180;
                 break;
         }
         ShooterL.setVelocity(targetVelocity);
@@ -104,13 +105,13 @@ public class robotControl {
         switch (goalColor) {
             case "blue":
                 limelight.pipelineSwitch(0);
-                targetGoalX = 16;
-                targetGoalY = 131;
+                targetGoalX = 4;
+                targetGoalY = 135;
                 break;
             case "red":
                 limelight.pipelineSwitch(1);
-                targetGoalX = 128;
-                targetGoalY = 131;
+                targetGoalX = 140;
+                targetGoalY = 135;
                 break;
         }
     }
