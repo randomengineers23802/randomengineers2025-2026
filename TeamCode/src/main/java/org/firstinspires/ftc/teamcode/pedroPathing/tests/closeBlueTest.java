@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.auto.blue;
+package org.firstinspires.ftc.teamcode.pedroPathing.tests;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -16,9 +16,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
 
-@Autonomous(name = "closeBlueDiddy", group = "Autonomous")
+@Autonomous(name = "closeBlueTest", group = "Autonomous")
 @Configurable
-public class closeBlueDiddy extends OpMode {
+public class closeBlueTest extends OpMode {
 
     private robotControl robot;
     private TelemetryManager panelsTelemetry;
@@ -77,14 +77,14 @@ public class closeBlueDiddy extends OpMode {
 
     public static class Paths {
         public PathChain Path1;
+        public PathChain Path2;
         public PathChain Path3;
         public PathChain Path4;
         public PathChain Path5;
+        public PathChain Path6;
         public PathChain Path7;
         public PathChain Path8;
-        public PathChain Path10;
-        public PathChain Path11;
-        public PathChain Path12;
+        public PathChain Path9;
 
         public Paths(Follower follower) {
             Path1 = follower.pathBuilder().addPath(
@@ -97,17 +97,17 @@ public class closeBlueDiddy extends OpMode {
 
                     .build();
 
-            Path3 = follower.pathBuilder().addPath(
+            Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(58.000, 80.000),
 
                                     new Pose(18.000, 84.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(311), Math.toRadians(180))
+                    ).setLinearHeadingInterpolation(Math.toRadians(311), Math.toRadians(180), 0.4)
 
                     .build();
 
-            Path4 = follower.pathBuilder().addPath(
+            Path3 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(18.000, 84.000),
                                     new Pose(37.000, 79.500),
@@ -117,7 +117,7 @@ public class closeBlueDiddy extends OpMode {
 
                     .build();
 
-            Path5 = follower.pathBuilder().addPath(
+            Path4 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(18.000, 75.000),
 
@@ -127,7 +127,7 @@ public class closeBlueDiddy extends OpMode {
 
                     .build();
 
-            Path7 = follower.pathBuilder().addPath(
+            Path5 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(58.000, 80.000),
                                     new Pose(49.196, 58.939),
@@ -137,7 +137,7 @@ public class closeBlueDiddy extends OpMode {
 
                     .build();
 
-            Path8 = follower.pathBuilder().addPath(
+            Path6 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(18.000, 58.000),
 
@@ -147,7 +147,7 @@ public class closeBlueDiddy extends OpMode {
 
                     .build();
 
-            Path10 = follower.pathBuilder().addPath(
+            Path7 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(58.000, 80.000),
                                     new Pose(50.630, 34.059),
@@ -157,7 +157,7 @@ public class closeBlueDiddy extends OpMode {
 
                     .build();
 
-            Path11 = follower.pathBuilder().addPath(
+            Path8 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(18.000, 35.500),
 
@@ -167,7 +167,7 @@ public class closeBlueDiddy extends OpMode {
 
                     .build();
 
-            Path12 = follower.pathBuilder().addPath(
+            Path9 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(58.000, 80.000),
 
@@ -192,21 +192,21 @@ public class closeBlueDiddy extends OpMode {
 
             case 2:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path3, true);
+                    follower.followPath(paths.Path2, true);
                     pathState++;
                 }
                 break;
 
             case 3:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path4, true);
+                    follower.followPath(paths.Path3, true);
                     pathState++;
                 }
                 break;
 
             case 4:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path5, true);
+                    follower.followPath(paths.Path4, true);
                     pathState++;
                 }
                 break;
@@ -217,14 +217,14 @@ public class closeBlueDiddy extends OpMode {
 
             case 6:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path7, true);
+                    follower.followPath(paths.Path5, true);
                     pathState++;
                 }
                 break;
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path8, true);
+                    follower.followPath(paths.Path6, true);
                     pathState++;
                 }
                 break;
@@ -235,14 +235,14 @@ public class closeBlueDiddy extends OpMode {
 
             case 9:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path10, true);
+                    follower.followPath(paths.Path7, true);
                     pathState++;
                 }
                 break;
 
             case 10:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path11, true);
+                    follower.followPath(paths.Path8, true);
                     pathState++;
                 }
                 break;
@@ -253,7 +253,7 @@ public class closeBlueDiddy extends OpMode {
 
             case 12:
                 if (!pathStarted) {
-                    follower.followPath(paths.Path12, true);
+                    follower.followPath(paths.Path9, true);
                     pathStarted = true;
                 }
                 if (!follower.isBusy())

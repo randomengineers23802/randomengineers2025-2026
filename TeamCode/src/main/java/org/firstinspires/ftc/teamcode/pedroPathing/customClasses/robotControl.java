@@ -24,14 +24,11 @@ public class robotControl {
     public double targetGoalY;
     private ElapsedTime timer = new ElapsedTime();
     public double aimTurn;
-
     private double lastError = 0;
 
     PIDFCoefficients shooterLPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.875);
     PIDFCoefficients shooterRPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.62);
-
     PIDFCoefficients aimPIDF = new PIDFCoefficients(0.8, 0.0, 0.1, 0.02);
-
 
     public robotControl(HardwareMap hardwareMap, Follower follower) {
         this.follower = follower;
