@@ -80,7 +80,7 @@ public class teleOpBlue extends OpMode {
                     follower.setTeleOpDrive(
                             y * slowModeMultiplier,
                             x * slowModeMultiplier,
-                            robot.aimTurn * slowModeMultiplier,
+                            robot.aimTurn,
                             false
                     );
                 }
