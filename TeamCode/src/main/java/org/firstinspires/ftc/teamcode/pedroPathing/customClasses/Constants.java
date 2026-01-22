@@ -26,8 +26,8 @@ public class Constants {
             .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.0005, 0, 0.00001, 0.6, 0.02))
             .centripetalScaling(0.001);
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.65, 0.25);
-
+    //public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.65, 0.25);
+    public static PathConstraints pathConstraints = new PathConstraints(0.97, 7.0, 0.5, 1.0, 0, 0.3, 5, 0.1);
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("motorFR")
