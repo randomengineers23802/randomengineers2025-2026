@@ -142,4 +142,9 @@ public class teleOpRed extends OpMode {
             slowMode = !slowMode;
         }
     }
+
+    @Override
+    public void stop() {
+        passthrough.startPose = follower.getPose();
+    }
 }
