@@ -25,6 +25,7 @@ public class robotControl {
     private ElapsedTime timer = new ElapsedTime();
     public double aimTurn;
     private double lastError = 0;
+    private double arcRadius = 80; //guess will need to change later
 
     PIDFCoefficients shooterLPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.875);
     PIDFCoefficients shooterRPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.62);
@@ -56,7 +57,7 @@ public class robotControl {
         Pose currentPose = follower.getPose();
         double distanceX = targetGoalX - currentPose.getX();
         double distanceY = targetGoalY - currentPose.getY();
-        double angleToGoal = Math.atan2(distanceY, distanceX) + Math.PI;;
+        double angleToGoal = Math.atan2(distanceY, distanceX) + Math.PI;
 
         double error = angleToGoal - currentPose.getHeading();
         while (error > Math.PI) error -= 2 * Math.PI;
@@ -77,6 +78,20 @@ public class robotControl {
         else {
             aimTurn = Range.clip(turretPower, -1.0, 1.0);
         }
+    }
+
+    public Pose closestPoseOnArc() {
+        Pose currentPose = follower.getPose();
+
+        double distanceX = currentPose.getX() - targetGoalX;
+        double distanceY = currentPose.getY() - targetGoalY;
+        double distanceToCenter = Math.hypot(distanceX, distanceY);
+
+        double closestPointX = targetGoalX + (distanceX / distanceToCenter) * arcRadius;
+        double closestPointY = targetGoalY + (distanceY / distanceToCenter) * arcRadius;
+        double angleToGoal = Math.atan2(closestPointY, closestPointX) + Math.PI;
+        Pose arcTargetPose = new Pose(closestPointX, closestPointY, angleToGoal);
+        return arcTargetPose;
     }
 
     public void setShooterVelocity(String range) {
