@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
 
 @Configurable
-@TeleOp(name = "finalTeleOpRed", group = "TeleOp")
+@TeleOp(name = "teleOpRed", group = "TeleOp")
 public class teleOpRed extends OpMode {
     private Follower follower;
     private boolean automatedDrive;
