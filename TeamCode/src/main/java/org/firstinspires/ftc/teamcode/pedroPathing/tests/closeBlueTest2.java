@@ -16,9 +16,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
 
-@Autonomous(name = "closeBlueTest", group = "Autonomous")
+@Autonomous(name = "closeBlueTest2", group = "Autonomous")
 @Configurable
-public class closeBlueTest extends OpMode {
+public class closeBlueTest2 extends OpMode {
 
     private robotControl robot;
     private TelemetryManager panelsTelemetry;
@@ -80,11 +80,12 @@ public class closeBlueTest extends OpMode {
         public PathChain Path2;
         public PathChain Path3;
         public PathChain Path4;
-        public PathChain Path5;
         public PathChain Path6;
         public PathChain Path7;
         public PathChain Path8;
         public PathChain Path9;
+        public PathChain Path10;
+        public PathChain Path11;
 
         public Paths(Follower follower) {
             Path1 = follower.pathBuilder().addPath(
@@ -98,36 +99,6 @@ public class closeBlueTest extends OpMode {
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(58.000, 80.000),
-
-                                    new Pose(18.000, 84.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(311), Math.toRadians(180), 0.15)
-
-                    .build();
-
-            Path3 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(18.000, 84.000),
-                                    new Pose(37.000, 79.500),
-                                    new Pose(18.000, 75.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
-
-                    .build();
-
-            Path4 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(18.000, 75.000),
-
-                                    new Pose(58.000, 80.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(311))
-
-                    .build();
-
-            Path5 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(58.000, 80.000),
                                     new Pose(55.000, 59.000),
@@ -137,9 +108,9 @@ public class closeBlueTest extends OpMode {
 
                     .build();
 
-            Path6 = follower.pathBuilder().addPath(
+            Path3 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(18.000, 58.000),
+                                    new Pose(12.000, 58.000),
 
                                     new Pose(58.000, 80.000)
                             )
@@ -147,7 +118,51 @@ public class closeBlueTest extends OpMode {
 
                     .build();
 
+            Path4 = follower.pathBuilder().addPath(
+                            new BezierCurve(
+                                    new Pose(58.000, 80.000),
+                                    new Pose(42.508, 50.804),
+                                    new Pose(14.452, 84.339),
+                                    new Pose(8.092, 58.931),
+                                    new Pose(11.330, 61.574),
+                                    new Pose(24.288, 65.066),
+                                    new Pose(11.000, 55.000)
+                            )
+                    ).setLinearHeadingInterpolation(Math.toRadians(311), Math.toRadians(130), 0.15)
+
+                    .build();
+
+            Path5 = follower.pathBuilder().addPath(
+                            new BezierLine(
+                                    new Pose(11.000, 55.000),
+
+                                    new Pose(58.000, 80.000)
+                            )
+                    ).setLinearHeadingInterpolation(Math.toRadians(130), Math.toRadians(311))
+
+                    .build();
+
+            Path6 = follower.pathBuilder().addPath(
+                            new BezierLine(
+                                    new Pose(58.000, 80.000),
+
+                                    new Pose(18.000, 84.000)
+                            )
+                    ).setLinearHeadingInterpolation(Math.toRadians(311), Math.toRadians(175), 0.15)
+
+                    .build();
+
             Path7 = follower.pathBuilder().addPath(
+                            new BezierLine(
+                                    new Pose(18.000, 84.000),
+
+                                    new Pose(58.000, 80.000)
+                            )
+                    ).setLinearHeadingInterpolation(Math.toRadians(175), Math.toRadians(311))
+
+                    .build();
+
+            Path8 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(58.000, 80.000),
                                     new Pose(75.000, 30.000),
@@ -157,9 +172,9 @@ public class closeBlueTest extends OpMode {
 
                     .build();
 
-            Path8 = follower.pathBuilder().addPath(
+            Path9 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(18.000, 35.500),
+                                    new Pose(12.000, 33.000),
 
                                     new Pose(58.000, 80.000)
                             )
@@ -167,7 +182,7 @@ public class closeBlueTest extends OpMode {
 
                     .build();
 
-            Path9 = follower.pathBuilder().addPath(
+            Path10 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(58.000, 80.000),
 
@@ -198,21 +213,21 @@ public class closeBlueTest extends OpMode {
                 break;
 
             case 3:
-                if (follower.getCurrentTValue() > 0.95) {
+                if (!follower.isBusy()) {
                     follower.followPath(paths.Path3, true);
                     pathState++;
                 }
                 break;
 
             case 4:
+                Shoot();
+                break;
+
+            case 5:
                 if (!follower.isBusy()) {
                     follower.followPath(paths.Path4, true);
                     pathState++;
                 }
-                break;
-
-            case 5:
-                Shoot();
                 break;
 
             case 6:
@@ -252,8 +267,26 @@ public class closeBlueTest extends OpMode {
                 break;
 
             case 12:
-                if (!pathStarted) {
+                if (follower.getCurrentTValue() > 0.95) {
                     follower.followPath(paths.Path9, true);
+                    pathState++;
+                }
+                break;
+
+            case 13:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.Path10, true);
+                    pathState++;
+                }
+                break;
+
+            case 14:
+                Shoot();
+                break;
+
+            case 15:
+                if (!pathStarted) {
+                    follower.followPath(paths.Path11, true);
                     pathStarted = true;
                 }
                 if (!follower.isBusy())
