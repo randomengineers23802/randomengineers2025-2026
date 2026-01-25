@@ -70,13 +70,13 @@ public class robotControl {
             derivative = (error - lastError) / dt;
             lastError = error;
         }
-        double feedforward = Math.signum(error) * aimPIDF.f;
-        double turretPower = (error * aimPIDF.p) + (derivative * aimPIDF.d) + feedforward;
+        double feedForward = Math.signum(error) * aimPIDF.f;
+        double aimPower = (error * aimPIDF.p) + (derivative * aimPIDF.d) + feedForward;
 
         if (Math.abs(error) < Math.toRadians(1.0)) //won't move if robot is within 1 degree
             aimTurn = 0;
         else {
-            aimTurn = Range.clip(turretPower, -1.0, 1.0);
+            aimTurn = Range.clip(aimPower, -1.0, 1.0);
         }
     }
 
@@ -113,7 +113,7 @@ public class robotControl {
         ShooterR.setPower(0);
     }
 
-    public void setPipeline(String goalColor) {
+    public void setAlliance(String goalColor) {
         switch (goalColor) {
             case "blue":
                 limelight.pipelineSwitch(0);

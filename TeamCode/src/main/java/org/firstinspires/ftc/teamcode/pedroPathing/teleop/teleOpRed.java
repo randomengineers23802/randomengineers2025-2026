@@ -31,7 +31,7 @@ public class teleOpRed extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.update();
         robot = new robotControl(hardwareMap, follower);
-        robot.setPipeline("red");
+        robot.setAlliance("red");
         follower.setStartingPose(passthrough.startPose);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
