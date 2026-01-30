@@ -23,13 +23,12 @@ public class robotControl {
     public double targetGoalX;
     public double targetGoalY;
     private ElapsedTime timer = new ElapsedTime();
-    public double aimTurn;
     private double lastError = 0;
     private double arcRadius = 80; //guess will need to change later
 
     PIDFCoefficients shooterLPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.875);
     PIDFCoefficients shooterRPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.62);
-    PIDFCoefficients aimPIDF = new PIDFCoefficients(0.8, 0.0, 0.1, 0.02);
+    PIDFCoefficients aimPIDF = new PIDFCoefficients(1.2, 0.0, 0.1, 0.02);
 
     public robotControl(HardwareMap hardwareMap, Follower follower) {
         this.follower = follower;
@@ -53,7 +52,7 @@ public class robotControl {
         timer.reset();
     }
 
-    public void autoAim() {
+    public double autoAim() {
         Pose currentPose = follower.getPose();
         double distanceX = targetGoalX - currentPose.getX();
         double distanceY = targetGoalY - currentPose.getY();
@@ -74,9 +73,9 @@ public class robotControl {
         double aimPower = (error * aimPIDF.p) + (derivative * aimPIDF.d) + feedForward;
 
         if (Math.abs(error) < Math.toRadians(1.0)) //won't move if robot is within 1 degree
-            aimTurn = 0;
+            return 0;
         else {
-            aimTurn = Range.clip(aimPower, -1.0, 1.0);
+            return Range.clip(aimPower, -1.0, 1.0);
         }
     }
 

@@ -70,15 +70,14 @@ public class teleOpRed extends OpMode {
         double turn = -gamepad1.right_stick_x;
 
         if (gamepad1.left_trigger > 0.2) {
-            robot.autoAim();
             if (!automatedDrive) {
                 if (!slowMode) {
-                    follower.setTeleOpDrive(y, x, robot.aimTurn, false);
+                    follower.setTeleOpDrive(y, x, robot.autoAim(), false);
                 } else {
                     follower.setTeleOpDrive(
                             y * slowModeMultiplier,
                             x * slowModeMultiplier,
-                            robot.aimTurn,
+                            robot.autoAim(),
                             false
                     );
                 }
