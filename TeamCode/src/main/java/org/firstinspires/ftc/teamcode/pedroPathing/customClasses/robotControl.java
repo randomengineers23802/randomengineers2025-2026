@@ -79,6 +79,35 @@ public class robotControl {
         }
     }
 
+
+    //    public void turretAim() {
+//        Pose currentPose = follower.getPose();
+//        double distanceX = targetGoalX - currentPose.getX();
+//        double distanceY = targetGoalY - currentPose.getY();
+//        double angleToGoal = Math.atan2(distanceY, distanceX);
+//        double turretLocalTarget = angleToGoal - currentPose.getHeading();
+//        double currentTurretAngle = turret.getCurrentPosition() / turretTicksPerRadian;
+//        double error = turretLocalTarget - currentTurretAngle;
+//        while (error > Math.PI) error -= 2 * Math.PI;
+//        while (error < -Math.PI) error += 2 * Math.PI;
+//        double dt = turretTimer.seconds();
+//        turretTimer.reset();
+//
+//        double derivative = 0;
+//        if (dt > 0.001) {
+//            derivative = (error - lastError) / dt;
+//            lastError = error;
+//        }
+//        double feedforward = Math.signum(error) * turretPIDF.f;
+//        double turretPower = (error * turretPIDF.p) + (derivative * turretPIDF.d) + feedforward;
+//
+//        if (Math.abs(error) < Math.toRadians(1.0)) //won't move if turret is within 1 degree
+//            turret.setPower(0);
+//        else {
+//            turretPower = Range.clip(turretPower, -1.0, 1.0);
+//            turret.setPower(turretPower);
+//        }
+//    }
     public Pose closestPoseOnArc() {
         Pose currentPose = follower.getPose();
 
