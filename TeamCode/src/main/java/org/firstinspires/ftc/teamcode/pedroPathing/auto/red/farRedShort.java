@@ -41,7 +41,7 @@ public class farRedShort extends OpMode {
     public void start() {
         robot.intakeOn();
         robot.setShooterVelocity("far");
-        robot.beltOn();
+
         robot.blueBoiClosed();
         timer.reset();
     }
@@ -123,7 +123,7 @@ public class farRedShort extends OpMode {
             default:
                 robot.shooterStop();
                 robot.intakeOff();
-                robot.beltOff();
+
                 follower.breakFollowing();
                 panelsTelemetry.debug("Status", "Autonomous Complete");
                 panelsTelemetry.update(telemetry);

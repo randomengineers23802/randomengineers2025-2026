@@ -38,7 +38,7 @@ public class teleOpBlueArcTest extends OpMode {
     }
 
     private void Shoot() {
-        robot.beltOn();
+
         robot.intakeOn();
         follower.holdPoint(currentPose);
         double t = timer.seconds();
@@ -46,7 +46,6 @@ public class teleOpBlueArcTest extends OpMode {
             robot.blueBoiOpen();
         else {
             robot.blueBoiClosed();
-            robot.beltOff();
             shooting = false;
             automatedDrive = false;
             follower.startTeleopDrive();
@@ -58,47 +57,31 @@ public class teleOpBlueArcTest extends OpMode {
         follower.startTeleopDrive();
         robot.intakeOff();
         robot.setShooterVelocity("close");
-        robot.beltOff();
     }
 
     @Override
     public void loop() {
         follower.update();
         panelsTelemetry.update();
-        panelsTelemetry.addData("ShooterL", robot.ShooterL.getVelocity());
-        panelsTelemetry.addData("ShooterR", robot.ShooterR.getVelocity());
+        panelsTelemetry.addData("Shooter1", robot.Shooter1.getVelocity());
+        panelsTelemetry.addData("Shooter2", robot.Shooter2.getVelocity());
 
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
-        if (gamepad1.left_trigger > 0.2) {
-            if (!automatedDrive) {
-                if (!slowMode) {
-                    follower.setTeleOpDrive(y, x, robot.autoAim(), false);
-                } else {
-                    follower.setTeleOpDrive(
-                            y * slowModeMultiplier,
-                            x * slowModeMultiplier,
-                            robot.autoAim(),
-                            false
-                    );
-                }
+        if (!automatedDrive) {
+            if (!slowMode) {
+                follower.setTeleOpDrive(y, x, turn, false);
+            } else {
+                follower.setTeleOpDrive(
+                        y * slowModeMultiplier,
+                        x * slowModeMultiplier,
+                        turn * slowModeMultiplier,
+                        false
+                );
             }
         }
-        else {
-            if (!automatedDrive) {
-                if (!slowMode) {
-                    follower.setTeleOpDrive(y, x, turn, false);
-                } else {
-                    follower.setTeleOpDrive(
-                            y * slowModeMultiplier,
-                            x * slowModeMultiplier,
-                            turn * slowModeMultiplier,
-                            false
-                    );
-                }
-            }
-        }
+
 
         if (gamepad1.x) {
             follower.holdPoint(robot.closestPoseOnArc());
@@ -114,11 +97,10 @@ public class teleOpBlueArcTest extends OpMode {
 
         if (gamepad1.right_bumper) {
             robot.intakeOn();
-            robot.beltOn();
+
         }
         else if (!shooting) {
             robot.intakeOff();
-            robot.beltOff();
         }
 
         boolean rightTriggerPressed = gamepad1.right_trigger > 0.2;

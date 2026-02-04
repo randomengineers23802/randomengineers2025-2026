@@ -26,6 +26,7 @@ public class teleOpBlue extends OpMode {
     private robotControl robot;
     private ElapsedTime timer = new ElapsedTime();
     private boolean prevRightTrigger = false;
+    private boolean prevX = false;
 
     @Override
     public void init() {
@@ -38,7 +39,6 @@ public class teleOpBlue extends OpMode {
     }
 
     private void Shoot() {
-        robot.beltOn();
         robot.intakeOn();
         follower.holdPoint(currentPose);
         double t = timer.seconds();
@@ -46,7 +46,6 @@ public class teleOpBlue extends OpMode {
             robot.blueBoiOpen();
         else {
             robot.blueBoiClosed();
-            robot.beltOff();
             shooting = false;
             automatedDrive = false;
             follower.startTeleopDrive();
@@ -58,45 +57,29 @@ public class teleOpBlue extends OpMode {
         follower.startTeleopDrive();
         robot.intakeOff();
         robot.setShooterVelocity("close");
-        robot.beltOff();
     }
 
     @Override
     public void loop() {
         follower.update();
+        robot.aimTurret();
         panelsTelemetry.update();
-        panelsTelemetry.addData("ShooterL", robot.ShooterL.getVelocity());
-        panelsTelemetry.addData("ShooterR", robot.ShooterR.getVelocity());
+        panelsTelemetry.addData("Shooter1", robot.Shooter1.getVelocity());
+        panelsTelemetry.addData("Shooter2", robot.Shooter2.getVelocity());
 
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
-        if (gamepad1.left_trigger > 0.2) {
-            if (!automatedDrive) {
-                if (!slowMode) {
-                    follower.setTeleOpDrive(y, x, robot.autoAim(), false);
-                } else {
-                    follower.setTeleOpDrive(
-                            y * slowModeMultiplier,
-                            x * slowModeMultiplier,
-                            robot.autoAim(),
-                            false
-                    );
-                }
-            }
-        }
-        else {
-            if (!automatedDrive) {
-                if (!slowMode) {
-                    follower.setTeleOpDrive(y, x, turn, false);
-                } else {
-                    follower.setTeleOpDrive(
-                            y * slowModeMultiplier,
-                            x * slowModeMultiplier,
-                            turn * slowModeMultiplier,
-                            false
-                    );
-                }
+        if (!automatedDrive) {
+            if (!slowMode) {
+                follower.setTeleOpDrive(y, x, turn, false);
+            } else {
+                follower.setTeleOpDrive(
+                        y * slowModeMultiplier,
+                        x * slowModeMultiplier,
+                        turn * slowModeMultiplier,
+                        false
+                );
             }
         }
 
@@ -110,23 +93,26 @@ public class teleOpBlue extends OpMode {
 
         if (gamepad1.right_bumper) {
             robot.intakeOn();
-            robot.beltOn();
         }
         else if (!shooting) {
             robot.intakeOff();
-            robot.beltOff();
         }
+
+        boolean xPressed = gamepad1.x;
+        boolean xWasPressed = xPressed && !prevX;
+        if (xWasPressed && follower.getVelocity().getMagnitude() < 1.5) {
+            robot.relocalize();
+        }
+        prevX = xPressed;
 
         boolean rightTriggerPressed = gamepad1.right_trigger > 0.2;
         boolean rightTriggerWasPressed = rightTriggerPressed && !prevRightTrigger;
-
         if (rightTriggerWasPressed && !shooting) {
             timer.reset();
             currentPose = follower.getPose();
             automatedDrive = true;
             shooting = true;
         }
-
         prevRightTrigger = rightTriggerPressed;
 
         if (shooting)
