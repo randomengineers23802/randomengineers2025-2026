@@ -129,9 +129,10 @@ public class robotControl {
 //    }
 
     public void relocalize() {
+        limelight.updateRobotOrientation(Math.toDegrees(follower.getHeading()));
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
-            Pose3D limelightPose = result.getBotpose();
+            Pose3D limelightPose = result.getBotpose_MT2();
 
             //Limelight meters to pedro inches
             double xInches = limelightPose.getPosition().x * 39.3701;
