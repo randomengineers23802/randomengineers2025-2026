@@ -58,6 +58,7 @@ public class closeBlueTest2 extends OpMode {
         panelsTelemetry.debug("Y", follower.getPose().getY());
         panelsTelemetry.debug("Heading", follower.getPose().getHeading());
         panelsTelemetry.debug("Current Path", pathState);
+        panelsTelemetry.debug("T value", follower.getCurrentTValue());
         panelsTelemetry.update(telemetry);
     }
 
@@ -211,7 +212,7 @@ public class closeBlueTest2 extends OpMode {
                 break;
 
             case 3:
-                if (follower.getCurrentTValue() > 0.95) {
+                if (follower.getCurrentTValue() > 0.95 && follower.getCurrentTValue() != 1.0) {
                     follower.followPath(paths.Path3, true);
                     pathState++;
                 }
@@ -251,7 +252,7 @@ public class closeBlueTest2 extends OpMode {
                 break;
 
             case 9:
-                if (follower.getCurrentTValue() > 0.95) {
+                if (follower.getCurrentTValue() > 0.95 && follower.getCurrentTValue() != 1.0) {
                     follower.followPath(paths.Path7, true);
                     pathState++;
                 }
@@ -269,7 +270,7 @@ public class closeBlueTest2 extends OpMode {
                 break;
 
             case 12:
-                if (follower.getCurrentTValue() > 0.95) {
+                if (follower.getCurrentTValue() > 0.95 && follower.getCurrentTValue() != 1.0) {
                     follower.followPath(paths.Path9, true);
                     pathState++;
                 }
