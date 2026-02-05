@@ -60,7 +60,7 @@ public class turretTest extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        robot.turretAim();
+        robot.aimTurret();
         panelsTelemetry.update();
 
         double x = gamepad1.left_stick_x;
