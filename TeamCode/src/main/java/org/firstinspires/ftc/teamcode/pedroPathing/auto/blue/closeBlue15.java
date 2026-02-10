@@ -26,7 +26,6 @@ public class closeBlue15 extends OpMode {
     private int pathState;
     private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
-    private boolean pathStarted = false;
     private boolean gateWait = false;
 
     @Override
@@ -283,7 +282,6 @@ public class closeBlue15 extends OpMode {
             case 14:
                 if (follower.getCurrentTValue() > 0.95) {
                     follower.followPath(paths.Path10, true);
-                    pathStarted = true;
                 }
                 if (!follower.isBusy())
                     pathState++;

@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
 
-@Autonomous(name = "closeBlue15Friendly", group = "Autonomous")
+@Autonomous(name = "closeBlue15friendly", group = "Autonomous")
 @Configurable
 public class closeBlue15friendly extends OpMode {
 
@@ -26,7 +26,6 @@ public class closeBlue15friendly extends OpMode {
     private int pathState;
     private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
-    private boolean pathStarted = false;
     private boolean gateWait = false;
 
     @Override
@@ -237,6 +236,7 @@ public class closeBlue15friendly extends OpMode {
                 }
                 if (timer.seconds() > 4.0) {
                     follower.followPath(paths.Path5, true);
+                    gateWait = false;
                     pathState++;
                 }
                 break;
@@ -288,7 +288,6 @@ public class closeBlue15friendly extends OpMode {
             case 14:
                 if (follower.getCurrentTValue() > 0.95) {
                     follower.followPath(paths.Path10, true);
-                    pathStarted = true;
                 }
                 if (!follower.isBusy())
                     pathState++;
