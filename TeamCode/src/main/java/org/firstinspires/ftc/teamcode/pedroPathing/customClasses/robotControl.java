@@ -30,8 +30,11 @@ public class robotControl {
     private ElapsedTime timer = new ElapsedTime();
     private ElapsedTime turretTimer = new ElapsedTime();
     private double lastError = 0;
+    private double lastEncoderAngle = 0;
     private double arcRadius = 80; //guess will need to change later
     private AnalogInput analogEncoder;
+    private int rotationCounter;
+    private double gearRatio = 20.0 / 50.0;
 
     PIDFCoefficients shooterPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.875);
     //PIDFCoefficients aimPIDF = new PIDFCoefficients(1.2, 0.0, 0.1, 0.02);
@@ -113,6 +116,43 @@ public class robotControl {
             turret.setPower(turretPower);
         }
     }
+
+    public void aimTurretTest() {
+        Pose currentPose = follower.getPose();
+        double distanceX = targetGoalX - currentPose.getX();
+        double distanceY = targetGoalY - currentPose.getY();
+        double angleToGoal = Math.atan2(distanceY, distanceX);
+        double turretLocalTarget = angleToGoal - currentPose.getHeading();
+        double currentEncoderAngle = analogEncoder.getVoltage() / 3.3 * 360;
+        if (lastEncoderAngle - currentEncoderAngle > 270) {
+            rotationCounter += 1;
+        }
+        else if (lastEncoderAngle - currentEncoderAngle < -270) {
+            rotationCounter -= 1;
+        }
+        double currentTurretAngle = ((rotationCounter * 360) + currentEncoderAngle) * gearRatio;
+
+
+        lastEncoderAngle = currentEncoderAngle;
+        double error = turretLocalTarget - currentTurretAngle;
+        double dt = turretTimer.seconds();
+        turretTimer.reset();
+        double derivative = 0;
+        if (dt > 0.001) {
+            derivative = (error - lastError) / dt;
+            lastError = error;
+        }
+        double feedforward = Math.signum(error) * aimTurretPIDF.f;
+        double turretPower = (error * aimTurretPIDF.p) + (derivative * aimTurretPIDF.d) + feedforward;
+
+        if (Math.abs(error) < Math.toRadians(1.0)) //won't move if turret is within 1 degree
+            turret.setPower(0);
+        else {
+            turretPower = Range.clip(turretPower, -1.0, 1.0);
+            turret.setPower(turretPower);
+        }
+    }
+
 
 //    public void relocalize() {
 //        LLResult result = limelight.getLatestResult();
