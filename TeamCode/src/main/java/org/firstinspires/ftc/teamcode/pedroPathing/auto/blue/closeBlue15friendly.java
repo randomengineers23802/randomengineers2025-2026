@@ -16,9 +16,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
 import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
 
-@Autonomous(name = "closeBlue15", group = "Autonomous")
+@Autonomous(name = "closeBlue15Friendly", group = "Autonomous")
 @Configurable
-public class closeBlue15 extends OpMode {
+public class closeBlue15friendly extends OpMode {
 
     private robotControl robot;
     private TelemetryManager panelsTelemetry;
@@ -78,6 +78,7 @@ public class closeBlue15 extends OpMode {
     }
 
 
+
     public static class Paths {
         public PathChain Path1;
         public PathChain Path2;
@@ -112,9 +113,9 @@ public class closeBlue15 extends OpMode {
                     .build();
 
             Path3 = follower.pathBuilder().addPath(
-                            new BezierCurve(
+                            new BezierLine(
                                     new Pose(10.000, 58.000),
-                                    new Pose(39.000, 61.000),
+
                                     new Pose(58.000, 80.000)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(200), Math.toRadians(316))
@@ -142,6 +143,26 @@ public class closeBlue15 extends OpMode {
                     .build();
 
             Path6 = follower.pathBuilder().addPath(
+                            new BezierCurve(
+                                    new Pose(58.000, 80.000),
+                                    new Pose(60.000, 69.000),
+                                    new Pose(7.000, 58.000)
+                            )
+                    ).setLinearHeadingInterpolation(Math.toRadians(316), Math.toRadians(140), 0.15)
+
+                    .build();
+
+            Path7 = follower.pathBuilder().addPath(
+                            new BezierCurve(
+                                    new Pose(7.000, 58.000),
+                                    new Pose(40.000, 62.000),
+                                    new Pose(58.000, 80.000)
+                            )
+                    ).setLinearHeadingInterpolation(Math.toRadians(140), Math.toRadians(316))
+
+                    .build();
+
+            Path8 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(58.000, 80.000),
 
@@ -151,33 +172,13 @@ public class closeBlue15 extends OpMode {
 
                     .build();
 
-            Path7 = follower.pathBuilder().addPath(
+            Path9 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(18.000, 84.000),
 
                                     new Pose(58.000, 80.000)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(175), Math.toRadians(316))
-
-                    .build();
-
-            Path8 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(58.000, 80.000),
-                                    new Pose(85.000, 30.000),
-                                    new Pose(10.000, 33.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(316), Math.toRadians(180), 0.15)
-
-                    .build();
-
-            Path9 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(10.000, 33.000),
-
-                                    new Pose(58.000, 80.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(316))
 
                     .build();
 
@@ -252,7 +253,11 @@ public class closeBlue15 extends OpMode {
                 break;
 
             case 9:
-                if (follower.getCurrentTValue() > 0.95 && follower.getCurrentTValue() != 1.0) {
+                if (!gateWait) {
+                    gateWait = true;
+                    timer.reset();
+                }
+                if (timer.seconds() > 4.0) {
                     follower.followPath(paths.Path7, true);
                     pathState++;
                 }
@@ -288,7 +293,6 @@ public class closeBlue15 extends OpMode {
                 if (!follower.isBusy())
                     pathState++;
                 break;
-
 
             default:
                 robot.shooterStop();
