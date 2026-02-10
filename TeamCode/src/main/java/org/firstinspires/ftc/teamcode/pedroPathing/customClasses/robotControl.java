@@ -7,6 +7,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 public class robotControl {
 
+    private Gamepad gamepad1;
     public DcMotorEx Shooter1;
     public DcMotorEx Shooter2;
     public Limelight3A limelight;
@@ -41,8 +43,9 @@ public class robotControl {
     PIDFCoefficients aimTurretPIDF = new PIDFCoefficients(1.2, 0.0, 0.1, 0.02);
 
 
-    public robotControl(HardwareMap hardwareMap, Follower follower) {
+    public robotControl(HardwareMap hardwareMap, Follower follower, Gamepad gamepad1) {
         this.follower = follower;
+        this.gamepad1 = gamepad1;
         Shooter1 = hardwareMap.get(DcMotorEx.class, "Shooter1");
         Shooter1.setDirection(DcMotorEx.Direction.FORWARD);
         Shooter1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -184,6 +187,7 @@ public class robotControl {
             Pose pedroPose = new Pose(xInches, yInches, yawRadians, FTCCoordinates.INSTANCE)
                     .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
             follower.setPose(pedroPose);
+            gamepad1.rumble(500);
         }
     }
 

@@ -33,7 +33,7 @@ public class farBlue extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(56.875, 8.5625, Math.toRadians(90)));
         paths = new Paths(follower);
-        robot = new robotControl(hardwareMap, follower);
+        robot = new robotControl(hardwareMap, follower, gamepad1);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);

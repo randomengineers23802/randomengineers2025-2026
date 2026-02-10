@@ -31,7 +31,7 @@ public class closeBlueShort extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(24.500, 128.000, Math.toRadians(323.5)));
         paths = new Paths(follower);
-        robot = new robotControl(hardwareMap, follower);
+        robot = new robotControl(hardwareMap, follower, gamepad1);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);

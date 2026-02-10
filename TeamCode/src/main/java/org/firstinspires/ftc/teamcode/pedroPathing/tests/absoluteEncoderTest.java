@@ -33,7 +33,7 @@ public class absoluteEncoderTest extends OpMode {
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(0, 0, Math.toRadians(0)));
-        robot = new robotControl(hardwareMap, follower);
+        robot = new robotControl(hardwareMap, follower, gamepad1);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);

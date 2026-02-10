@@ -31,7 +31,7 @@ public class farRedShort extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(87.125, 8.5625, Math.toRadians(90)));
         paths = new Paths(follower);
-        robot = new robotControl(hardwareMap, follower);
+        robot = new robotControl(hardwareMap, follower, gamepad1);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
