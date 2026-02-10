@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.tests;
+package org.firstinspires.ftc.teamcode.pedroPathing.auto.blue;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
 
 @Autonomous(name = "closeBlueTest2", group = "Autonomous")
 @Configurable
-public class closeBlueTest2 extends OpMode {
+public class closeBlue15 extends OpMode {
 
     private robotControl robot;
     private TelemetryManager panelsTelemetry;
