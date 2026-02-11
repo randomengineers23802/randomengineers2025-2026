@@ -50,12 +50,6 @@ public class farRed extends OpMode {
     public void loop() {
         follower.update();
         pathState = autonomousPathUpdate();
-
-        panelsTelemetry.debug("Path State", pathState);
-        panelsTelemetry.debug("X", follower.getPose().getX());
-        panelsTelemetry.debug("Y", follower.getPose().getY());
-        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
-        panelsTelemetry.update(telemetry);
     }
 
     private void Shoot() {

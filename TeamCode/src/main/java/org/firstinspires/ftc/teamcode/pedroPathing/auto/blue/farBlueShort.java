@@ -30,7 +30,7 @@ public class farBlueShort extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(56.875, 8.5625, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(56.875, 8.5625, Math.toRadians(0)));
         paths = new Paths(follower);
         robot = new robotControl(hardwareMap, follower);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -51,12 +51,6 @@ public class farBlueShort extends OpMode {
     public void loop() {
         follower.update();
         pathState = autonomousPathUpdate();
-
-        panelsTelemetry.debug("Path State", pathState);
-        panelsTelemetry.debug("X", follower.getPose().getX());
-        panelsTelemetry.debug("Y", follower.getPose().getY());
-        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
-        panelsTelemetry.update(telemetry);
     }
 
     private void Shoot() {
@@ -85,7 +79,7 @@ public class farBlueShort extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(56.875, 8.563), new Pose(58.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(292))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(292))
                     .build();
 
             Path2 = follower
