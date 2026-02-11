@@ -187,7 +187,7 @@ public class robotControl {
             Pose pedroPose = new Pose(xInches, yInches, yawRadians, FTCCoordinates.INSTANCE)
                     .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
             follower.setPose(pedroPose);
-            gamepad1.rumble(500);
+            gamepad1.rumble(1, 1, 500);
         }
     }
 
