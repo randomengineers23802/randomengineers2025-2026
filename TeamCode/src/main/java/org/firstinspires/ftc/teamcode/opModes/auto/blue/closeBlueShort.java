@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.auto.blue;
+package org.firstinspires.ftc.teamcode.opModes.auto.blue;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -10,13 +10,13 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.control.passthrough;
+import org.firstinspires.ftc.teamcode.control.robotControl;
 
-@Autonomous(name = "farBlueShort", group = "Autonomous")
+@Autonomous(name = "closeBlueShort", group = "Autonomous")
 @Configurable
-public class farBlueShort extends OpMode {
+public class closeBlueShort extends OpMode {
 
     private robotControl robot;
     private TelemetryManager panelsTelemetry;
@@ -24,13 +24,12 @@ public class farBlueShort extends OpMode {
     private int pathState;
     private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
-
     private boolean pathStarted = false;
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(56.875, 8.5625, Math.toRadians(0)));
+        follower.setStartingPose(new Pose(24.500, 128.000, Math.toRadians(323.5)));
         paths = new Paths(follower);
         robot = new robotControl(hardwareMap, follower);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -41,16 +40,21 @@ public class farBlueShort extends OpMode {
     @Override
     public void start() {
         robot.intakeOn();
-        robot.setShooterVelocity("far");
+        robot.setShooterVelocity("close");
         robot.beltOn();
         robot.blueBoiClosed();
-        timer.reset();
     }
 
     @Override
     public void loop() {
         follower.update();
         pathState = autonomousPathUpdate();
+
+        panelsTelemetry.debug("Path State", pathState);
+        panelsTelemetry.debug("X", follower.getPose().getX());
+        panelsTelemetry.debug("Y", follower.getPose().getY());
+        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+        panelsTelemetry.update(telemetry);
     }
 
     private void Shoot() {
@@ -77,17 +81,17 @@ public class farBlueShort extends OpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(56.875, 8.563), new Pose(58.000, 15.000))
+                            new BezierLine(new Pose(24.500, 128.000), new Pose(58.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(292))
+                    .setLinearHeadingInterpolation(Math.toRadians(323.5), Math.toRadians(315), 0.8)
                     .build();
 
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(58.000, 15.000), new Pose(36.000, 15.000))
+                            new BezierLine(new Pose(58.000, 80.000), new Pose(50.000, 128.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(292), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180), 0.8)
                     .build();
         }
     }
@@ -95,11 +99,8 @@ public class farBlueShort extends OpMode {
     public int autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                double t = timer.seconds();
-                if (t >= 2.5 && !follower.isBusy()) {
-                    follower.followPath(paths.Path1, true);
-                    pathState++;
-                }
+                follower.followPath(paths.Path1, true);
+                pathState++;
                 break;
 
             case 1:

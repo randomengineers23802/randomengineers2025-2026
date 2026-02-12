@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.auto.blue;
+package org.firstinspires.ftc.teamcode.opModes.auto.blue;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -11,15 +11,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.control.passthrough;
+import org.firstinspires.ftc.teamcode.control.robotControl;
 import com.pedropathing.geometry.BezierCurve;
 
-@Autonomous(name = "farBlue", group = "Autonomous")
+@Autonomous(name = "closeBlue", group = "Autonomous")
 @Configurable
 @Disabled
-public class farBlue extends OpMode {
+public class closeBlue extends OpMode {
 
     private robotControl robot;
     private TelemetryManager panelsTelemetry;
@@ -27,13 +27,12 @@ public class farBlue extends OpMode {
     private int pathState;
     private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
-
     private boolean pathStarted = false;
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(56.875, 8.5625, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(24.500, 128.000, Math.toRadians(323.5)));
         paths = new Paths(follower);
         robot = new robotControl(hardwareMap, follower);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -44,7 +43,7 @@ public class farBlue extends OpMode {
     @Override
     public void start() {
         robot.intakeOn();
-        robot.setShooterVelocity("far");
+        robot.setShooterVelocity("close");
         robot.beltOn();
         robot.blueBoiClosed();
     }
@@ -53,6 +52,13 @@ public class farBlue extends OpMode {
     public void loop() {
         follower.update();
         pathState = autonomousPathUpdate();
+
+        panelsTelemetry.debug("Path State", pathState);
+        panelsTelemetry.debug("X", follower.getPose().getX());
+        panelsTelemetry.debug("Y", follower.getPose().getY());
+        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+        panelsTelemetry.debug("Current Path", pathState);
+        panelsTelemetry.update(telemetry);
     }
 
     private void Shoot() {
@@ -89,23 +95,23 @@ public class farBlue extends OpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(56.875, 8.563), new Pose(58.000, 15.000))
+                            new BezierLine(new Pose(24.500, 128.000), new Pose(58.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(293))
+                    .setLinearHeadingInterpolation(Math.toRadians(323.5), Math.toRadians(318))
                     .build();
 
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(58.000, 15.000), new Pose(49.000, 84.000))
+                            new BezierLine(new Pose(58.000, 80.000), new Pose(49.000, 84.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(293), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(318), Math.toRadians(180))
                     .build();
 
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(49.000, 84.000), new Pose(18.000, 84.000))
+                            new BezierLine(new Pose(49.000, 84.000), new Pose(16.000, 84.000))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -114,9 +120,9 @@ public class farBlue extends OpMode {
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(18.000, 84.000),
+                                    new Pose(16.000, 84.000),
                                     new Pose(37.000, 79.500),
-                                    new Pose(18.000, 75.000)
+                                    new Pose(16.000, 75.000)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
@@ -125,27 +131,23 @@ public class farBlue extends OpMode {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierCurve(
-                                    new Pose(18.000, 75.000),
-                                    new Pose(62.000, 88.000),
-                                    new Pose(58.000, 15.000)
-                            )
+                            new BezierLine(new Pose(16.000, 75.000), new Pose(58.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(293))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(318))
                     .build();
 
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(58.000, 15.000), new Pose(49.000, 35.500))
+                            new BezierLine(new Pose(58.000, 80.000), new Pose(49.000, 58.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(293), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(318), Math.toRadians(180))
                     .build();
 
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(49.000, 35.500), new Pose(18.000, 35.500))
+                            new BezierLine(new Pose(49.000, 58.000), new Pose(10.000, 58.000))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -153,23 +155,23 @@ public class farBlue extends OpMode {
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(18.000, 35.500), new Pose(58.000, 15.000))
+                            new BezierLine(new Pose(10.000, 58.000), new Pose(58.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(293))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(318))
                     .build();
 
             Path9 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(58.000, 15.000), new Pose(49.000, 58.000))
+                            new BezierLine(new Pose(58.000, 80.000), new Pose(49.000, 35.500))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(293), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(318), Math.toRadians(180))
                     .build();
 
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(49.000, 58.000), new Pose(18.000, 58.000))
+                            new BezierLine(new Pose(49.000, 35.500), new Pose(10.000, 35.500))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -177,17 +179,17 @@ public class farBlue extends OpMode {
             Path11 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(18.000, 58.000), new Pose(58.000, 15.000))
+                            new BezierLine(new Pose(10.000, 35.500), new Pose(58.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(293))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(318))
                     .build();
 
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(58.000, 15.000), new Pose(36.000, 15.000))
+                            new BezierLine(new Pose(58.000, 80.000), new Pose(25.000, 70.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(293), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(318), Math.toRadians(270))
                     .build();
         }
     }
@@ -293,6 +295,7 @@ public class farBlue extends OpMode {
                 if (!follower.isBusy())
                     pathState++;
                 break;
+
 
             default:
                 robot.shooterStop();

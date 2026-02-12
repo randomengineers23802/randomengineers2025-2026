@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.customClasses;
+package org.firstinspires.ftc.teamcode.control;
 
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
