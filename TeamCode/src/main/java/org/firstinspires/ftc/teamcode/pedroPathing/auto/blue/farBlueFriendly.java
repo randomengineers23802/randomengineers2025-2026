@@ -26,7 +26,7 @@ public class farBlueFriendly extends OpMode {
     private int pathState;
     private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
-
+    private boolean wallWait = false;
     private boolean pathStarted = false;
 
     @Override
@@ -70,6 +70,8 @@ public class farBlueFriendly extends OpMode {
     }
 
 
+
+
     public static class Paths {
         public PathChain Path1;
         public PathChain Path2;
@@ -81,8 +83,6 @@ public class farBlueFriendly extends OpMode {
         public PathChain Path8;
         public PathChain Path9;
         public PathChain Path10;
-        public PathChain Path11;
-        public PathChain Path12;
 
         public Paths(Follower follower) {
             Path1 = follower.pathBuilder().addPath(
@@ -91,7 +91,7 @@ public class farBlueFriendly extends OpMode {
 
                                     new Pose(58.000, 15.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(290))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(292))
 
                     .build();
 
@@ -111,7 +111,7 @@ public class farBlueFriendly extends OpMode {
 
                                     new Pose(58.000, 15.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(188), Math.toRadians(290))
+                    ).setLinearHeadingInterpolation(Math.toRadians(188), Math.toRadians(292))
 
                     .build();
 
@@ -119,59 +119,59 @@ public class farBlueFriendly extends OpMode {
                             new BezierLine(
                                     new Pose(58.000, 15.000),
 
-                                    new Pose(8.000, 8.500)
+                                    new Pose(11.000, 20.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(180))
+                    ).setLinearHeadingInterpolation(Math.toRadians(292), Math.toRadians(230))
 
                     .build();
 
             Path5 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(8.000, 8.500),
+                                    new Pose(11.000, 20.000),
 
-                                    new Pose(8.000, 24.000)
+                                    new Pose(8.000, 8.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(270))
+                    ).setLinearHeadingInterpolation(Math.toRadians(230), Math.toRadians(270))
 
                     .build();
 
             Path6 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(8.000, 24.000),
+                                    new Pose(8.000, 8.000),
 
-                                    new Pose(8.000, 8.500)
+                                    new Pose(58.000, 15.000)
                             )
-                    ).setTangentHeadingInterpolation()
+                    ).setLinearHeadingInterpolation(Math.toRadians(230), Math.toRadians(292))
 
                     .build();
 
             Path7 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(8.000, 8.500),
+                                    new Pose(58.000, 15.000),
 
-                                    new Pose(8.000, 24.000)
+                                    new Pose(11.000, 20.000)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(270))
+                    ).setLinearHeadingInterpolation(Math.toRadians(292), Math.toRadians(230))
 
                     .build();
 
             Path8 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(8.000, 24.000),
+                                    new Pose(11.000, 20.000),
 
-                                    new Pose(8.000, 8.500)
+                                    new Pose(8.000, 8.000)
                             )
-                    ).setTangentHeadingInterpolation()
+                    ).setLinearHeadingInterpolation(Math.toRadians(230), Math.toRadians(270))
 
                     .build();
 
             Path9 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(8.000, 8.500),
+                                    new Pose(8.000, 8.000),
 
                                     new Pose(58.000, 15.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(290))
+                    ).setLinearHeadingInterpolation(Math.toRadians(230), Math.toRadians(292))
 
                     .build();
 
@@ -179,29 +179,9 @@ public class farBlueFriendly extends OpMode {
                             new BezierLine(
                                     new Pose(58.000, 15.000),
 
-                                    new Pose(8.000, 8.500)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(180))
-
-                    .build();
-
-            Path11 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(8.000, 8.500),
-
-                                    new Pose(58.000, 15.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(290))
-
-                    .build();
-
-            Path12 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(58.000, 15.000),
-
                                     new Pose(36.000, 15.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(180))
+                    ).setLinearHeadingInterpolation(Math.toRadians(292), Math.toRadians(180))
 
                     .build();
         }
@@ -244,65 +224,71 @@ public class farBlueFriendly extends OpMode {
                 break;
 
             case 6:
-                if (!follower.isBusy()) {
+                if (!wallWait) {
+                    wallWait = true;
+                    timer.reset();
+                }
+                if (timer.seconds() > 3.0) {
                     follower.followPath(paths.Path5, true);
+                    wallWait = false;
                     pathState++;
                 }
                 break;
 
             case 7:
-                if (!follower.isBusy()) {
+                if (!wallWait) {
+                    wallWait = true;
+                    timer.reset();
+                }
+                if (timer.seconds() > 2.0) {
                     follower.followPath(paths.Path6, true);
+                    wallWait = false;
                     pathState++;
                 }
                 break;
 
             case 8:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.Path7, true);
-                    pathState++;
-                }
+                Shoot();
                 break;
 
-            case  9:
+            case 9:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path8, true);
+                    follower.followPath(paths.Path4, true);
                     pathState++;
                 }
                 break;
 
             case 10:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.Path9, true);
+                if (!wallWait) {
+                    wallWait = true;
+                    timer.reset();
+                }
+                if (timer.seconds() > 3.0) {
+                    follower.followPath(paths.Path8, true);
+                    wallWait = false;
                     pathState++;
                 }
                 break;
 
             case 11:
-                Shoot();
+                if (!wallWait) {
+                    wallWait = true;
+                    timer.reset();
+                }
+                if (timer.seconds() > 2.0) {
+                    follower.followPath(paths.Path9, true);
+                    wallWait = false;
+                    pathState++;
+                }
                 break;
 
             case 12:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.Path10, true);
-                    pathState++;
-                }
-                break;
-
-            case 13:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.Path11, true);
-                    pathState++;
-                }
-                break;
-
-            case 14:
                 Shoot();
                 break;
 
-            case 15:
+            case 13:
                 if (!pathStarted) {
-                    follower.followPath(paths.Path12, true);
+                    follower.followPath(paths.Path10, true);
                     pathStarted = true;
                 }
                 if (!follower.isBusy())
