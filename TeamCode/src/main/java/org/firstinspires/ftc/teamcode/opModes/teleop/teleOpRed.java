@@ -42,9 +42,9 @@ public class teleOpRed extends OpMode {
         follower.holdPoint(currentPose);
         double t = timer.seconds();
         if (t <= 1.0)
-            robot.blueBoiOpen();
+            robot.stopperOpen();
         else {
-            robot.blueBoiClosed();
+            robot.stopperClosed();
             shooting = false;
             automatedDrive = false;
             follower.startTeleopDrive();
@@ -119,7 +119,7 @@ public class teleOpRed extends OpMode {
             follower.startTeleopDrive();
             automatedDrive = false;
             shooting = false;
-            robot.blueBoiClosed();
+            robot.stopperClosed();
         }
 
         if (gamepad1.leftBumperWasPressed()) {

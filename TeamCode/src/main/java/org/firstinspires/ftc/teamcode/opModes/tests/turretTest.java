@@ -42,9 +42,9 @@ public class turretTest extends OpMode {
         follower.holdPoint(currentPose);
         double t = timer.seconds();
         if (t <= 1.0)
-            robot.blueBoiOpen();
+            robot.stopperOpen();
         else {
-            robot.blueBoiClosed();
+            robot.stopperClosed();
             shooting = false;
             automatedDrive = false;
             follower.startTeleopDrive();
@@ -60,7 +60,7 @@ public class turretTest extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        robot.aimTurret();
+        robot.updateTurret();
         panelsTelemetry.update();
 
         double x = gamepad1.left_stick_x;
@@ -115,7 +115,7 @@ public class turretTest extends OpMode {
             follower.startTeleopDrive();
             automatedDrive = false;
             shooting = false;
-            robot.blueBoiClosed();
+            robot.stopperClosed();
         }
 
         if (gamepad1.leftBumperWasPressed()) {

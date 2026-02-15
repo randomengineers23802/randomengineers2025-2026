@@ -42,7 +42,7 @@ public class farRedShort extends OpMode {
         robot.intakeOn();
         robot.setShooterVelocity("far");
 
-        robot.blueBoiClosed();
+        robot.stopperClosed();
         timer.reset();
     }
 
@@ -64,10 +64,10 @@ public class farRedShort extends OpMode {
         else {
             double t = timer.seconds();
             if (t <= 1.0) {
-                robot.blueBoiOpen();
+                robot.stopperOpen();
             }
             else {
-                robot.blueBoiClosed();
+                robot.stopperClosed();
                 pathState++;
             }
         }

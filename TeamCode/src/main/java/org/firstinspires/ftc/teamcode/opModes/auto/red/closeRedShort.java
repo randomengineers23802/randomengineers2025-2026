@@ -42,7 +42,7 @@ public class closeRedShort extends OpMode {
         robot.intakeOn();
         robot.setShooterVelocity("close");
 
-        robot.blueBoiClosed();
+        robot.stopperClosed();
     }
 
     @Override
@@ -63,10 +63,10 @@ public class closeRedShort extends OpMode {
         else {
             double t = timer.seconds();
             if (t <= 1.0) {
-                robot.blueBoiOpen();
+                robot.stopperOpen();
             }
             else {
-                robot.blueBoiClosed();
+                robot.stopperClosed();
                 pathState++;
             }
         }
