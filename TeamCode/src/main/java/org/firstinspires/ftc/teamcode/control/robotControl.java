@@ -27,8 +27,7 @@ public class robotControl {
     private DcMotor turret;
     private Servo BlueBoi;
     private Follower follower;
-    public double targetGoalX;
-    public double targetGoalY;
+    private Pose targetPose = new Pose(0, 0);
     private ElapsedTime timer = new ElapsedTime();
     private ElapsedTime turretTimer = new ElapsedTime();
     private double lastError = 0;
@@ -96,8 +95,8 @@ public class robotControl {
 
         public void aimTurret() {
         Pose currentPose = follower.getPose();
-        double distanceX = targetGoalX - currentPose.getX();
-        double distanceY = targetGoalY - currentPose.getY();
+        double distanceX = targetPose.getX() - currentPose.getX();
+        double distanceY = targetPose.getY() - currentPose.getY();
         double angleToGoal = Math.atan2(distanceY, distanceX);
         double turretLocalTarget = angleToGoal - currentPose.getHeading();
         double currentTurretAngle = analogEncoder.getVoltage() / 3.3 * 360;
@@ -122,8 +121,8 @@ public class robotControl {
 
     public void aimTurretTest() {
         Pose currentPose = follower.getPose();
-        double distanceX = targetGoalX - currentPose.getX();
-        double distanceY = targetGoalY - currentPose.getY();
+        double distanceX = targetPose.getX() - currentPose.getX();
+        double distanceY = targetPose.getY() - currentPose.getY();
         double angleToGoal = Math.atan2(distanceY, distanceX);
         double turretLocalTarget = angleToGoal - currentPose.getHeading();
         double currentEncoderAngle = analogEncoder.getVoltage() / 3.3 * 360;
@@ -194,12 +193,12 @@ public class robotControl {
     public Pose closestPoseOnArc() {
         Pose currentPose = follower.getPose();
 
-        double distanceX = currentPose.getX() - targetGoalX;
-        double distanceY = currentPose.getY() - targetGoalY;
+        double distanceX = currentPose.getX() - targetPose.getX();
+        double distanceY = currentPose.getY() - targetPose.getY();
         double distanceToCenter = Math.hypot(distanceX, distanceY);
 
-        double closestPointX = targetGoalX + (distanceX / distanceToCenter) * arcRadius;
-        double closestPointY = targetGoalY + (distanceY / distanceToCenter) * arcRadius;
+        double closestPointX = targetPose.getX() + (distanceX / distanceToCenter) * arcRadius;
+        double closestPointY = targetPose.getY() + (distanceY / distanceToCenter) * arcRadius;
         double angleToGoal = Math.atan2(closestPointY, closestPointX) + Math.PI;
         Pose arcTargetPose = new Pose(closestPointX, closestPointY, angleToGoal);
         return arcTargetPose;
@@ -227,14 +226,10 @@ public class robotControl {
     public void setAlliance(String goalColor) {
         switch (goalColor) {
             case "blue":
-                limelight.pipelineSwitch(0);
-                targetGoalX = 4;
-                targetGoalY = 135;
+                targetPose = new Pose(4, 135);
                 break;
             case "red":
-                limelight.pipelineSwitch(1);
-                targetGoalX = 140;
-                targetGoalY = 135;
+                targetPose = new Pose(140, 135);
                 break;
         }
     }
