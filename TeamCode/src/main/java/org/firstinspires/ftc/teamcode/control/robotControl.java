@@ -26,10 +26,11 @@ public class robotControl {
     public Limelight3A limelight;
     private DcMotor intake;
     private DcMotor turret;
-    private Servo BlueBoi;
+    private Servo stopper;
+    private Servo hood;
     private Follower follower;
     private Pose targetPose = new Pose(0, 0);
-    private ElapsedTime timer = new ElapsedTime();
+    private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime turretTimer = new ElapsedTime();
     private double lastError = 0;
     private double lastEncoderAngle = 0;
@@ -37,8 +38,8 @@ public class robotControl {
     private int rotationCounter;
     private double gearRatio = 20.0 / 50.0;
     private static final double flywheelOffset = 0; //if shooting consistently to far/short
-    private static final double flywheelMinSpeed = 1000;
-    private static final double flywheelMaxSpeed = 1080;
+    private static final double flywheelMinSpeed = 1000; //ticks
+    private static final double flywheelMaxSpeed = 1080; //ticks
     private static final double scoreHeight = 26; //distance from flywheel to goal
     private static final double scoreAngle = Math.toRadians(-30);
     private static final double passthroughPointRadius = 5;//radius that robot will aim, based of of targetPose
@@ -58,21 +59,22 @@ public class robotControl {
         Shooter1.setDirection(DcMotorEx.Direction.FORWARD);
         Shooter1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         Shooter1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
-        Shooter2 = hardwareMap.get(DcMotorEx.class, "Shooter1");
+        Shooter2 = hardwareMap.get(DcMotorEx.class, "Shooter2");
         Shooter2.setDirection(DcMotorEx.Direction.FORWARD);
         Shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         Shooter2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
         intake = hardwareMap.get(DcMotor.class, "intake");
         turret = hardwareMap.get(DcMotor.class, "belt");
         turret.setDirection(DcMotor.Direction.FORWARD);
-        BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
-        BlueBoi.setPosition(0.65);
+        stopper = hardwareMap.get(Servo.class, "stopper");
+        stopper.setPosition(0.65);
+        hood = hardwareMap.get(Servo.class, "hood");
+        hood.setPosition(getHoodTicksFromDegrees(60));
         analogEncoder = hardwareMap.get(AnalogInput.class, "analogEncoder");
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0);
         limelight.start();
-        timer.reset();
     }
 
 //    public double autoAim() {
@@ -166,9 +168,10 @@ public class robotControl {
     }
 
     public void updateTurret() {
-        ShotParameters aim = calculateShotVectorAndUpdateTurret(follower.getPose());
+        //rotate turret
+        ShotParameters shotParameters = calculateShotVectorAndUpdateTurret(follower.getPose());
         double currentTurretAngle = analogEncoder.getVoltage() / 3.3 * 360;
-        double error = aim.turretAngle - currentTurretAngle;
+        double error = shotParameters.turretAngle - currentTurretAngle;
         double dt = turretTimer.seconds();
         turretTimer.reset();
         double derivative = 0;
@@ -185,6 +188,27 @@ public class robotControl {
             turretPower = Range.clip(turretPower, -1.0, 1.0);
             turret.setPower(turretPower);
         }
+
+        //control flywheel
+        if (gamepad1.right_trigger > 0.2) {
+            stopperClosed();
+            setFlywheelVelocity(shotParameters.flywheelTicks);
+            if (Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.95) {
+                gamepad1.rumble(1.0, 1.0, 200);
+            }
+            shootTimer.reset();
+        }
+        else if (shootTimer.seconds() < 1.0 && Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.95) {
+            stopperOpen(); //open stopper mechanism
+            setFlywheelVelocity(shotParameters.flywheelTicks);
+        }
+        else {
+            stopperClosed();
+            setFlywheelVelocity(350); //idle speed
+        }
+
+        //control hood
+        hood.setPosition(getHoodTicksFromDegrees(shotParameters.hoodAngle));
     }
 
 
@@ -218,7 +242,7 @@ public class robotControl {
             Pose pedroPose = new Pose(xInches, yInches, yawRadians, FTCCoordinates.INSTANCE)
                     .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
             follower.setPose(pedroPose);
-            gamepad1.rumble(1, 1, 500);
+            gamepad1.rumble(1, 1, 200);
         }
     }
 
@@ -234,6 +258,11 @@ public class robotControl {
         }
         Shooter1.setVelocity(targetVelocity);
         Shooter2.setVelocity(targetVelocity);
+    }
+
+    private void setFlywheelVelocity(double ticks) {
+        Shooter1.setVelocity(ticks);
+        Shooter2.setVelocity(ticks);
     }
 
     public void shooterStop() {
@@ -262,12 +291,12 @@ public class robotControl {
         intake.setPower(0.0);
     }
 
-    public void blueBoiOpen() {
-        BlueBoi.setPosition(1.0);
+    public void stopperOpen() {
+        stopper.setPosition(1.0);
     }
 
-    public void blueBoiClosed() {
-        BlueBoi.setPosition(0.65);
+    public void stopperClosed() {
+        stopper.setPosition(0.65);
     }
 
     private Vector robotToGoalVector(Pose currentPose) {
@@ -281,7 +310,7 @@ public class robotControl {
     }
 
     private static double getHoodTicksFromDegrees(double degrees) {
-        return 0.0226 * degrees - 0.7443;
+        return Range.clip(0.0226 * degrees - 0.7443, 0.0, 1.0);
     }
 
     private ShotParameters calculateShotVectorAndUpdateTurret(Pose currentPose) {
