@@ -165,7 +165,7 @@ public class robotControl {
         }
     }
 
-    public void moveTurret() {
+    public void updateTurret() {
         ShotParameters aim = calculateShotVectorAndUpdateTurret(follower.getPose());
         double currentTurretAngle = analogEncoder.getVoltage() / 3.3 * 360;
         double error = aim.turretAngle - currentTurretAngle;
