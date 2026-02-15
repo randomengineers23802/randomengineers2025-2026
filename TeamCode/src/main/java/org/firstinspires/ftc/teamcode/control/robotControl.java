@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.control;
 import com.pedropathing.ftc.FTCCoordinates;
 import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -32,10 +33,18 @@ public class robotControl {
     private ElapsedTime turretTimer = new ElapsedTime();
     private double lastError = 0;
     private double lastEncoderAngle = 0;
-    private double arcRadius = 80; //guess will need to change later
     private AnalogInput analogEncoder;
     private int rotationCounter;
     private double gearRatio = 20.0 / 50.0;
+    private static final double flywheelOffset = 0; //if shooting consistently to far/short
+    private static final double flywheelMinSpeed = 1000;
+    private static final double flywheelMaxSpeed = 1080;
+    private static final double scoreHeight = 26; //distance from flywheel to goal
+    private static final double scoreAngle = Math.toRadians(-30);
+    private static final double passthroughPointRadius = 5;//radius that robot will aim, based of of targetPose
+    private static final double hoodMinAngle = Math.toRadians(42); //ball exit angle
+    private static final double hoodMaxAngle = Math.toRadians(72); //ball exit angle
+    //will have to change what angles actually are, higher ball exit angle means smalled hood angle
 
     PIDFCoefficients shooterPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.875);
     //PIDFCoefficients aimPIDF = new PIDFCoefficients(1.2, 0.0, 0.1, 0.02);
@@ -95,9 +104,10 @@ public class robotControl {
 
         public void aimTurret() {
         Pose currentPose = follower.getPose();
-        double distanceX = targetPose.getX() - currentPose.getX();
-        double distanceY = targetPose.getY() - currentPose.getY();
-        double angleToGoal = Math.atan2(distanceY, distanceX);
+        //double distanceX = targetPose.getX() - currentPose.getX();
+        //double distanceY = targetPose.getY() - currentPose.getY();
+        //double angleToGoal = Math.atan2(distanceY, distanceX);
+        double angleToGoal = robotToGoalVector(currentPose).getTheta();
         double turretLocalTarget = angleToGoal - currentPose.getHeading();
         double currentTurretAngle = analogEncoder.getVoltage() / 3.3 * 360;
         double error = turretLocalTarget - currentTurretAngle;
@@ -155,6 +165,28 @@ public class robotControl {
         }
     }
 
+    public void moveTurret() {
+        ShotParameters aim = calculateShotVectorAndUpdateTurret(follower.getPose());
+        double currentTurretAngle = analogEncoder.getVoltage() / 3.3 * 360;
+        double error = aim.turretAngle - currentTurretAngle;
+        double dt = turretTimer.seconds();
+        turretTimer.reset();
+        double derivative = 0;
+        if (dt > 0.001) {
+            derivative = (error - lastError) / dt;
+            lastError = error;
+        }
+        double feedforward = Math.signum(error) * aimTurretPIDF.f;
+        double turretPower = (error * aimTurretPIDF.p) + (derivative * aimTurretPIDF.d) + feedforward;
+
+        if (Math.abs(error) < Math.toRadians(1.0)) //won't move if turret is within 1 degree
+            turret.setPower(0);
+        else {
+            turretPower = Range.clip(turretPower, -1.0, 1.0);
+            turret.setPower(turretPower);
+        }
+    }
+
 
 //    public void relocalize() {
 //        LLResult result = limelight.getLatestResult();
@@ -190,20 +222,6 @@ public class robotControl {
         }
     }
 
-    public Pose closestPoseOnArc() {
-        Pose currentPose = follower.getPose();
-
-        double distanceX = currentPose.getX() - targetPose.getX();
-        double distanceY = currentPose.getY() - targetPose.getY();
-        double distanceToCenter = Math.hypot(distanceX, distanceY);
-
-        double closestPointX = targetPose.getX() + (distanceX / distanceToCenter) * arcRadius;
-        double closestPointY = targetPose.getY() + (distanceY / distanceToCenter) * arcRadius;
-        double angleToGoal = Math.atan2(closestPointY, closestPointX) + Math.PI;
-        Pose arcTargetPose = new Pose(closestPointX, closestPointY, angleToGoal);
-        return arcTargetPose;
-    }
-
     public void setShooterVelocity(String range) {
         double targetVelocity = 0;
         switch (range) {
@@ -226,10 +244,12 @@ public class robotControl {
     public void setAlliance(String goalColor) {
         switch (goalColor) {
             case "blue":
-                targetPose = new Pose(4, 135);
+                //targetPose = new Pose(4, 135);
+                targetPose = new Pose(6, 138);
                 break;
             case "red":
-                targetPose = new Pose(140, 135);
+                //targetPose = new Pose(140, 135);
+                targetPose = new Pose(138, 138);
                 break;
         }
     }
@@ -248,5 +268,56 @@ public class robotControl {
 
     public void blueBoiClosed() {
         BlueBoi.setPosition(0.65);
+    }
+
+    private Vector robotToGoalVector(Pose currentPose) {
+        double dx = targetPose.getX() - currentPose.getX();
+        double dy = targetPose.getY() - currentPose.getY();
+        return new Vector(dx, dy);
+    }
+
+    public static double getFlywheelTicksFromVelocity(double velocity) {
+        return Range.clip(94.501 * velocity / 12 - 187.96 + flywheelOffset, flywheelMinSpeed, flywheelMaxSpeed);
+    }
+
+    private static double getHoodTicksFromDegrees(double degrees) {
+        return 0.0226 * degrees - 0.7443;
+    }
+
+    private ShotParameters calculateShotVectorAndUpdateTurret(Pose currentPose) {
+        //constants
+        Vector robotToGoalVector = robotToGoalVector(currentPose);
+        double g = 32.174 * 12;
+        double x = robotToGoalVector.getMagnitude() - passthroughPointRadius;
+        double y = scoreHeight;
+        double a = scoreAngle;
+
+        //calculate initial launch components
+        double hoodAngle = Range.clip(Math.atan(2 * y / x - Math.tan(a)), hoodMaxAngle, hoodMinAngle);
+        double flywheelSpeed = Math.sqrt(g * x * x / (2 * Math.pow(Math.cos(hoodAngle), 2) * (x * Math.tan(hoodAngle) - y)));
+
+        //get robot velocity and convert it into parallel and perpendicular components
+        Vector robotVelocity = follower.getVelocity();
+        double coordinateTheta = robotVelocity.getTheta() - robotToGoalVector.getTheta();
+        double parallelComponent = -Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
+        double perpendicularComponent = Math.sin(coordinateTheta) * robotVelocity.getMagnitude();
+
+        //velocity compensation variables
+        double vz = flywheelSpeed * Math.sin(hoodAngle);
+        double time = x / (flywheelSpeed * Math.cos(hoodAngle));
+        double ivr = x / time + parallelComponent;
+        double nvr = Math.sqrt(ivr * ivr + perpendicularComponent * perpendicularComponent);
+        double ndr = nvr * time;
+
+        //recalculate launch components
+        hoodAngle = Range.clip(Math.atan(vz / nvr), hoodMaxAngle, hoodMinAngle);
+        flywheelSpeed = Math.sqrt(g * ndr * ndr / (2 * Math.pow(Math.cos(hoodAngle), 2) * (ndr * Math.tan(hoodAngle) - y)));
+
+        //update turret
+        double turretVelCompOffset = Math.atan(perpendicularComponent / ivr);
+        double turretAngle = Math.toDegrees(currentPose.getHeading() - robotToGoalVector.getTheta() + turretVelCompOffset);
+
+        //return data
+        return new ShotParameters(flywheelSpeed, hoodAngle, turretAngle);
     }
 }
