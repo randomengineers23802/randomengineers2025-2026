@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.tests;
+package org.firstinspires.ftc.teamcode.opModes.tests;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -9,13 +9,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.control.passthrough;
+import org.firstinspires.ftc.teamcode.control.robotControl;
 
 @Configurable
-@TeleOp(name = "teleOpBlueArcTest", group = "TeleOp")
-public class teleOpBlueArcTest extends OpMode {
+@TeleOp(name = "localizationTest", group = "TeleOp")
+public class localizationTest extends OpMode {
     private Follower follower;
     private boolean automatedDrive;
     private TelemetryManager panelsTelemetry;
@@ -26,6 +26,7 @@ public class teleOpBlueArcTest extends OpMode {
     private robotControl robot;
     private ElapsedTime timer = new ElapsedTime();
     private boolean prevRightTrigger = false;
+    private boolean prevX = false;
 
     @Override
     public void init() {
@@ -37,34 +38,15 @@ public class teleOpBlueArcTest extends OpMode {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
-    private void Shoot() {
-
-        robot.intakeOn();
-        follower.holdPoint(currentPose);
-        double t = timer.seconds();
-        if (t <= 1.0)
-            robot.blueBoiOpen();
-        else {
-            robot.blueBoiClosed();
-            shooting = false;
-            automatedDrive = false;
-            follower.startTeleopDrive();
-        }
-    }
-
     @Override
     public void start() {
         follower.startTeleopDrive();
-        robot.intakeOff();
-        robot.setShooterVelocity("close");
     }
 
     @Override
     public void loop() {
         follower.update();
         panelsTelemetry.update();
-        panelsTelemetry.addData("Shooter1", robot.Shooter1.getVelocity());
-        panelsTelemetry.addData("Shooter2", robot.Shooter2.getVelocity());
 
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y;
@@ -82,47 +64,27 @@ public class teleOpBlueArcTest extends OpMode {
             }
         }
 
-
-        if (gamepad1.x) {
-            follower.holdPoint(robot.closestPoseOnArc());
+        boolean xPressed = gamepad1.x;
+        boolean xWasPressed = xPressed && !prevX;
+        if (xWasPressed && follower.getVelocity().getMagnitude() < 1.5) {
+            robot.relocalize();
         }
-
-        if (gamepad1.dpad_left) {
-            robot.setShooterVelocity("far");
-        }
-
-        if (gamepad1.dpad_right) {
-            robot.setShooterVelocity("close");
-        }
-
-        if (gamepad1.right_bumper) {
-            robot.intakeOn();
-
-        }
-        else if (!shooting) {
-            robot.intakeOff();
-        }
+        prevX = xPressed;
 
         boolean rightTriggerPressed = gamepad1.right_trigger > 0.2;
         boolean rightTriggerWasPressed = rightTriggerPressed && !prevRightTrigger;
-
         if (rightTriggerWasPressed && !shooting) {
             timer.reset();
             currentPose = follower.getPose();
             automatedDrive = true;
             shooting = true;
         }
-
         prevRightTrigger = rightTriggerPressed;
-
-        if (shooting)
-            Shoot();
 
         if (automatedDrive && (gamepad1.bWasPressed() || Math.abs(gamepad1.left_stick_x) > 0.4 || Math.abs(gamepad1.left_stick_y) > 0.4 || Math.abs(gamepad1.right_stick_x) > 0.4)) {
             follower.startTeleopDrive();
             automatedDrive = false;
             shooting = false;
-            robot.blueBoiClosed();
         }
 
         if (gamepad1.leftBumperWasPressed()) {

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.tests;
+package org.firstinspires.ftc.teamcode.opModes.teleop;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -8,14 +8,13 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.control.passthrough;
+import org.firstinspires.ftc.teamcode.control.robotControl;
 
 @Configurable
-@TeleOp(name = "localizationTest", group = "TeleOp")
-public class localizationTest extends OpMode {
+@TeleOp(name = "teleOpRed", group = "TeleOp")
+public class teleOpRed extends OpMode {
     private Follower follower;
     private boolean automatedDrive;
     private TelemetryManager panelsTelemetry;
@@ -33,23 +32,40 @@ public class localizationTest extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.update();
         robot = new robotControl(hardwareMap, follower, gamepad1);
-        robot.setAlliance("blue");
+        robot.setAlliance("red");
         follower.setStartingPose(passthrough.startPose);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+    }
+
+    private void Shoot() {
+        robot.intakeOn();
+        follower.holdPoint(currentPose);
+        double t = timer.seconds();
+        if (t <= 1.0)
+            robot.blueBoiOpen();
+        else {
+            robot.blueBoiClosed();
+            shooting = false;
+            automatedDrive = false;
+            follower.startTeleopDrive();
+        }
     }
 
     @Override
     public void start() {
         follower.startTeleopDrive();
+        robot.intakeOff();
+        robot.setShooterVelocity("close");
     }
 
     @Override
     public void loop() {
         follower.update();
+        robot.aimTurret();
         panelsTelemetry.update();
 
-        double x = gamepad1.left_stick_x;
-        double y = gamepad1.left_stick_y;
+        double x = -gamepad1.left_stick_x;
+        double y = -gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
         if (!automatedDrive) {
             if (!slowMode) {
@@ -64,6 +80,21 @@ public class localizationTest extends OpMode {
             }
         }
 
+        if (gamepad1.dpad_left) {
+            robot.setShooterVelocity("far");
+        }
+
+        if (gamepad1.dpad_right) {
+            robot.setShooterVelocity("close");
+        }
+
+        if (gamepad1.right_bumper) {
+            robot.intakeOn();
+        }
+        else if (!shooting) {
+            robot.intakeOff();
+        }
+
         boolean xPressed = gamepad1.x;
         boolean xWasPressed = xPressed && !prevX;
         if (xWasPressed && follower.getVelocity().getMagnitude() < 1.5) {
@@ -76,15 +107,19 @@ public class localizationTest extends OpMode {
         if (rightTriggerWasPressed && !shooting) {
             timer.reset();
             currentPose = follower.getPose();
-            automatedDrive = true;
             shooting = true;
+            automatedDrive = true;
         }
         prevRightTrigger = rightTriggerPressed;
+
+        if (shooting)
+            Shoot();
 
         if (automatedDrive && (gamepad1.bWasPressed() || Math.abs(gamepad1.left_stick_x) > 0.4 || Math.abs(gamepad1.left_stick_y) > 0.4 || Math.abs(gamepad1.right_stick_x) > 0.4)) {
             follower.startTeleopDrive();
             automatedDrive = false;
             shooting = false;
+            robot.blueBoiClosed();
         }
 
         if (gamepad1.leftBumperWasPressed()) {

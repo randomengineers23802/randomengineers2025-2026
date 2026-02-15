@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.auto.red;
+package org.firstinspires.ftc.teamcode.opModes.auto.red;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -10,13 +10,13 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.control.passthrough;
+import org.firstinspires.ftc.teamcode.control.robotControl;
 
-@Autonomous(name = "closeRedShort", group = "Autonomous")
+@Autonomous(name = "farRedShort", group = "Autonomous")
 @Configurable
-public class closeRedShort extends OpMode {
+public class farRedShort extends OpMode {
 
     private robotControl robot;
     private TelemetryManager panelsTelemetry;
@@ -29,7 +29,7 @@ public class closeRedShort extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(119.5, 128.0, Math.toRadians(216.5)));
+        follower.setStartingPose(new Pose(87.125, 8.5625, Math.toRadians(90)));
         paths = new Paths(follower);
         robot = new robotControl(hardwareMap, follower, gamepad1);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -40,9 +40,10 @@ public class closeRedShort extends OpMode {
     @Override
     public void start() {
         robot.intakeOn();
-        robot.setShooterVelocity("close");
+        robot.setShooterVelocity("far");
 
         robot.blueBoiClosed();
+        timer.reset();
     }
 
     @Override
@@ -81,17 +82,17 @@ public class closeRedShort extends OpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(119.500, 128.000), new Pose(86.000, 80.000))
+                            new BezierLine(new Pose(87.125, 8.563), new Pose(86.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(216.5), Math.toRadians(225.0), 0.8)
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(248))
                     .build();
 
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(86.000, 80.000), new Pose(94.000, 128.000))
+                            new BezierLine(new Pose(86.000, 15.000), new Pose(108.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(229), Math.toRadians(0), 0.8)
+                    .setLinearHeadingInterpolation(Math.toRadians(248), Math.toRadians(0))
                     .build();
         }
     }
@@ -99,8 +100,11 @@ public class closeRedShort extends OpMode {
     public int autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(paths.Path1, true);
-                pathState++;
+                double t = timer.seconds();
+                if (t >= 2.5 && !follower.isBusy()) {
+                    follower.followPath(paths.Path1, true);
+                    pathState++;
+                }
                 break;
 
             case 1:

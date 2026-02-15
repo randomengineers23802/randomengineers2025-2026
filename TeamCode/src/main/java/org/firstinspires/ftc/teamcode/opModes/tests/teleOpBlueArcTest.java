@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.teleop;
+package org.firstinspires.ftc.teamcode.opModes.tests;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -9,13 +9,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.control.passthrough;
+import org.firstinspires.ftc.teamcode.control.robotControl;
 
 @Configurable
-@TeleOp(name = "teleOpBlue", group = "TeleOp")
-public class teleOpBlue extends OpMode {
+@TeleOp(name = "teleOpBlueArcTest", group = "TeleOp")
+public class teleOpBlueArcTest extends OpMode {
     private Follower follower;
     private boolean automatedDrive;
     private TelemetryManager panelsTelemetry;
@@ -26,7 +26,6 @@ public class teleOpBlue extends OpMode {
     private robotControl robot;
     private ElapsedTime timer = new ElapsedTime();
     private boolean prevRightTrigger = false;
-    private boolean prevX = false;
 
     @Override
     public void init() {
@@ -39,6 +38,7 @@ public class teleOpBlue extends OpMode {
     }
 
     private void Shoot() {
+
         robot.intakeOn();
         follower.holdPoint(currentPose);
         double t = timer.seconds();
@@ -62,7 +62,6 @@ public class teleOpBlue extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        robot.aimTurret();
         panelsTelemetry.update();
         panelsTelemetry.addData("Shooter1", robot.Shooter1.getVelocity());
         panelsTelemetry.addData("Shooter2", robot.Shooter2.getVelocity());
@@ -83,6 +82,11 @@ public class teleOpBlue extends OpMode {
             }
         }
 
+
+        if (gamepad1.x) {
+            follower.holdPoint(robot.closestPoseOnArc());
+        }
+
         if (gamepad1.dpad_left) {
             robot.setShooterVelocity("far");
         }
@@ -93,26 +97,22 @@ public class teleOpBlue extends OpMode {
 
         if (gamepad1.right_bumper) {
             robot.intakeOn();
+
         }
         else if (!shooting) {
             robot.intakeOff();
         }
 
-        boolean xPressed = gamepad1.x;
-        boolean xWasPressed = xPressed && !prevX;
-        if (xWasPressed && follower.getVelocity().getMagnitude() < 1.5) {
-            robot.relocalize();
-        }
-        prevX = xPressed;
-
         boolean rightTriggerPressed = gamepad1.right_trigger > 0.2;
         boolean rightTriggerWasPressed = rightTriggerPressed && !prevRightTrigger;
+
         if (rightTriggerWasPressed && !shooting) {
             timer.reset();
             currentPose = follower.getPose();
             automatedDrive = true;
             shooting = true;
         }
+
         prevRightTrigger = rightTriggerPressed;
 
         if (shooting)

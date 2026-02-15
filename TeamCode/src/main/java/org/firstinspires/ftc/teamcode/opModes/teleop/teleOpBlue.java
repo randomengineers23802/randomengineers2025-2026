@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.teleop;
+package org.firstinspires.ftc.teamcode.opModes.teleop;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -8,13 +8,14 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.passthrough;
-import org.firstinspires.ftc.teamcode.pedroPathing.customClasses.robotControl;
+
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.control.passthrough;
+import org.firstinspires.ftc.teamcode.control.robotControl;
 
 @Configurable
-@TeleOp(name = "teleOpRed", group = "TeleOp")
-public class teleOpRed extends OpMode {
+@TeleOp(name = "teleOpBlue", group = "TeleOp")
+public class teleOpBlue extends OpMode {
     private Follower follower;
     private boolean automatedDrive;
     private TelemetryManager panelsTelemetry;
@@ -32,7 +33,7 @@ public class teleOpRed extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.update();
         robot = new robotControl(hardwareMap, follower, gamepad1);
-        robot.setAlliance("red");
+        robot.setAlliance("blue");
         follower.setStartingPose(passthrough.startPose);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
@@ -63,9 +64,11 @@ public class teleOpRed extends OpMode {
         follower.update();
         robot.aimTurret();
         panelsTelemetry.update();
+        panelsTelemetry.addData("Shooter1", robot.Shooter1.getVelocity());
+        panelsTelemetry.addData("Shooter2", robot.Shooter2.getVelocity());
 
-        double x = -gamepad1.left_stick_x;
-        double y = -gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x;
+        double y = gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
         if (!automatedDrive) {
             if (!slowMode) {
@@ -107,8 +110,8 @@ public class teleOpRed extends OpMode {
         if (rightTriggerWasPressed && !shooting) {
             timer.reset();
             currentPose = follower.getPose();
-            shooting = true;
             automatedDrive = true;
+            shooting = true;
         }
         prevRightTrigger = rightTriggerPressed;
 
