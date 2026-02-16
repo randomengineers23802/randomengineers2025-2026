@@ -32,7 +32,7 @@ public class farRedFriendly extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(87.125, 8.5625, Math.toRadians(270)));
+        follower.setStartingPose(new Pose(87.125, 8.5625, Math.toRadians(180)));
         paths = new Paths(follower);
         robot = new robotControl(hardwareMap, follower);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -87,7 +87,7 @@ public class farRedFriendly extends OpMode {
                                     new Pose(87.125, 8.563),
                                     new Pose(86.000, 15.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(338))
+                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(248))
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
@@ -104,7 +104,7 @@ public class farRedFriendly extends OpMode {
                                     new Pose(134.000, 34.000),
                                     new Pose(86.000, 15.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(82), Math.toRadians(338))
+                    ).setLinearHeadingInterpolation(Math.toRadians(352), Math.toRadians(248))
                     .build();
 
             Path4 = follower.pathBuilder().addPath(
@@ -112,7 +112,7 @@ public class farRedFriendly extends OpMode {
                                     new Pose(86.000, 15.000),
                                     new Pose(133.000, 20.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(338), Math.toRadians(40))
+                    ).setLinearHeadingInterpolation(Math.toRadians(248), Math.toRadians(310))
                     .build();
 
             Path5 = follower.pathBuilder().addPath(
@@ -120,7 +120,7 @@ public class farRedFriendly extends OpMode {
                                     new Pose(133.000, 20.000),
                                     new Pose(136.000, 8.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(40), Math.toRadians(0))
+                    ).setLinearHeadingInterpolation(Math.toRadians(310), Math.toRadians(270))
                     .build();
 
             Path6 = follower.pathBuilder().addPath(
@@ -128,7 +128,7 @@ public class farRedFriendly extends OpMode {
                                     new Pose(136.000, 8.000),
                                     new Pose(86.000, 15.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(40), Math.toRadians(338))
+                    ).setLinearHeadingInterpolation(Math.toRadians(310), Math.toRadians(248))
                     .build();
 
             Path7 = follower.pathBuilder().addPath(
@@ -136,7 +136,7 @@ public class farRedFriendly extends OpMode {
                                     new Pose(86.000, 15.000),
                                     new Pose(133.000, 20.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(338), Math.toRadians(40))
+                    ).setLinearHeadingInterpolation(Math.toRadians(248), Math.toRadians(310))
                     .build();
 
             Path8 = follower.pathBuilder().addPath(
@@ -144,7 +144,7 @@ public class farRedFriendly extends OpMode {
                                     new Pose(133.000, 20.000),
                                     new Pose(136.000, 8.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(40), Math.toRadians(0))
+                    ).setLinearHeadingInterpolation(Math.toRadians(310), Math.toRadians(270))
                     .build();
 
             Path9 = follower.pathBuilder().addPath(
@@ -152,7 +152,7 @@ public class farRedFriendly extends OpMode {
                                     new Pose(136.000, 8.000),
                                     new Pose(86.000, 15.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(40), Math.toRadians(338))
+                    ).setLinearHeadingInterpolation(Math.toRadians(310), Math.toRadians(248))
                     .build();
 
             Path10 = follower.pathBuilder().addPath(
@@ -160,7 +160,7 @@ public class farRedFriendly extends OpMode {
                                     new Pose(86.000, 15.000),
                                     new Pose(108.000, 15.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(338), Math.toRadians(90))
+                    ).setLinearHeadingInterpolation(Math.toRadians(248), Math.toRadians(360))
                     .build();
         }
     }
@@ -171,30 +171,36 @@ public class farRedFriendly extends OpMode {
                 follower.followPath(paths.Path1, true);
                 pathState++;
                 break;
+
             case 1:
                 Shoot();
                 break;
+
             case 2:
                 if (!follower.isBusy()) {
                     follower.followPath(paths.Path2, true);
                     pathState++;
                 }
                 break;
+
             case 3:
                 if (!follower.isBusy()) {
                     follower.followPath(paths.Path3, true);
                     pathState++;
                 }
                 break;
+
             case 4:
                 Shoot();
                 break;
+
             case 5:
                 if (!follower.isBusy()) {
                     follower.followPath(paths.Path4, true);
                     pathState++;
                 }
                 break;
+
             case 6:
                 if (!wallWait) {
                     wallWait = true;
@@ -206,6 +212,7 @@ public class farRedFriendly extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 7:
                 if (!wallWait) {
                     wallWait = true;
@@ -217,15 +224,18 @@ public class farRedFriendly extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 8:
                 Shoot();
                 break;
+
             case 9:
                 if (!follower.isBusy()) {
                     follower.followPath(paths.Path4, true);
                     pathState++;
                 }
                 break;
+
             case 10:
                 if (!wallWait) {
                     wallWait = true;
@@ -237,6 +247,7 @@ public class farRedFriendly extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 11:
                 if (!wallWait) {
                     wallWait = true;
@@ -248,9 +259,11 @@ public class farRedFriendly extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 12:
                 Shoot();
                 break;
+
             case 13:
                 if (!pathStarted) {
                     follower.followPath(paths.Path10, true);
@@ -259,6 +272,7 @@ public class farRedFriendly extends OpMode {
                 if (!follower.isBusy())
                     pathState++;
                 break;
+
             default:
                 robot.shooterStop();
                 robot.intakeOff();
