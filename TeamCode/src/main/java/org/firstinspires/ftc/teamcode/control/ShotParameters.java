@@ -7,8 +7,8 @@ public class ShotParameters {
     public final double hoodAngle;
     public final double turretAngle;
 
-    public ShotParameters(double flywheelTicks, double hoodAngle, double turretAngle) {
-        this.flywheelTicks = getFlywheelTicksFromVelocity(flywheelTicks);
+    public ShotParameters(double flywheelSpeed, double hoodAngle, double turretAngle) {
+        this.flywheelTicks = getFlywheelTicksFromVelocity(flywheelSpeed);
         this.hoodAngle = Math.toDegrees(hoodAngle);
         this.turretAngle = turretAngle;
     }
