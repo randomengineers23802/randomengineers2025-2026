@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode.control;
 
-import static org.firstinspires.ftc.teamcode.control.robotControl.getFlywheelTicksFromVelocity;
-
 public class ShotParameters {
     public final double flywheelTicks;
-    public final double hoodAngle;
+    public final double hoodPosition;
     public final double turretAngle;
 
-    public ShotParameters(double flywheelSpeed, double hoodAngle, double turretAngle) {
-        this.flywheelTicks = getFlywheelTicksFromVelocity(flywheelSpeed);
-        this.hoodAngle = Math.toDegrees(hoodAngle);
+    public ShotParameters(double flywheelSpeed, double hoodDegrees, double turretAngle) {
+        this.flywheelTicks = robotControl.getFlywheelTicksFromVelocity(flywheelSpeed);
+        this.hoodPosition = robotControl.getHoodPositionFromDegrees(hoodDegrees);
         this.turretAngle = turretAngle;
     }
 }

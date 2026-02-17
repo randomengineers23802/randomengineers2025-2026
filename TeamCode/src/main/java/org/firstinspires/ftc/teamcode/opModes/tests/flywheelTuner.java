@@ -65,7 +65,7 @@ public class flywheelTuner extends OpMode {
         ShotParameters shotParameters = robot.calculateShotVectorAndTurret(currentPose);
         //robot.updateTurretForTesting();
         panelsTelemetry.addData("Calculated Target Velocity In/Sec", robot.flywheelVelocity);
-        panelsTelemetry.addData("Calculated hood angle", shotParameters.hoodAngle);
+        panelsTelemetry.addData("Calculated hood angle", robot.hoodAngleViewTest);
         panelsTelemetry.addData("Hood Servo Position", robot.hood.getPosition());
         panelsTelemetry.addData("Motor Ticks 1", robot.Shooter1.getVelocity());
         panelsTelemetry.addData("Motor Ticks 2", robot.Shooter2.getVelocity());
