@@ -36,6 +36,7 @@ public class robotControl {
     private double lastError = 0;
     private double lastEncoderAngle = 0;
     private AnalogInput analogEncoder;
+    private boolean prevX = false;
     private int rotationCounter;
     private double gearRatio = 20.0 / 50.0;
     private static final double flywheelOffset = 0; //if shooting consistently to far/short
@@ -276,23 +277,28 @@ public class robotControl {
 //    }
 
     public void relocalize() {
-        limelight.updateRobotOrientation(Math.toDegrees(follower.getHeading()));
-        LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid()) {
-            Pose3D limelightPose = result.getBotpose_MT2();
+        boolean xPressed = gamepad1.x;
+        boolean xWasPressed = xPressed && !prevX;
+        if (xWasPressed && follower.getVelocity().getMagnitude() < 1.5) {
+            limelight.updateRobotOrientation(Math.toDegrees(follower.getHeading()));
+            LLResult result = limelight.getLatestResult();
+            if (result != null && result.isValid()) {
+                Pose3D limelightPose = result.getBotpose_MT2();
 
-            //Limelight meters to pedro inches
-            double xInches = limelightPose.getPosition().x * 39.3701;
-            double yInches = limelightPose.getPosition().y * 39.3701;
+                //Limelight meters to pedro inches
+                double xInches = limelightPose.getPosition().x * 39.3701;
+                double yInches = limelightPose.getPosition().y * 39.3701;
 
-            //Limelight degrees to pedro radians
-            double yawRadians = Math.toRadians(limelightPose.getOrientation().getYaw());
+                //Limelight degrees to pedro radians
+                double yawRadians = Math.toRadians(limelightPose.getOrientation().getYaw());
 
-            Pose pedroPose = new Pose(xInches, yInches, yawRadians, FTCCoordinates.INSTANCE)
-                    .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
-            follower.setPose(pedroPose);
-            gamepad1.rumble(1, 1, 200);
+                Pose pedroPose = new Pose(xInches, yInches, yawRadians, FTCCoordinates.INSTANCE)
+                        .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+                follower.setPose(pedroPose);
+                gamepad1.rumble(1, 1, 200);
+            }
         }
+        prevX = xPressed;
     }
 
     public void setShooterVelocity(String range) {
