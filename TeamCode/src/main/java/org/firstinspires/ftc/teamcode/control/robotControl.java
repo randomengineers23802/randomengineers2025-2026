@@ -235,14 +235,27 @@ public class robotControl {
             if (Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.97) {
                 gamepad1.rumble(1.0, 1.0, 200);
             }
+            if (gamepad1.right_bumper) {
+                intakeOn();
+            }
+            else {
+                intakeOff();
+            }
             shootTimer.reset();
         }
         else if (shootTimer.seconds() < 1.0 && Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.97) {
-            stopperOpen(); //open stopper mechanism
+            stopperOpen();
+            intakeOn();
             setFlywheelVelocity(shotParameters.flywheelTicks);
         }
         else {
             stopperClosed();
+            if (gamepad1.right_bumper) {
+                intakeOn();
+            }
+            else {
+                intakeOff();
+            }
             setFlywheelVelocity(350); //idle speed
         }
     }
