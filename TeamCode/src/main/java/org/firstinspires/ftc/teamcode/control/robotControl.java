@@ -28,6 +28,7 @@ public class robotControl {
     private DcMotor turret;
     private Servo stopper;
     public Servo hood;
+    private Servo light;
     private Follower follower;
     private Pose targetPose = new Pose(0, 0);
     private ElapsedTime shootTimer = new ElapsedTime();
@@ -72,6 +73,8 @@ public class robotControl {
         turret.setDirection(DcMotor.Direction.FORWARD);
         stopper = hardwareMap.get(Servo.class, "stopper");
         stopper.setPosition(0.65);
+        light = hardwareMap.get(Servo.class, "light");
+        light.setPosition(0.277); //red
         hood = hardwareMap.get(Servo.class, "hood");
         hood.setPosition(getHoodPositionFromDegrees(60));
         analogEncoder = hardwareMap.get(AnalogInput.class, "analogEncoder");
@@ -212,11 +215,14 @@ public class robotControl {
         double feedforward = Math.signum(error) * aimTurretPIDF.f;
         double turretPower = (error * aimTurretPIDF.p) + (derivative * aimTurretPIDF.d) + feedforward;
 
-        if (Math.abs(error) < 1.0) //won't move if turret is within 1 degree
+        if (Math.abs(error) < 1.0) { //won't move if turret is within 1 degree
             turret.setPower(0);
+            light.setPosition(0.5); //green
+        }
         else {
             turretPower = Range.clip(turretPower, -1.0, 1.0);
             turret.setPower(turretPower);
+            light.setPosition(0.277); //red
         }
 
         //control hood
@@ -226,12 +232,12 @@ public class robotControl {
         if (gamepad1.right_trigger > 0.2) {
             stopperClosed();
             setFlywheelVelocity(shotParameters.flywheelTicks);
-            if (Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.95) {
+            if (Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.97) {
                 gamepad1.rumble(1.0, 1.0, 200);
             }
             shootTimer.reset();
         }
-        else if (shootTimer.seconds() < 1.0 && Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.95) {
+        else if (shootTimer.seconds() < 1.0 && Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.97) {
             stopperOpen(); //open stopper mechanism
             setFlywheelVelocity(shotParameters.flywheelTicks);
         }
