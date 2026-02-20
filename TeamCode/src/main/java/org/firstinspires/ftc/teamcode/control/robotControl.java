@@ -26,7 +26,7 @@ public class robotControl {
     public Limelight3A limelight;
     private DcMotor intake;
     private DcMotor turret;
-    private Servo stopper;
+    public Servo stopper;
     public Servo hood;
     private Servo light;
     private Follower follower;
@@ -395,7 +395,7 @@ public class robotControl {
 
         //recalculate launch components
         hoodAngle = Range.clip(Math.atan(vz / nvr), hoodMaxAngle, hoodMinAngle);
-        hoodAngleViewTest = hoodAngle;
+        hoodAngleViewTest = Math.toDegrees(hoodAngle);
         flywheelSpeed = Math.sqrt(g * ndr * ndr / (2 * Math.pow(Math.cos(hoodAngle), 2) * (ndr * Math.tan(hoodAngle) - y)));
         flywheelVelocity = flywheelSpeed; //view calculated target velocity for testing purposes, will delete eventually
 

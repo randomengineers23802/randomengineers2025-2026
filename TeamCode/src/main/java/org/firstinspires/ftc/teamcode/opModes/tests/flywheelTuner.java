@@ -27,6 +27,7 @@ public class flywheelTuner extends OpMode {
     private final Pose startPose = new Pose(8.90625, 8.5625, Math.toRadians(90));
     public static double flyWheelTicks = 0;
     public static double hoodPosition = 0;
+    public static double stopperPosition = 0;
 
     @Override
     public void init() {
@@ -36,20 +37,6 @@ public class flywheelTuner extends OpMode {
         robot.setAlliance("blue");
         follower.setStartingPose(startPose);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-    }
-
-    private void Shoot() {
-        robot.intakeOn();
-        follower.holdPoint(currentPose);
-        double t = timer.seconds();
-        if (t <= 1.0)
-            robot.stopperOpen();
-        else {
-            robot.stopperClosed();
-            shooting = false;
-            automatedDrive = false;
-            follower.startTeleopDrive();
-        }
     }
 
     @Override
@@ -70,32 +57,11 @@ public class flywheelTuner extends OpMode {
         panelsTelemetry.addData("Motor Ticks 1", robot.Shooter1.getVelocity());
         panelsTelemetry.addData("Motor Ticks 2", robot.Shooter2.getVelocity());
         panelsTelemetry.addData("Distance to goal", robot.robotToGoalVector(currentPose).getMagnitude());
+        panelsTelemetry.addData("stopper position", robot.stopper.getPosition());
         panelsTelemetry.update();
 
         robot.Shooter1.setVelocity(flyWheelTicks);
         robot.Shooter2.setVelocity(flyWheelTicks);
         robot.hood.setPosition(hoodPosition);
-
-
-        if (gamepad1.right_bumper) {
-            robot.intakeOn();
-        }
-        else if (!shooting) {
-            robot.intakeOff();
-        }
-
-        boolean rightTriggerPressed = gamepad1.right_trigger > 0.2;
-        boolean rightTriggerWasPressed = rightTriggerPressed && !prevRightTrigger;
-
-        if (rightTriggerWasPressed && !shooting) {
-            timer.reset();
-            automatedDrive = true;
-            shooting = true;
-        }
-
-        prevRightTrigger = rightTriggerPressed;
-
-        if (shooting)
-            Shoot();
     }
 }
