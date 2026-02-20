@@ -205,7 +205,14 @@ public class robotControl {
         //rotate turret
         ShotParameters shotParameters = calculateShotVectorAndTurret(follower.getPose());
         double currentTurretAngle = analogEncoder.getVoltage() / 3.3 * 360;
-        double error = shotParameters.turretAngle - currentTurretAngle;
+        //double error = shotParameters.turretAngle - currentTurretAngle;
+
+        //should snap around at 270 instead of 0
+        double targetAngle = shotParameters.turretAngle;
+        double shiftedCurrent = (currentTurretAngle + 90) % 360;
+        double shiftedTarget = (targetAngle + 90) % 360;
+        double error = shiftedTarget - shiftedCurrent;
+
         double dt = turretTimer.seconds();
         turretTimer.reset();
         double derivative = 0;
