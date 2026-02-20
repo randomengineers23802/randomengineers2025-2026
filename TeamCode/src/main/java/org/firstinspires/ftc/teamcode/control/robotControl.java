@@ -28,7 +28,8 @@ public class robotControl {
     private DcMotor turret;
     public Servo stopper;
     public Servo hood;
-    private Servo light;
+    private Servo light1;
+    private Servo light2;
     private Follower follower;
     private Pose targetPose = new Pose(0, 0);
     private ElapsedTime shootTimer = new ElapsedTime();
@@ -74,8 +75,10 @@ public class robotControl {
         turret.setDirection(DcMotor.Direction.FORWARD);
         stopper = hardwareMap.get(Servo.class, "stopper");
         stopper.setPosition(0.65);
-        light = hardwareMap.get(Servo.class, "light");
-        light.setPosition(0.277); //red
+        light1 = hardwareMap.get(Servo.class, "light1");
+        light1.setPosition(0.277); //red
+        light2 = hardwareMap.get(Servo.class, "light2");
+        light2.setPosition(0.277); //red
         hood = hardwareMap.get(Servo.class, "hood");
         hood.setPosition(getHoodPositionFromDegrees(60));
         analogEncoder = hardwareMap.get(AnalogInput.class, "analogEncoder");
@@ -225,12 +228,14 @@ public class robotControl {
 
         if (Math.abs(error) < 1.0) { //won't move if turret is within 1 degree
             turret.setPower(0);
-            light.setPosition(0.5); //green
+            light1.setPosition(0.5); //green
+            light2.setPosition(0.5); //green
         }
         else {
             turretPower = Range.clip(turretPower, -1.0, 1.0);
             turret.setPower(turretPower);
-            light.setPosition(0.277); //red
+            light1.setPosition(0.277); //red
+            light2.setPosition(0.277); //red
         }
 
         //control hood
