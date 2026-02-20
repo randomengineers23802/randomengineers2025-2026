@@ -49,6 +49,7 @@ public class robotControl {
     private static final double hoodMinAngle = Math.toRadians(42); //ball exit angle
     private static final double hoodMaxAngle = Math.toRadians(72); //ball exit angle
     //will have to change what angles actually are, higher ball exit angle means smalled hood angle
+    public String turretState = "IDLE";
 
     public double flywheelVelocity;
     public double hoodAngleViewTest;
@@ -242,37 +243,80 @@ public class robotControl {
         hood.setPosition(shotParameters.hoodPosition);
 
         //control flywheel
+//        if (gamepad1.right_trigger > 0.2) {
+//            stopperClosed();
+//            setFlywheelVelocity(shotParameters.flywheelTicks);
+//            if (Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.97) {
+//                gamepad1.rumble(1.0, 1.0, 200);
+//            }
+//            if (gamepad1.right_bumper) {
+//                intakeOn();
+//            }
+//            else {
+//                intakeOff();
+//            }
+//            shootTimer.reset();
+//        }
+//        else if (shootTimer.seconds() < 1.0 && Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.97) {
+//            stopperOpen();
+//            intakeOn();
+//            setFlywheelVelocity(shotParameters.flywheelTicks);
+//        }
+//        else {
+//            stopperClosed();
+//            if (gamepad1.right_bumper) {
+//                intakeOn();
+//            }
+//            else {
+//                intakeOff();
+//            }
+//            setFlywheelVelocity(350); //idle speed
+//        }
+
         if (gamepad1.right_trigger > 0.2) {
-            stopperClosed();
-            setFlywheelVelocity(shotParameters.flywheelTicks);
-            if (Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.97) {
-                gamepad1.rumble(1.0, 1.0, 200);
-            }
-            if (gamepad1.right_bumper) {
-                intakeOn();
-            }
-            else {
-                intakeOff();
-            }
-            shootTimer.reset();
+            turretState = "CHARGING";
         }
-        else if (shootTimer.seconds() < 1.0 && Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.97) {
-            stopperOpen();
-            intakeOn();
-            setFlywheelVelocity(shotParameters.flywheelTicks);
+        else if (shootTimer.seconds() < 1.0) {
+            turretState = "SHOOTING";
         }
         else {
-            stopperClosed();
-            if (gamepad1.right_bumper) {
+            turretState = "IDLE";
+        }
+
+        switch (turretState) {
+            case "IDLE":
+                stopperClosed();
+                if (gamepad1.right_bumper) {
+                    intakeOn();
+                }
+                else {
+                    intakeOff();
+                }
+                setFlywheelVelocity(350); //idle speed
+                break;
+
+            case "CHARGING":
+                stopperClosed();
+                setFlywheelVelocity(shotParameters.flywheelTicks);
+                if (Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.97) {
+                    gamepad1.rumble(1.0, 1.0, 200);
+                }
+                if (gamepad1.right_bumper) {
+                    intakeOn();
+                }
+                else {
+                    intakeOff();
+                }
+                shootTimer.reset();
+                break;
+
+            case "SHOOTING":
+                stopperOpen();
                 intakeOn();
-            }
-            else {
-                intakeOff();
-            }
-            setFlywheelVelocity(350); //idle speed
+                setFlywheelVelocity(shotParameters.flywheelTicks);
+                break;
         }
     }
-
 
 //    public void relocalize() {
 //        LLResult result = limelight.getLatestResult();
