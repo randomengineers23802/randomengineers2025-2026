@@ -37,7 +37,7 @@ public class teleOpRed extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        robot.updateTurret();
+        robot.updateTurretTele();
         panelsTelemetry.addData("Shooter1", robot.Shooter1.getVelocity());
         panelsTelemetry.addData("Shooter2", robot.Shooter2.getVelocity());
         panelsTelemetry.update();

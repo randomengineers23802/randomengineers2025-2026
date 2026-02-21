@@ -49,7 +49,6 @@ public class robotControl {
     private static final double hoodMinAngle = Math.toRadians(42); //ball exit angle
     private static final double hoodMaxAngle = Math.toRadians(72); //ball exit angle
     //will have to change what angles actually are, higher ball exit angle means smalled hood angle
-    public String turretState = "IDLE";
 
     public double flywheelVelocity;
     public double hoodAngleViewTest;
@@ -205,7 +204,7 @@ public class robotControl {
         hood.setPosition(shotParameters.hoodPosition);
     }
 
-    public void updateTurret() {
+    public void updateTurretTele() {
         //rotate turret
         ShotParameters shotParameters = calculateShotVectorAndTurret(follower.getPose());
         double currentTurretAngle = analogEncoder.getVoltage() / 3.3 * 360;
@@ -274,39 +273,81 @@ public class robotControl {
 //        }
 
         if (gamepad1.right_trigger > 0.2) {
-            turretState = "CHARGING";
+            turretStateUpdate("CHARGING", shotParameters);
+            if (gamepad1.right_bumper) {
+                intakeOn();
+            }
+            else {
+                intakeOff();
+            }
         }
         else if (shootTimer.seconds() < 1.0) {
-            turretState = "SHOOTING";
+            turretStateUpdate("SHOOTING", shotParameters);
+            if (Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.97) {
+                gamepad1.rumble(1.0, 1.0, 200);
+            }
+            if (gamepad1.right_bumper) {
+                intakeOn();
+            }
+            else {
+                intakeOff();
+            }
         }
         else {
-            turretState = "IDLE";
+            turretStateUpdate("IDLE", shotParameters);
+        }
+    }
+
+    public void updateTurretAuto(String turretState) {
+        //rotate turret
+        ShotParameters shotParameters = calculateShotVectorAndTurret(follower.getPose());
+        double currentTurretAngle = analogEncoder.getVoltage() / 3.3 * 360;
+        //double error = shotParameters.turretAngle - currentTurretAngle;
+
+        //should snap around at 270 instead of 0
+        double targetAngle = shotParameters.turretAngle;
+        double shiftedCurrent = (currentTurretAngle + 90) % 360;
+        double shiftedTarget = (targetAngle + 90) % 360;
+        double error = shiftedTarget - shiftedCurrent;
+
+        double dt = turretTimer.seconds();
+        turretTimer.reset();
+        double derivative = 0;
+        if (dt > 0.001) {
+            derivative = (error - lastError) / dt;
+        }
+        lastError = error;
+        double feedforward = Math.signum(error) * aimTurretPIDF.f;
+        double turretPower = (error * aimTurretPIDF.p) + (derivative * aimTurretPIDF.d) + feedforward;
+
+        if (Math.abs(error) < 1.0) { //won't move if turret is within 1 degree
+            turret.setPower(0);
+            light1.setPosition(0.5); //green
+            light2.setPosition(0.5); //green
+        }
+        else {
+            turretPower = Range.clip(turretPower, -1.0, 1.0);
+            turret.setPower(turretPower);
+            light1.setPosition(0.277); //red
+            light2.setPosition(0.277); //red
         }
 
+        //control hood
+        hood.setPosition(shotParameters.hoodPosition);
+
+        turretStateUpdate(turretState, shotParameters);
+    }
+
+    public void turretStateUpdate(String turretState, ShotParameters shotParameters) {
         switch (turretState) {
             case "IDLE":
                 stopperClosed();
-                if (gamepad1.right_bumper) {
-                    intakeOn();
-                }
-                else {
-                    intakeOff();
-                }
                 setFlywheelVelocity(350); //idle speed
                 break;
 
             case "CHARGING":
                 stopperClosed();
                 setFlywheelVelocity(shotParameters.flywheelTicks);
-                if (Shooter1.getVelocity() > shotParameters.flywheelTicks * 0.97) {
-                    gamepad1.rumble(1.0, 1.0, 200);
-                }
-                if (gamepad1.right_bumper) {
-                    intakeOn();
-                }
-                else {
-                    intakeOff();
-                }
                 shootTimer.reset();
                 break;
 

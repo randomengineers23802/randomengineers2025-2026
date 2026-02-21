@@ -17,13 +17,9 @@ import org.firstinspires.ftc.teamcode.control.robotControl;
 @TeleOp(name = "flywheelTuner", group = "TeleOp")
 public class flywheelTuner extends OpMode {
     private Follower follower;
-    private boolean automatedDrive;
     private TelemetryManager panelsTelemetry;
-    private boolean shooting = false;
     private Pose currentPose;
     private robotControl robot;
-    private ElapsedTime timer = new ElapsedTime();
-    private boolean prevRightTrigger = false;
     private final Pose startPose = new Pose(8.90625, 8.5625, Math.toRadians(90));
     public static double flyWheelTicks = 0;
     public static double hoodPosition = 0;
@@ -41,7 +37,6 @@ public class flywheelTuner extends OpMode {
 
     @Override
     public void start() {
-        follower.startTeleopDrive();
         robot.intakeOff();
     }
 
@@ -63,5 +58,6 @@ public class flywheelTuner extends OpMode {
         robot.Shooter1.setVelocity(flyWheelTicks);
         robot.Shooter2.setVelocity(flyWheelTicks);
         robot.hood.setPosition(hoodPosition);
+        robot.stopper.setPosition(stopperPosition);
     }
 }
