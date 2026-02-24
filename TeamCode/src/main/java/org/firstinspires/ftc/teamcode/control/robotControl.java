@@ -454,7 +454,7 @@ public class robotControl {
     public Vector robotToGoalVector(Pose currentPose) {
         double dx = targetPose.getX() - currentPose.getX();
         double dy = targetPose.getY() - currentPose.getY();
-        return new Vector(dx, dy);
+        return new Vector(new Pose(dx, dy));
     }
 
     public static double getFlywheelTicksFromVelocity(double velocity) {
