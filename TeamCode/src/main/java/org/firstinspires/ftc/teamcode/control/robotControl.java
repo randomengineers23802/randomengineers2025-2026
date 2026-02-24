@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.util.Range;
+import com.pedropathing.math.Vector;
 
 public class robotControl {
 
@@ -20,8 +21,7 @@ public class robotControl {
     private DcMotor belt ;
     private Servo BlueBoi;
     private Follower follower;
-    public double targetGoalX;
-    public double targetGoalY;
+    private Pose goalTarget;
     private ElapsedTime timer = new ElapsedTime();
     private double lastError = 0;
     private double arcRadius = 80; //guess will need to change later
@@ -55,8 +55,8 @@ public class robotControl {
 
     public double autoAim() {
         Pose currentPose = follower.getPose();
-        double distanceX = targetGoalX - currentPose.getX();
-        double distanceY = targetGoalY - currentPose.getY();
+        double distanceX = goalTarget.getX() - currentPose.getX();
+        double distanceY = goalTarget.getY() - currentPose.getY();
         double angleToGoal = Math.atan2(distanceY, distanceX) + Math.PI;
 
         double error = angleToGoal - currentPose.getHeading();
@@ -83,12 +83,12 @@ public class robotControl {
     public Pose closestPoseOnArc() {
         Pose currentPose = follower.getPose();
 
-        double distanceX = currentPose.getX() - targetGoalX;
-        double distanceY = currentPose.getY() - targetGoalY;
+        double distanceX = currentPose.getX() - goalTarget.getX();
+        double distanceY = currentPose.getY() - goalTarget.getY();
         double distanceToCenter = Math.hypot(distanceX, distanceY);
 
-        double closestPointX = targetGoalX + (distanceX / distanceToCenter) * arcRadius;
-        double closestPointY = targetGoalY + (distanceY / distanceToCenter) * arcRadius;
+        double closestPointX = goalTarget.getX() + (distanceX / distanceToCenter) * arcRadius;
+        double closestPointY = goalTarget.getY() + (distanceY / distanceToCenter) * arcRadius;
         double angleToGoal = Math.atan2(closestPointY, closestPointX) + Math.PI;
         Pose arcTargetPose = new Pose(closestPointX, closestPointY, angleToGoal);
         return arcTargetPose;
@@ -116,14 +116,10 @@ public class robotControl {
     public void setAlliance(String goalColor) {
         switch (goalColor) {
             case "blue":
-                limelight.pipelineSwitch(0);
-                targetGoalX = 4;
-                targetGoalY = 135;
+                goalTarget = new Pose(4, 135);
                 break;
             case "red":
-                limelight.pipelineSwitch(1);
-                targetGoalX = 140;
-                targetGoalY = 135;
+                goalTarget = new Pose(140, 135);
                 break;
         }
     }
