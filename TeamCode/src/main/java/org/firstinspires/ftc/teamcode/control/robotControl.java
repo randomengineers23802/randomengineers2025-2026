@@ -36,7 +36,7 @@ public class robotControl {
     private ElapsedTime turretTimer = new ElapsedTime();
     private double lastError = 0;
     private double lastEncoderAngle = 0;
-    private AnalogInput analogEncoder;
+    public AnalogInput analogEncoder;
     private boolean prevX = false;
     private int rotationCounter;
     private double gearRatio = 20.0 / 50.0;
@@ -66,12 +66,12 @@ public class robotControl {
         Shooter1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         Shooter1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
         Shooter2 = hardwareMap.get(DcMotorEx.class, "Shooter2");
-        Shooter2.setDirection(DcMotorEx.Direction.FORWARD);
+        Shooter2.setDirection(DcMotorEx.Direction.REVERSE);
         Shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         Shooter2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
         intake = hardwareMap.get(DcMotor.class, "intake");
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        turret = hardwareMap.get(DcMotor.class, "belt");
+        turret = hardwareMap.get(DcMotor.class, "turret");
         turret.setDirection(DcMotor.Direction.FORWARD);
         stopper = hardwareMap.get(Servo.class, "stopper");
         stopper.setPosition(0.65);
@@ -201,7 +201,7 @@ public class robotControl {
         }
 
         //control hood
-        hood.setPosition(shotParameters.hoodPosition);
+        //hood.setPosition(shotParameters.hoodPosition);
     }
 
     public void updateTurretTele() {
