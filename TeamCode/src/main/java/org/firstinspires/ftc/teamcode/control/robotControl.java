@@ -24,7 +24,14 @@ public class robotControl {
     private Pose goalTarget;
     private ElapsedTime timer = new ElapsedTime();
     private double lastError = 0;
-    private double arcRadius = 80; //guess will need to change later
+
+    private static final double flywheelOffset = 0;
+    private static final double flywheelMinSpeed = 1000;
+    private static final double flywheelMaxSpeed = 1080;
+    private static final double scoreHeight = 26;
+    private static final double passthroughPointRadius = 5;
+
+    public double flywheelInchesPerSec;
 
     PIDFCoefficients shooterLPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.875);
     PIDFCoefficients shooterRPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.62);
@@ -73,25 +80,36 @@ public class robotControl {
         double feedForward = Math.signum(error) * aimPIDF.f;
         double aimPower = (error * aimPIDF.p) + (derivative * aimPIDF.d) + feedForward;
 
-        if (Math.abs(error) < Math.toRadians(1.0)) //won't move if robot is within 1 degree
+        if (Math.abs(error) < Math.toRadians(1.0))
             return 0;
         else {
             return Range.clip(aimPower, -1.0, 1.0);
         }
     }
 
-    public Pose closestPoseOnArc() {
+    public ShotParameters updateShooting() {
         Pose currentPose = follower.getPose();
+        ShotParameters shotParameters = calculateShotVectorAndTurret(currentPose);
 
-        double distanceX = currentPose.getX() - goalTarget.getX();
-        double distanceY = currentPose.getY() - goalTarget.getY();
-        double distanceToCenter = Math.hypot(distanceX, distanceY);
+        double error = shotParameters.heading - currentPose.getHeading();
+        while (error > Math.PI) error -= 2 * Math.PI;
+        while (error < -Math.PI) error += 2 * Math.PI;
+        double dt = timer.seconds();
+        timer.reset();
 
-        double closestPointX = goalTarget.getX() + (distanceX / distanceToCenter) * arcRadius;
-        double closestPointY = goalTarget.getY() + (distanceY / distanceToCenter) * arcRadius;
-        double angleToGoal = Math.atan2(closestPointY, closestPointX) + Math.PI;
-        Pose arcTargetPose = new Pose(closestPointX, closestPointY, angleToGoal);
-        return arcTargetPose;
+        double derivative = 0;
+        if (dt > 0.001) {
+            derivative = (error - lastError) / dt;
+            lastError = error;
+        }
+        double feedForward = Math.signum(error) * aimPIDF.f;
+        double aimPower = (error * aimPIDF.p) + (derivative * aimPIDF.d) + feedForward;
+
+        if (Math.abs(error) < Math.toRadians(1.0))
+            return new ShotParameters(shotParameters.flywheelTicks, 0);
+        else {
+            return new ShotParameters(shotParameters.flywheelTicks, Range.clip(aimPower, -1.0, 1.0));
+        }
     }
 
     public void setShooterVelocity(String range) {
@@ -106,6 +124,11 @@ public class robotControl {
         }
         ShooterL.setVelocity(targetVelocity);
         ShooterR.setVelocity(targetVelocity);
+    }
+
+    public void setShooterVelocity(double ticks) {
+        ShooterL.setVelocity(ticks);
+        ShooterR.setVelocity(ticks);
     }
 
     public void shooterStop() {
@@ -124,27 +147,51 @@ public class robotControl {
         }
     }
 
-    public void beltOn() {
-        belt.setPower(0.8);
+    public Vector robotToGoalVector(Pose currentPose) {
+        double dx = goalTarget.getX() - currentPose.getX();
+        double dy = goalTarget.getY() - currentPose.getY();
+        return new Vector(new Pose(dx, dy));
     }
 
-    public void beltOff() {
-        belt.setPower(0.0);
+    public static double getFlywheelTicksFromVelocity(double velocity) {
+        return Range.clip(94.501 * velocity - 187.96 + flywheelOffset, flywheelMinSpeed, flywheelMaxSpeed); // originally divided velocity by 12
     }
 
-    public void intakeOn() {
-        intake.setPower(1.0);
+    public ShotParameters calculateShotVectorAndTurret(Pose currentPose) {
+        Vector robotToGoalVector = robotToGoalVector(currentPose);
+        double g = 32.174 * 12;
+        double x = robotToGoalVector.getMagnitude() - passthroughPointRadius;
+        double y = scoreHeight;
+
+        double fixedExitAngle = Math.toRadians(48.3);
+        double cosTheta = Math.cos(fixedExitAngle);
+        double flywheelSpeed = Math.sqrt((g * Math.pow(x, 2)) / (2 * Math.pow(cosTheta, 2) * (x * Math.tan(fixedExitAngle) - y)));
+
+        Vector robotVelocity = follower.getVelocity();
+        double coordinateTheta = robotVelocity.getTheta() - robotToGoalVector.getTheta();
+        double parallelComponent = -Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
+        double perpendicularComponent = Math.sin(coordinateTheta) * robotVelocity.getMagnitude();
+
+        double vz = flywheelSpeed * Math.sin(fixedExitAngle);
+        double time = x / (flywheelSpeed * Math.cos(fixedExitAngle));
+        double ivr = x / time + parallelComponent;
+        double nvr = Math.sqrt(ivr * ivr + perpendicularComponent * perpendicularComponent);
+
+        flywheelSpeed = Math.sqrt(Math.pow(vz, 2) + Math.pow(nvr, 2));
+        flywheelInchesPerSec = flywheelSpeed;
+
+        double turretVelCompOffset = Math.atan2(perpendicularComponent, ivr);
+
+        double heading = robotToGoalVector.getTheta() - turretVelCompOffset + Math.PI;
+        double flywheelTicks = getFlywheelTicksFromVelocity(flywheelSpeed);
+
+        return new ShotParameters(flywheelTicks, heading);
     }
 
-    public void intakeOff() {
-        intake.setPower(0.0);
-    }
-
-    public void blueBoiOpen() {
-        BlueBoi.setPosition(1.0);
-    }
-
-    public void blueBoiClosed() {
-        BlueBoi.setPosition(0.65);
-    }
+    public void beltOn() { belt.setPower(0.8); }
+    public void beltOff() { belt.setPower(0.0); }
+    public void intakeOn() { intake.setPower(1.0); }
+    public void intakeOff() { intake.setPower(0.0); }
+    public void blueBoiOpen() { BlueBoi.setPosition(1.0); }
+    public void blueBoiClosed() { BlueBoi.setPosition(0.65); }
 }
