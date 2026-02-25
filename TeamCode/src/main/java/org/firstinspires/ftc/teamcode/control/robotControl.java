@@ -35,11 +35,7 @@ public class robotControl {
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime turretTimer = new ElapsedTime();
     private double lastError = 0;
-    private double lastEncoderAngle = 0;
     public AnalogInput analogEncoder;
-    private boolean prevX = false;
-    private int rotationCounter;
-    private double gearRatio = 20.0 / 50.0;
     private static final double flywheelOffset = 0; //if shooting consistently to far/short
     private static final double flywheelMinSpeed = 1000; //ticks
     private static final double flywheelMaxSpeed = 1080; //ticks
@@ -123,42 +119,6 @@ public class robotControl {
         double angleToGoal = robotToGoalVector(currentPose).getTheta();
         double turretLocalTarget = angleToGoal - currentPose.getHeading();
         double currentTurretAngle = analogEncoder.getVoltage() / 3.3 * 2 * Math.PI;
-        double error = turretLocalTarget - currentTurretAngle;
-        double dt = turretTimer.seconds();
-        turretTimer.reset();
-        double derivative = 0;
-        if (dt > 0.001) {
-            derivative = (error - lastError) / dt;
-            lastError = error;
-        }
-        double feedforward = Math.signum(error) * aimTurretPIDF.f;
-        double turretPower = (error * aimTurretPIDF.p) + (derivative * aimTurretPIDF.d) + feedforward;
-
-        if (Math.abs(error) < Math.toRadians(1.0)) //won't move if turret is within 1 degree
-            turret.setPower(0);
-        else {
-            turretPower = Range.clip(turretPower, -1.0, 1.0);
-            turret.setPower(turretPower);
-        }
-    }
-
-    public void aimTurretTest() {
-        Pose currentPose = follower.getPose();
-        double distanceX = targetPose.getX() - currentPose.getX();
-        double distanceY = targetPose.getY() - currentPose.getY();
-        double angleToGoal = Math.atan2(distanceY, distanceX);
-        double turretLocalTarget = angleToGoal - currentPose.getHeading();
-        double currentEncoderAngle = analogEncoder.getVoltage() / 3.3 * 360;
-        if (lastEncoderAngle - currentEncoderAngle > 270) {
-            rotationCounter += 1;
-        }
-        else if (lastEncoderAngle - currentEncoderAngle < -270) {
-            rotationCounter -= 1;
-        }
-        double currentTurretAngle = ((rotationCounter * 360) + currentEncoderAngle) * gearRatio;
-
-
-        lastEncoderAngle = currentEncoderAngle;
         double error = turretLocalTarget - currentTurretAngle;
         double dt = turretTimer.seconds();
         turretTimer.reset();
@@ -374,9 +334,7 @@ public class robotControl {
 //    }
 
     public void relocalize() {
-        boolean xPressed = gamepad1.x;
-        boolean xWasPressed = xPressed && !prevX;
-        if (xWasPressed && follower.getVelocity().getMagnitude() < 1.5) {
+        if (gamepad1.xWasPressed() && follower.getVelocity().getMagnitude() < 1.5) {
             limelight.updateRobotOrientation(Math.toDegrees(follower.getHeading()));
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) {
@@ -395,7 +353,6 @@ public class robotControl {
                 gamepad1.rumble(1, 1, 200);
             }
         }
-        prevX = xPressed;
     }
 
     public void setShooterVelocity(String range) {
