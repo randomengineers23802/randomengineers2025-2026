@@ -26,10 +26,10 @@ public class robotControl {
     private double lastError = 0;
 
     private static final double flywheelOffset = 0;
-    private static final double flywheelMinSpeed = 1000;
-    private static final double flywheelMaxSpeed = 1080;
+    private static final double flywheelMinSpeed = 0;
+    private static final double flywheelMaxSpeed = 2000;
     private static final double scoreHeight = 26;
-    private static final double passthroughPointRadius = 5;
+    private static final double passthroughPointRadius = 3;
 
     public double flywheelInchesPerSec;
 
@@ -139,10 +139,10 @@ public class robotControl {
     public void setAlliance(String goalColor) {
         switch (goalColor) {
             case "blue":
-                goalTarget = new Pose(4, 135);
+                goalTarget = new Pose(4, 140);
                 break;
             case "red":
-                goalTarget = new Pose(140, 135);
+                goalTarget = new Pose(140, 140);
                 break;
         }
     }
@@ -154,7 +154,7 @@ public class robotControl {
     }
 
     public static double getFlywheelTicksFromVelocity(double velocity) {
-        return Range.clip(94.501 * velocity - 187.96 + flywheelOffset, flywheelMinSpeed, flywheelMaxSpeed); // originally divided velocity by 12
+        return Range.clip((0.0176676 * Math.pow(velocity, 2)) - (5.11447 * velocity) + 1366.42995 + flywheelOffset, flywheelMinSpeed, flywheelMaxSpeed); // originally divided velocity by 12
     }
 
     public ShotParameters calculateShotVectorAndTurret(Pose currentPose) {

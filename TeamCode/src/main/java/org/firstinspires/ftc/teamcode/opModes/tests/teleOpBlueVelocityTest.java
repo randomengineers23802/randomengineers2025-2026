@@ -42,7 +42,7 @@ public class teleOpBlueVelocityTest extends OpMode {
     private void Shoot() {
         robot.beltOn();
         robot.intakeOn();
-        follower.holdPoint(currentPose);
+        //follower.holdPoint(currentPose);
         double t = timer.seconds();
         if (t <= 1.0)
             robot.blueBoiOpen();
@@ -51,7 +51,7 @@ public class teleOpBlueVelocityTest extends OpMode {
             robot.beltOff();
             shooting = false;
             automatedDrive = false;
-            follower.startTeleopDrive();
+            //follower.startTeleopDrive();
         }
     }
 
@@ -67,14 +67,15 @@ public class teleOpBlueVelocityTest extends OpMode {
     public void loop() {
         follower.update();
         ShotParameters shotParameters = robot.updateShooting();
-        if (gamepad1.dpadUpWasPressed())
-            customTicks += 20;
-        else if (gamepad1.dpadDownWasPressed())
-            customTicks -= 20;
-        robot.setShooterVelocity(customTicks);
-        //robot.setShooterVelocity(shotParameters.flywheelTicks);
+//        if (gamepad1.dpadUpWasPressed())
+//            customTicks += 20;
+//        else if (gamepad1.dpadDownWasPressed())
+//            customTicks -= 20;
+        //robot.setShooterVelocity(customTicks);
+        robot.setShooterVelocity(shotParameters.flywheelTicks);
 
         panelsTelemetry.addData("distance from goal", robot.robotToGoalVector(follower.getPose()).getMagnitude());
+        panelsTelemetry.addData("Target ticks", shotParameters.flywheelTicks);
         panelsTelemetry.addData("ShooterL ticks", robot.ShooterL.getVelocity());
         panelsTelemetry.addData("ShooterR ticks", robot.ShooterR.getVelocity());
         panelsTelemetry.addData("calculated inches per second", robot.flywheelInchesPerSec);

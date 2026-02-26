@@ -4,8 +4,8 @@ public class ShotParameters {
     public final double flywheelTicks;
     public final double heading;
 
-    public ShotParameters(double flywheelSpeed, double heading) {
-        this.flywheelTicks = robotControl.getFlywheelTicksFromVelocity(flywheelSpeed);
+    public ShotParameters(double flywheelTicks, double heading) {
+        this.flywheelTicks = flywheelTicks;
         this.heading = heading;
     }
 }
