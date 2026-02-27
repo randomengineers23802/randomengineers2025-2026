@@ -5,18 +5,19 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.control.ShotParameters;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.control.passthrough;
 import org.firstinspires.ftc.teamcode.control.robotControl;
 
 @Configurable
-@TeleOp(name = "teleOpBlueVelocityTest", group = "TeleOp")
-public class teleOpBlueVelocityTest extends OpMode {
+@Disabled
+@TeleOp(name = "teleOpBlue", group = "TeleOp")
+public class teleOpBlueOld extends OpMode {
     private Follower follower;
     private boolean automatedDrive;
     private TelemetryManager panelsTelemetry;
@@ -27,7 +28,6 @@ public class teleOpBlueVelocityTest extends OpMode {
     private robotControl robot;
     private ElapsedTime timer = new ElapsedTime();
     private boolean prevRightTrigger = false;
-    public double customTicks = 0;
 
     @Override
     public void init() {
@@ -42,7 +42,7 @@ public class teleOpBlueVelocityTest extends OpMode {
     private void Shoot() {
         robot.beltOn();
         robot.intakeOn();
-        //follower.holdPoint(currentPose);
+        follower.holdPoint(currentPose);
         double t = timer.seconds();
         if (t <= 1.0)
             robot.blueBoiOpen();
@@ -51,7 +51,7 @@ public class teleOpBlueVelocityTest extends OpMode {
             robot.beltOff();
             shooting = false;
             automatedDrive = false;
-            //follower.startTeleopDrive();
+            follower.startTeleopDrive();
         }
     }
 
@@ -66,21 +66,9 @@ public class teleOpBlueVelocityTest extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        ShotParameters shotParameters = robot.updateShooting();
-//        if (gamepad1.dpadUpWasPressed())
-//            customTicks += 20;
-//        else if (gamepad1.dpadDownWasPressed())
-//            customTicks -= 20;
-        //robot.setShooterVelocity(customTicks);
-        robot.setShooterVelocity(shotParameters.flywheelTicks);
-
-        panelsTelemetry.addData("distance from goal", robot.robotToGoalVector(follower.getPose()).getMagnitude());
-        panelsTelemetry.addData("Target ticks", shotParameters.flywheelTicks);
-        panelsTelemetry.addData("ShooterL ticks", robot.ShooterL.getVelocity());
-        panelsTelemetry.addData("ShooterR ticks", robot.ShooterR.getVelocity());
-        panelsTelemetry.addData("calculated inches per second", robot.flywheelInchesPerSec);
-
         panelsTelemetry.update();
+        panelsTelemetry.addData("ShooterL", robot.ShooterL.getVelocity());
+        panelsTelemetry.addData("ShooterR", robot.ShooterR.getVelocity());
 
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y;
@@ -88,12 +76,12 @@ public class teleOpBlueVelocityTest extends OpMode {
         if (gamepad1.left_trigger > 0.2) {
             if (!automatedDrive) {
                 if (!slowMode) {
-                    follower.setTeleOpDrive(y, x, shotParameters.heading, false);
+                    follower.setTeleOpDrive(y, x, robot.autoAim(), false);
                 } else {
                     follower.setTeleOpDrive(
                             y * slowModeMultiplier,
                             x * slowModeMultiplier,
-                            shotParameters.heading,
+                            robot.autoAim(),
                             false
                     );
                 }
@@ -112,6 +100,14 @@ public class teleOpBlueVelocityTest extends OpMode {
                     );
                 }
             }
+        }
+
+        if (gamepad1.dpad_left) {
+            robot.setShooterVelocity("far");
+        }
+
+        if (gamepad1.dpad_right) {
+            robot.setShooterVelocity("close");
         }
 
         if (gamepad1.right_bumper) {
