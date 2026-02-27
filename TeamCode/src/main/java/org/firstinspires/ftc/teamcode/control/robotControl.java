@@ -26,16 +26,16 @@ public class robotControl {
     private double lastError = 0;
 
     private static final double flywheelOffset = 0;
-    private static final double flywheelMinSpeed = 0;
-    private static final double flywheelMaxSpeed = 2000;
+    private static final double flywheelMinSpeed = 1020;
+    private static final double flywheelMaxSpeed = 1380;
     private static final double scoreHeight = 26;
     private static final double passthroughPointRadius = 3;
 
     public double flywheelInchesPerSec;
 
-    PIDFCoefficients shooterLPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.875);
+    PIDFCoefficients shooterLPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.875); //try running with just f, see if ticks are below or above target
     PIDFCoefficients shooterRPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.62);
-    PIDFCoefficients aimPIDF = new PIDFCoefficients(1.2, 0.0, 0.1, 0.02);
+    PIDFCoefficients aimPIDF = new PIDFCoefficients(1.2, 0.0, 0.1, 0.02); //may need to increase for shooting on the move
 
     public robotControl(HardwareMap hardwareMap, Follower follower) {
         this.follower = follower;
@@ -154,7 +154,7 @@ public class robotControl {
     }
 
     public static double getFlywheelTicksFromVelocity(double velocity) {
-        return Range.clip((0.0176676 * Math.pow(velocity, 2)) - (5.11447 * velocity) + 1366.42995 + flywheelOffset, flywheelMinSpeed, flywheelMaxSpeed); // originally divided velocity by 12
+        return Range.clip((0.0176676 * Math.pow(velocity, 2)) - (5.11447 * velocity) + 1366.42995 + flywheelOffset, flywheelMinSpeed, flywheelMaxSpeed);
     }
 
     public ShotParameters calculateShotVectorAndTurret(Pose currentPose) {
