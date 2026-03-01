@@ -29,7 +29,7 @@ public class farRedShort extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(87.125, 8.5625, Math.toRadians(0)));
+        follower.setStartingPose(new Pose(87.125, 8.5625, Math.toRadians(180)));
         paths = new Paths(follower);
         robot = new robotControl(hardwareMap, follower);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -84,7 +84,7 @@ public class farRedShort extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(87.125, 8.563), new Pose(86.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(248))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(248))
                     .build();
 
             Path2 = follower
