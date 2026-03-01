@@ -28,8 +28,8 @@ public class robotControl {
     private DcMotor turret;
     public Servo stopper;
     public Servo hood;
-    private Servo light1;
-    private Servo light2;
+    //private Servo light1;
+    //private Servo light2;
     private Follower follower;
     private Pose targetPose = new Pose(0, 0);
     private ElapsedTime shootTimer = new ElapsedTime();
@@ -41,28 +41,29 @@ public class robotControl {
     private static final double flywheelMaxSpeed = 1080; //ticks
     private static final double scoreHeight = 26; //distance from flywheel to goal
     private static final double scoreAngle = Math.toRadians(-30);
-    private static final double passthroughPointRadius = 5;//radius that robot will aim, based of of targetPose
-    private static final double hoodMinAngle = Math.toRadians(42); //ball exit angle
-    private static final double hoodMaxAngle = Math.toRadians(72); //ball exit angle
+    private static final double passthroughPointRadius = 3;//radius that robot will aim, based of of targetPose
+    private static final double hoodMinAngle = Math.toRadians(90 - 38); //ball exit angle
+    private static final double hoodMaxAngle = Math.toRadians(90 - 19); //ball exit angle
     //will have to change what angles actually are, higher ball exit angle means smalled hood angle
 
     public double flywheelVelocity;
     public double hoodAngleViewTest;
+    public double clampedHoodAngleViewTest;
 
-    PIDFCoefficients shooterPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.875);
+    PIDFCoefficients shooterPIDF = new PIDFCoefficients(60, 0.0, 0.0, 17.1);
     //PIDFCoefficients aimPIDF = new PIDFCoefficients(1.2, 0.0, 0.1, 0.02);
-    PIDFCoefficients aimTurretPIDF = new PIDFCoefficients(1.2, 0.0, 0.1, 0.02);
+    PIDFCoefficients aimTurretPIDF = new PIDFCoefficients(0.1, 0.0, 0.0, 0.02);
 
 
     public robotControl(HardwareMap hardwareMap, Follower follower, Gamepad gamepad1) {
         this.follower = follower;
         this.gamepad1 = gamepad1;
         Shooter1 = hardwareMap.get(DcMotorEx.class, "Shooter1");
-        Shooter1.setDirection(DcMotorEx.Direction.FORWARD);
+        Shooter1.setDirection(DcMotorEx.Direction.REVERSE);
         Shooter1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         Shooter1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
         Shooter2 = hardwareMap.get(DcMotorEx.class, "Shooter2");
-        Shooter2.setDirection(DcMotorEx.Direction.REVERSE);
+        Shooter2.setDirection(DcMotorEx.Direction.FORWARD);
         Shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         Shooter2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterPIDF);
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -70,13 +71,13 @@ public class robotControl {
         turret = hardwareMap.get(DcMotor.class, "turret");
         turret.setDirection(DcMotor.Direction.FORWARD);
         stopper = hardwareMap.get(Servo.class, "stopper");
-        stopper.setPosition(0.65);
-        light1 = hardwareMap.get(Servo.class, "light1");
-        light1.setPosition(0.277); //red
-        light2 = hardwareMap.get(Servo.class, "light2");
-        light2.setPosition(0.277); //red
+        stopperClosed();
+//        light1 = hardwareMap.get(Servo.class, "light1");
+//        light1.setPosition(0.277); //red
+//        light2 = hardwareMap.get(Servo.class, "light2");
+//        light2.setPosition(0.277); //red
         hood = hardwareMap.get(Servo.class, "hood");
-        hood.setPosition(getHoodPositionFromDegrees(60));
+        hood.setPosition(getHoodPositionFromDegrees(67.4));
         analogEncoder = hardwareMap.get(AnalogInput.class, "analogEncoder");
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -188,14 +189,14 @@ public class robotControl {
 
         if (Math.abs(error) < 1.0) { //won't move if turret is within 1 degree
             turret.setPower(0);
-            light1.setPosition(0.5); //green
-            light2.setPosition(0.5); //green
+//            light1.setPosition(0.5); //green
+//            light2.setPosition(0.5); //green
         }
         else {
             turretPower = Range.clip(turretPower, -1.0, 1.0);
             turret.setPower(turretPower);
-            light1.setPosition(0.277); //red
-            light2.setPosition(0.277); //red
+//            light1.setPosition(0.277); //red
+//            light2.setPosition(0.277); //red
         }
 
         //control hood
@@ -282,14 +283,14 @@ public class robotControl {
 
         if (Math.abs(error) < 1.0) { //won't move if turret is within 1 degree
             turret.setPower(0);
-            light1.setPosition(0.5); //green
-            light2.setPosition(0.5); //green
+//            light1.setPosition(0.5); //green
+//            light2.setPosition(0.5); //green
         }
         else {
             turretPower = Range.clip(turretPower, -1.0, 1.0);
             turret.setPower(turretPower);
-            light1.setPosition(0.277); //red
-            light2.setPosition(0.277); //red
+//            light1.setPosition(0.277); //red
+//            light2.setPosition(0.277); //red
         }
 
         //control hood
@@ -302,7 +303,7 @@ public class robotControl {
         switch (turretState) {
             case "IDLE":
                 stopperClosed();
-                setFlywheelVelocity(350); //idle speed
+                setFlywheelVelocity(460); //idle speed
                 break;
 
             case "CHARGING":
@@ -401,11 +402,11 @@ public class robotControl {
     }
 
     public void stopperOpen() {
-        stopper.setPosition(1.0);
+        stopper.setPosition(0.43);
     }
 
     public void stopperClosed() {
-        stopper.setPosition(0.65);
+        stopper.setPosition(0.15);
     }
 
     public Vector robotToGoalVector(Pose currentPose) {
@@ -419,7 +420,7 @@ public class robotControl {
     }
 
     public static double getHoodPositionFromDegrees(double degrees) {
-        return Range.clip(0.0226 * degrees - 0.7443, 0.0, 1.0);
+        return Range.clip(0.00483871 * degrees - 0.215161, 0.05, 0.11);
     }
 
     public ShotParameters calculateShotVectorAndTurret(Pose currentPose) {
@@ -431,7 +432,9 @@ public class robotControl {
         double a = scoreAngle;
 
         //calculate initial launch components
-        double hoodAngle = Range.clip(Math.atan(2 * y / x - Math.tan(a)), hoodMaxAngle, hoodMinAngle);
+        double hoodAngle = Range.clip(Math.atan(2 * y / x - Math.tan(a)), hoodMinAngle, hoodMaxAngle);
+        hoodAngleViewTest = Math.toDegrees(Math.atan(2 * y / x - Math.tan(a)));
+        clampedHoodAngleViewTest = Math.toDegrees(hoodAngle);
         double flywheelSpeed = Math.sqrt(g * x * x / (2 * Math.pow(Math.cos(hoodAngle), 2) * (x * Math.tan(hoodAngle) - y)));
 
         //get robot velocity and convert it into parallel and perpendicular components
@@ -448,8 +451,7 @@ public class robotControl {
         double ndr = nvr * time;
 
         //recalculate launch components
-        hoodAngle = Range.clip(Math.atan(vz / nvr), hoodMaxAngle, hoodMinAngle);
-        hoodAngleViewTest = Math.toDegrees(hoodAngle);
+        hoodAngle = Range.clip(Math.atan(vz / nvr), hoodMinAngle, hoodMaxAngle);
         flywheelSpeed = Math.sqrt(g * ndr * ndr / (2 * Math.pow(Math.cos(hoodAngle), 2) * (ndr * Math.tan(hoodAngle) - y)));
         flywheelVelocity = flywheelSpeed; //view calculated target velocity for testing purposes, will delete eventually
 
