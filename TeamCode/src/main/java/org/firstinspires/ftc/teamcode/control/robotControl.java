@@ -13,28 +13,30 @@ import com.qualcomm.robotcore.util.Range;
 import com.pedropathing.math.Vector;
 
 public class robotControl {
-
+//May need differnetn aiming depending on if auto was close or far starting position
     public DcMotorEx ShooterL;
     public DcMotorEx ShooterR;
     public Limelight3A limelight;
     private DcMotor intake;
     private DcMotor belt ;
     private Servo BlueBoi;
+    public Servo kickstand1;
+    public Servo kickstand2;
     private Follower follower;
     private Pose goalTarget;
     private ElapsedTime timer = new ElapsedTime();
     private double lastError = 0;
 
     private static final double flywheelOffset = 0;
-    private static final double flywheelMinSpeed = 1020;
-    private static final double flywheelMaxSpeed = 1380;
+    private static final double flywheelMinSpeed = 1040;
+    private static final double flywheelMaxSpeed = 1300;
     private static final double scoreHeight = 26;
-    private static final double passthroughPointRadius = 3;
+    private static final double passthroughPointRadius = 2;
 
     public double flywheelInchesPerSec;
 
-    PIDFCoefficients shooterLPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.875); //try running with just f, see if ticks are below or above target
-    PIDFCoefficients shooterRPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.62);
+    PIDFCoefficients shooterLPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.7541);
+    PIDFCoefficients shooterRPIDF = new PIDFCoefficients(60.0, 0.0, 0.0, 11.775);
     PIDFCoefficients aimPIDF = new PIDFCoefficients(1.2, 0.0, 0.1, 0.02); //may need to increase for shooting on the move
 
     public robotControl(HardwareMap hardwareMap, Follower follower) {
@@ -53,6 +55,8 @@ public class robotControl {
         belt.setDirection(DcMotor.Direction.REVERSE);
         BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
         BlueBoi.setPosition(0.65);
+        kickstand1 = hardwareMap.get(Servo.class, "kickstand1");
+        kickstand2 = hardwareMap.get(Servo.class, "kickstand2");
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0);
@@ -136,6 +140,24 @@ public class robotControl {
         ShooterR.setPower(0);
     }
 
+    public void kickstandPosition(double position) {
+        kickstand1.setPosition(position);
+        kickstand2.setPosition(position);
+    }
+
+    public void kickstandUp() {
+        kickstand1.setPosition(0.48);
+        kickstand2.setPosition(0.65);
+    }
+
+    public void kickstandDown() {
+        kickstand1.setPosition(0.96);
+        kickstand2.setPosition(0.15);
+    }
+
+    //kickstand up 1: 0.48 2: 0.65
+    //kickstand down 1: 0.96  2: 0.15
+
     public void setAlliance(String goalColor) {
         switch (goalColor) {
             case "blue":
@@ -154,7 +176,8 @@ public class robotControl {
     }
 
     public static double getFlywheelTicksFromVelocity(double velocity) {
-        return Range.clip((0.0176676 * Math.pow(velocity, 2)) - (5.11447 * velocity) + 1366.42995 + flywheelOffset, flywheelMinSpeed, flywheelMaxSpeed);
+        //return Range.clip((0.0176676 * Math.pow(velocity, 2)) - (5.11447 * velocity) + 1366.42995 + flywheelOffset, flywheelMinSpeed, flywheelMaxSpeed);
+        return Range.clip(3.33709 * velocity + 387.24308, flywheelMinSpeed, flywheelMaxSpeed);
     }
 
     public ShotParameters calculateShotVectorAndTurret(Pose currentPose) {
