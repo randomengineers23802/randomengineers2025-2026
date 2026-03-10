@@ -45,7 +45,7 @@ public class closeBlueTest extends OpMode {
     public void start() {
         robot.intakeOn();
         robot.setShooterVelocity("close");
-        robot.beltOn();
+        robot.beltOnShoot();
         robot.blueBoiClosed();
     }
 

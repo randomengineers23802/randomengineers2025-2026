@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.control.Alliance;
 import org.firstinspires.ftc.teamcode.control.ShotParameters;
 import org.firstinspires.ftc.teamcode.control.passthrough;
 import org.firstinspires.ftc.teamcode.control.robotControl;
@@ -21,18 +22,20 @@ public class teleOpRed extends OpMode {
     private robotControl robot;
     private ElapsedTime timer = new ElapsedTime();
     private boolean prevRightTrigger = false;
+    private boolean endgame;
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         follower.update();
         robot = new robotControl(hardwareMap, follower);
-        robot.setAlliance("red");
+        robot.setAlliance(Alliance.RED);
         follower.setStartingPose(passthrough.startPose);
+        robot.kickstandUp();
     }
 
     private void Shoot() {
-        robot.beltOn();
+        robot.beltOnShoot();
         robot.intakeOn();
         double t = timer.seconds();
         if (t <= 1.0)
@@ -48,13 +51,14 @@ public class teleOpRed extends OpMode {
         follower.startTeleopDrive();
         robot.intakeOff();
         robot.beltOff();
+        robot.setLightColor(1.0);
     }
 
     @Override
     public void loop() {
         follower.update();
         ShotParameters shotParameters = robot.updateShooting();
-        robot.setShooterVelocity(shotParameters.flywheelTicks);
+        if (!endgame) { robot.setShooterVelocity(shotParameters.flywheelTicks); }
 
         double x = -gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
@@ -84,13 +88,15 @@ public class teleOpRed extends OpMode {
             }
         }
 
-        if (gamepad1.right_bumper) {
-            robot.intakeOn();
-            robot.beltOn();
-        }
-        else if (!shooting) {
-            robot.intakeOff();
-            robot.beltOff();
+        if (!shooting) {
+            if (gamepad1.right_bumper) {
+                robot.intakeOn();
+                robot.beltOnIntake();
+            }
+            else {
+                robot.intakeOff();
+                robot.beltOff();
+            }
         }
 
         boolean rightTriggerPressed = gamepad1.right_trigger > 0.2;
@@ -109,6 +115,23 @@ public class teleOpRed extends OpMode {
         if (gamepad1.bWasPressed()) {
             shooting = false;
             robot.blueBoiClosed();
+            follower.startTeleopDrive();
+        }
+
+        if (gamepad1.yWasPressed()) {
+            follower.followPath(robot.endgamePark.get());
+            robot.shooterStop();
+            slowMode = true;
+            endgame = true;
+        }
+
+        if (gamepad1.dpadDownWasPressed()) {
+            robot.kickstandDown();
+            robot.setLightColor(0.444);
+        }
+        else if (gamepad1.dpadUpWasPressed()) {
+            robot.kickstandUp();
+            robot.setLightColor(1.0);
         }
 
         if (gamepad1.leftBumperWasPressed()) {

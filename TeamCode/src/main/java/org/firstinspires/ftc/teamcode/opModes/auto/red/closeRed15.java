@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.control.Alliance;
+import org.firstinspires.ftc.teamcode.control.ShotParameters;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.control.passthrough;
 import org.firstinspires.ftc.teamcode.control.robotControl;
@@ -34,6 +36,7 @@ public class closeRed15 extends OpMode {
         follower.setStartingPose(new Pose(119.500, 128.000, Math.toRadians(216.5)));
         paths = new Paths(follower);
         robot = new robotControl(hardwareMap, follower);
+        robot.setAlliance(Alliance.RED);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
@@ -42,8 +45,7 @@ public class closeRed15 extends OpMode {
     @Override
     public void start() {
         robot.intakeOn();
-        robot.setShooterVelocity("close");
-        robot.beltOn();
+        robot.beltOnShoot();
         robot.blueBoiClosed();
     }
 
@@ -51,6 +53,8 @@ public class closeRed15 extends OpMode {
     public void loop() {
         follower.update();
         pathState = autonomousPathUpdate();
+        ShotParameters shotParameters = robot.updateShooting();
+        robot.setShooterVelocity(shotParameters.flywheelTicks);
     }
 
     private void Shoot() {
@@ -116,7 +120,7 @@ public class closeRed15 extends OpMode {
                             new BezierCurve(
                                     new Pose(86.000, 80.000),
                                     new Pose(84.000, 69.000),
-                                    new Pose(137.000, 58.000)
+                                    new Pose(137.000, 57.000)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(224), Math.toRadians(400), 0.15)
 

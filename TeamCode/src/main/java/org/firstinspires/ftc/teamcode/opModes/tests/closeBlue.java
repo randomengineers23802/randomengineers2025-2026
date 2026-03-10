@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.auto.red;
+package org.firstinspires.ftc.teamcode.opModes.tests;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -11,15 +11,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.control.Alliance;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.control.passthrough;
 import org.firstinspires.ftc.teamcode.control.robotControl;
 import com.pedropathing.geometry.BezierCurve;
 
-@Autonomous(name = "closeRed", group = "Autonomous")
+@Autonomous(name = "closeBlue", group = "Autonomous")
 @Configurable
 @Disabled
-public class closeRed extends OpMode {
+public class closeBlue extends OpMode {
 
     private robotControl robot;
     private TelemetryManager panelsTelemetry;
@@ -32,9 +34,10 @@ public class closeRed extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(119.5, 128.0, Math.toRadians(216.5)));
+        follower.setStartingPose(new Pose(24.500, 128.000, Math.toRadians(323.5)));
         paths = new Paths(follower);
         robot = new robotControl(hardwareMap, follower);
+        robot.setAlliance(Alliance.BLUE);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
@@ -44,7 +47,7 @@ public class closeRed extends OpMode {
     public void start() {
         robot.intakeOn();
         robot.setShooterVelocity("close");
-        robot.beltOn();
+        robot.beltOnShoot();
         robot.blueBoiClosed();
     }
 
@@ -68,7 +71,8 @@ public class closeRed extends OpMode {
             double t = timer.seconds();
             if (t <= 1.0) {
                 robot.blueBoiOpen();
-            } else {
+            }
+            else {
                 robot.blueBoiClosed();
                 pathState++;
             }
@@ -94,23 +98,23 @@ public class closeRed extends OpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(119.500, 128.000), new Pose(86.000, 80.000))
+                            new BezierLine(new Pose(24.500, 128.000), new Pose(58.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(216.5), Math.toRadians(225.0))
+                    .setLinearHeadingInterpolation(Math.toRadians(323.5), Math.toRadians(318))
                     .build();
 
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(86.000, 80.000), new Pose(95.000, 84.000))
+                            new BezierLine(new Pose(58.000, 80.000), new Pose(49.000, 84.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(225.0), Math.toRadians(0.0))
+                    .setLinearHeadingInterpolation(Math.toRadians(318), Math.toRadians(180))
                     .build();
 
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(95.000, 84.000), new Pose(128.000, 84.000))
+                            new BezierLine(new Pose(49.000, 84.000), new Pose(16.000, 84.000))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -119,34 +123,34 @@ public class closeRed extends OpMode {
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(128.000, 84.000),
-                                    new Pose(107.000, 79.500),
-                                    new Pose(128.000, 75.000)
+                                    new Pose(16.000, 84.000),
+                                    new Pose(37.000, 79.500),
+                                    new Pose(16.000, 75.000)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(0.0), Math.toRadians(90.0))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
                     .build();
 
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(128.000, 75.000), new Pose(86.000, 80.000))
+                            new BezierLine(new Pose(16.000, 75.000), new Pose(58.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90.0), Math.toRadians(225.0))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(318))
                     .build();
 
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(86.000, 80.000), new Pose(95.000, 58.000))
+                            new BezierLine(new Pose(58.000, 80.000), new Pose(49.000, 58.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(225.0), Math.toRadians(0.0))
+                    .setLinearHeadingInterpolation(Math.toRadians(318), Math.toRadians(180))
                     .build();
 
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(95.000, 58.000), new Pose(134.000, 58.000))
+                            new BezierLine(new Pose(49.000, 58.000), new Pose(10.000, 58.000))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -154,23 +158,23 @@ public class closeRed extends OpMode {
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(134.000, 58.000), new Pose(86.000, 80.000))
+                            new BezierLine(new Pose(10.000, 58.000), new Pose(58.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(0.0), Math.toRadians(225.0))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(318))
                     .build();
 
             Path9 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(86.000, 80.000), new Pose(95.000, 35.500))
+                            new BezierLine(new Pose(58.000, 80.000), new Pose(49.000, 35.500))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(225.0), Math.toRadians(0.0))
+                    .setLinearHeadingInterpolation(Math.toRadians(318), Math.toRadians(180))
                     .build();
 
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(95.000, 35.500), new Pose(134.000, 35.500))
+                            new BezierLine(new Pose(49.000, 35.500), new Pose(10.000, 35.500))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -178,17 +182,17 @@ public class closeRed extends OpMode {
             Path11 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(134.000, 35.500), new Pose(86.000, 80.000))
+                            new BezierLine(new Pose(10.000, 35.500), new Pose(58.000, 80.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(0.0), Math.toRadians(225.0))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(318))
                     .build();
 
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(86.000, 80.000), new Pose(119.000, 70.000))
+                            new BezierLine(new Pose(58.000, 80.000), new Pose(25.000, 70.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(225.0), Math.toRadians(270.0))
+                    .setLinearHeadingInterpolation(Math.toRadians(318), Math.toRadians(270))
                     .build();
         }
     }
@@ -294,6 +298,7 @@ public class closeRed extends OpMode {
                 if (!follower.isBusy())
                     pathState++;
                 break;
+
 
             default:
                 robot.shooterStop();

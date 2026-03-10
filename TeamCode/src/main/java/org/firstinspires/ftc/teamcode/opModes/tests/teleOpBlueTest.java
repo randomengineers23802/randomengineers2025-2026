@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.function.Supplier;
+import org.firstinspires.ftc.teamcode.control.Alliance;
 import org.firstinspires.ftc.teamcode.control.ShotParameters;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.control.passthrough;
@@ -40,7 +41,7 @@ public class teleOpBlueTest extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.update();
         robot = new robotControl(hardwareMap, follower);
-        robot.setAlliance("blue");
+        robot.setAlliance(Alliance.BLUE);
         follower.setStartingPose(passthrough.startPose);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         panelsTelemetry.debug("Status", "Initialized");
@@ -54,10 +55,10 @@ public class teleOpBlueTest extends OpMode {
     }
 
     private void Shoot() {
-        robot.beltOn();
+        robot.beltOnShoot();
         robot.intakeOn();
         double t = timer.seconds();
-        if (t <= 1.0)
+        if (t <= 1.2)
             robot.blueBoiOpen();
         else {
             robot.blueBoiClosed();
@@ -78,23 +79,41 @@ public class teleOpBlueTest extends OpMode {
         ShotParameters shotParameters = robot.updateShooting();
 
         if (gamepad1.dpadUpWasPressed())
-            flywheelTicks += 20;
+            flywheelTicks += 10;
         else if (gamepad1.dpadDownWasPressed())
-            flywheelTicks -= 20;
+            flywheelTicks -= 10;
 
         robot.setShooterVelocity(flywheelTicks);
 
-//        if (gamepad1.dpadLeftWasPressed())
+//        if (gamepad1.dpadLeftWasPressed()) {
 //            robot.kickstandUp();
-//        else if (gamepad1.dpadRightWasPressed())
+//            robot.setLightColor(1.0);
+//        }
+//        else if (gamepad1.dpadRightWasPressed()) {
 //            robot.kickstandDown();
+//            robot.setLightColor(0.52);
+//        }
+
+//        if (gamepad1.dpadUpWasPressed())
+//            kickstand1Position += 0.01;
+//        else if (gamepad1.dpadDownWasPressed())
+//            kickstand1Position -= 0.01;
+//
+//        if (gamepad1.dpadRightWasPressed())
+//            kickstand2Position += 0.01;
+//        else if (gamepad1.dpadLeftWasPressed())
+//            kickstand2Position -= 0.01;
+//
+//        robot.kickstand1.setPosition(kickstand1Position);
+//        robot.kickstand2.setPosition(kickstand2Position);
 
         telemetry.addData("target ticks", flywheelTicks);
         telemetry.addData("ShooterL ticks", robot.ShooterL.getVelocity());
         telemetry.addData("ShooterR ticks", robot.ShooterR.getVelocity());
         telemetry.addData("flywheel inches/sec", robot.flywheelInchesPerSec);
-        //telemetry.addData("kickstand1 position", kickstand1Position);
-        //telemetry.addData("kickstand2 position", kickstand2Position);
+        telemetry.addData("kickstand1 position", kickstand1Position);
+        telemetry.addData("kickstand2 position", kickstand2Position);
+        telemetry.addData("belt ticks", robot.belt.getVelocity());
         telemetry.update();
 
         panelsTelemetry.addData("ShooterL ticks", robot.ShooterL.getVelocity());
@@ -130,9 +149,9 @@ public class teleOpBlueTest extends OpMode {
             }
         }
 
-        if (gamepad1.right_bumper) {
+        if (gamepad1.right_bumper && !shooting) {
             robot.intakeOn();
-            robot.beltOn();
+            robot.beltOnIntake();
         }
         else if (!shooting) {
             robot.intakeOff();

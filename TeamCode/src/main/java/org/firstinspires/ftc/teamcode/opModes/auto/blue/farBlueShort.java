@@ -10,6 +10,9 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.control.Alliance;
+import org.firstinspires.ftc.teamcode.control.ShotParameters;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.control.passthrough;
 import org.firstinspires.ftc.teamcode.control.robotControl;
@@ -33,6 +36,7 @@ public class farBlueShort extends OpMode {
         follower.setStartingPose(new Pose(56.875, 8.5625, Math.toRadians(0)));
         paths = new Paths(follower);
         robot = new robotControl(hardwareMap, follower);
+        robot.setAlliance(Alliance.BLUE);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
@@ -41,8 +45,7 @@ public class farBlueShort extends OpMode {
     @Override
     public void start() {
         robot.intakeOn();
-        robot.setShooterVelocity("far");
-        robot.beltOn();
+        robot.beltOnShoot();
         robot.blueBoiClosed();
         timer.reset();
     }
@@ -51,6 +54,8 @@ public class farBlueShort extends OpMode {
     public void loop() {
         follower.update();
         pathState = autonomousPathUpdate();
+        ShotParameters shotParameters = robot.updateShooting();
+        robot.setShooterVelocity(shotParameters.flywheelTicks);
     }
 
     private void Shoot() {
