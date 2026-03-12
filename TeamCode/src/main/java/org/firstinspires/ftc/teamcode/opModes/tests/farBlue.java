@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.auto.red;
+package org.firstinspires.ftc.teamcode.opModes.tests;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -19,10 +19,10 @@ import org.firstinspires.ftc.teamcode.control.passthrough;
 import org.firstinspires.ftc.teamcode.control.robotControl;
 import com.pedropathing.geometry.BezierCurve;
 
-@Autonomous(name = "farRed", group = "Autonomous")
+@Autonomous(name = "farBlue", group = "Autonomous")
 @Configurable
 @Disabled
-public class farRed extends OpMode {
+public class farBlue extends OpMode {
 
     private robotControl robot;
     private TelemetryManager panelsTelemetry;
@@ -30,15 +30,16 @@ public class farRed extends OpMode {
     private int pathState;
     private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
+
     private boolean pathStarted = false;
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(87.125, 8.5625, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(56.875, 8.5625, Math.toRadians(90)));
         paths = new Paths(follower);
         robot = new robotControl(hardwareMap, follower);
-        robot.setAlliance(Alliance.RED);
+        robot.setAlliance(Alliance.BLUE);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
@@ -93,23 +94,23 @@ public class farRed extends OpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(87.125, 8.563), new Pose(86.000, 15.000))
+                            new BezierLine(new Pose(56.875, 8.563), new Pose(58.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(247))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(293))
                     .build();
 
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(86.000, 15.000), new Pose(95.000, 84.000))
+                            new BezierLine(new Pose(58.000, 15.000), new Pose(49.000, 84.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(247), Math.toRadians(0))
+                    .setLinearHeadingInterpolation(Math.toRadians(293), Math.toRadians(180))
                     .build();
 
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(95.000, 84.000), new Pose(126.000, 84.000))
+                            new BezierLine(new Pose(49.000, 84.000), new Pose(18.000, 84.000))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -118,38 +119,38 @@ public class farRed extends OpMode {
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(126.000, 84.000),
-                                    new Pose(107.000, 79.500),
-                                    new Pose(126.000, 75.000)
+                                    new Pose(18.000, 84.000),
+                                    new Pose(37.000, 79.500),
+                                    new Pose(18.000, 75.000)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
                     .build();
 
             Path5 = follower
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(126.000, 75.000),
-                                    new Pose(82.000, 88.000),
-                                    new Pose(86.000, 15.000)
+                                    new Pose(18.000, 75.000),
+                                    new Pose(62.000, 88.000),
+                                    new Pose(58.000, 15.000)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(247))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(293))
                     .build();
 
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(86.000, 15.000), new Pose(95.000, 35.500))
+                            new BezierLine(new Pose(58.000, 15.000), new Pose(49.000, 35.500))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(247), Math.toRadians(0))
+                    .setLinearHeadingInterpolation(Math.toRadians(293), Math.toRadians(180))
                     .build();
 
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(95.000, 35.500), new Pose(126.000, 35.500))
+                            new BezierLine(new Pose(49.000, 35.500), new Pose(18.000, 35.500))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -157,23 +158,23 @@ public class farRed extends OpMode {
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(126.000, 35.500), new Pose(86.000, 15.000))
+                            new BezierLine(new Pose(18.000, 35.500), new Pose(58.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(247))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(293))
                     .build();
 
             Path9 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(86.000, 15.000), new Pose(95.000, 58.000))
+                            new BezierLine(new Pose(58.000, 15.000), new Pose(49.000, 58.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(247), Math.toRadians(0))
+                    .setLinearHeadingInterpolation(Math.toRadians(293), Math.toRadians(180))
                     .build();
 
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(95.000, 58.000), new Pose(126.000, 58.000))
+                            new BezierLine(new Pose(49.000, 58.000), new Pose(18.000, 58.000))
                     )
                     .setTangentHeadingInterpolation()
                     .build();
@@ -181,17 +182,17 @@ public class farRed extends OpMode {
             Path11 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(126.000, 58.000), new Pose(86.000, 15.000))
+                            new BezierLine(new Pose(18.000, 58.000), new Pose(58.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(247))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(293))
                     .build();
 
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(86.000, 15.000), new Pose(108.000, 15.000))
+                            new BezierLine(new Pose(58.000, 15.000), new Pose(36.000, 15.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(247), Math.toRadians(0))
+                    .setLinearHeadingInterpolation(Math.toRadians(293), Math.toRadians(180))
                     .build();
         }
     }

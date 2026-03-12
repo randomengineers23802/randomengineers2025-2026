@@ -9,6 +9,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.control.passthrough;
 import org.firstinspires.ftc.teamcode.control.robotControl;
 
+@Disabled
 @Configurable
 @TeleOp(name = "teleOpBlueTest", group = "TeleOp")
 public class teleOpBlueTest extends OpMode {
