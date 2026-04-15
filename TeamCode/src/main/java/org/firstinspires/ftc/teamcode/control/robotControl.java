@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.pedropathing.math.Vector;
 
 import org.firstinspires.ftc.robotcore.external.function.Supplier;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 public class robotControl {
@@ -31,6 +32,7 @@ public class robotControl {
     private Servo BlueBoi;
     public Servo kickstand1;
     public Servo kickstand2;
+    public Servo kickstand3;
     private Follower follower;
     private Pose goalTarget;
     public Supplier<PathChain> endgamePark;
@@ -70,6 +72,7 @@ public class robotControl {
         BlueBoi.setPosition(0.65);
         kickstand1 = hardwareMap.get(Servo.class, "kickstand1");
         kickstand2 = hardwareMap.get(Servo.class, "kickstand2");
+        kickstand3 = hardwareMap.get(Servo.class, "kickstand3");
         light = hardwareMap.get(Servo.class, "light");
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -127,65 +130,90 @@ public class robotControl {
         ShooterR.setPower(0);
     }
 
-    public void kickstandPosition(double position) {
-        kickstand1.setPosition(position);
-        kickstand2.setPosition(position);
-    }
-
     public void setLightColor(double value) {
         light.setPosition(value);
     }
 
     public void kickstandUp() {
-        kickstand1.setPosition(0.14);
-        kickstand2.setPosition(0.88);
+        kickstand1.setPosition(0.16);
+        kickstand2.setPosition(0.86);
+        kickstand3.setPosition(0.16);
     }
 
     public void kickstandDown() {
-        kickstand1.setPosition(0.55);
-        kickstand2.setPosition(0.48);
+        kickstand1.setPosition(0.58);
+        kickstand2.setPosition(0.44);
+        kickstand3.setPosition(0.58);
     }
 
-    public boolean relocalize() {
+//    public void relocalize() {
+//        limelight.updateRobotOrientation(Math.toDegrees(follower.getHeading()));
+//        LLResult result = limelight.getLatestResult();
+//        if (result != null && result.isValid()) {
+//            Pose3D limelightPose = result.getBotpose_MT2();
+//            if (limelightPose != null) {
+//                //Limelight meters to pedro inches
+//                double xInches = limelightPose.getPosition().x * 39.3701;
+//                double yInches = limelightPose.getPosition().y * 39.3701;
+//
+//                //Limelight degrees to pedro radians
+//                //double yawRadians = Math.toRadians(limelightPose.getOrientation().getYaw(Angle));
+//
+//                Pose pedroPose = new Pose(xInches, yInches, limelightPose.getOrientation().getYaw(AngleUnit.RADIANS), FTCCoordinates.INSTANCE)
+//                        .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+//                follower.setPose(pedroPose);
+//            }
+//        }
+//    }
+
+    public void relocalize() {
         limelight.updateRobotOrientation(Math.toDegrees(follower.getHeading()));
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
             Pose3D limelightPose = result.getBotpose_MT2();
-
-            //Limelight meters to pedro inches
-            double xInches = limelightPose.getPosition().x * 39.3701;
-            double yInches = limelightPose.getPosition().y * 39.3701;
-
-            //Limelight degrees to pedro radians
-            double yawRadians = Math.toRadians(limelightPose.getOrientation().getYaw());
-
-            Pose pedroPose = new Pose(xInches, yInches, yawRadians, FTCCoordinates.INSTANCE)
-                    .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
-            follower.setPose(pedroPose);
-            return true;
+            if (limelightPose != null) {
+                //Limelight meters to pedro inches
+                double xInches = limelightPose.getPosition().x * 39.3701 + 72;
+                double yInches = limelightPose.getPosition().y * 39.3701 + 144 + 39.3701; //for some reason you have to add one meter to the y pose
+                follower.setPose(new Pose(xInches, yInches, limelightPose.getOrientation().getYaw(AngleUnit.RADIANS)));
+            }
         }
-        else
-            return false;
     }
 
-//    public void setAlliance(String goalColor) {
-//        switch (goalColor) {
-//            case "blue":
-//                goalTarget = new Pose(4, 140);
-//                endgamePark = () -> follower.pathBuilder()
-//                        .addPath(new Path(new BezierLine(follower::getPose, new Pose(112, 29))))
-//                        .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(135), 0.6))
-//                        .build();
-//                break;
-//            case "red":
-//                goalTarget = new Pose(140, 140);
-//                endgamePark = () -> follower.pathBuilder()
-//                        .addPath(new Path(new BezierLine(follower::getPose, new Pose(32, 29))))
-//                        .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.6))
-//                        .build();
-//                break;
-//        }
-//    }
+    public Pose relocalizeConvert() {
+        limelight.updateRobotOrientation(Math.toDegrees(follower.getHeading()));
+        LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            Pose3D limelightPose = result.getBotpose_MT2();
+            if (limelightPose != null) {
+                //Limelight meters to pedro inches
+                double xInches = limelightPose.getPosition().x * 39.3701 + 72;
+                double yInches = limelightPose.getPosition().y * 39.3701 + 144 + 39.3701;
+
+                //Limelight degrees to pedro radians
+                //double yawRadians = Math.toRadians(limelightPose.getOrientation().getYaw(Angle));
+
+//                Pose pedroPose = new Pose(xInches, yInches, limelightPose.getOrientation().getYaw(AngleUnit.RADIANS), FTCCoordinates.INSTANCE)
+//                        .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+
+                return new Pose(xInches, yInches, limelightPose.getOrientation().getYaw(AngleUnit.RADIANS));
+            }
+            return new Pose(0,0,0);
+        }
+        return new Pose(0,0,0);
+    }
+
+    public String relocalizeTest() {
+        limelight.updateRobotOrientation(Math.toDegrees(follower.getHeading()));
+        LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            Pose3D limelightPose = result.getBotpose_MT2();
+            if (limelightPose != null) {
+                return limelightPose.toString();
+            }
+        }
+        return "didn't get a pose";
+    }
 
     public void setAlliance(Alliance alliance) {
         switch (alliance) {
@@ -206,13 +234,13 @@ public class robotControl {
         }
     }
 
-    public Vector robotToGoalVector(Pose currentPose) {
+    private Vector robotToGoalVector(Pose currentPose) {
         double dx = goalTarget.getX() - currentPose.getX();
         double dy = goalTarget.getY() - currentPose.getY();
         return new Vector(new Pose(dx, dy));
     }
 
-    public static double getFlywheelTicksFromVelocity(double velocity) {
+    private static double getFlywheelTicksFromVelocity(double velocity) {
         return Range.clip((0.024369 * velocity * velocity) - (8.21129 * velocity) + 1632.4453, flywheelMinSpeed, flywheelMaxSpeed);
     }
 
@@ -251,7 +279,7 @@ public class robotControl {
     public void beltOnIntake() { belt.setVelocity(2600); }
     public void beltOff() { belt.setPower(0.0); }
     public void intakeOn() { intake.setPower(1.0); }
-    public void intakeOff() { intake.setPower(0.05); }
+    public void intakeOff() { intake.setPower(0.10); }
     public void blueBoiOpen() { BlueBoi.setPosition(1.0); }
     public void blueBoiClosed() { BlueBoi.setPosition(0.65); }
 }

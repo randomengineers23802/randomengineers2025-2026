@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opModes.teleop;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -58,7 +59,14 @@ public class teleOpRed extends OpMode {
     public void loop() {
         follower.update();
         ShotParameters shotParameters = robot.updateShooting();
-        if (!endgame) { robot.setShooterVelocity(shotParameters.flywheelTicks); }
+        if (!endgame) { robot.setShooterVelocity(shotParameters.flywheelTicks + 20); }
+        Pose currentPose = follower.getPose();
+        telemetry.addData("Pose x",currentPose.getX());
+        telemetry.addData("Pose y",currentPose.getY());
+        telemetry.addData("heading", Math.toDegrees(currentPose.getHeading()));
+        telemetry.addData("limelight raw pose", robot.relocalizeTest());
+        telemetry.addData("limelihgt raw converted to pedro", robot.relocalizeConvert());
+        telemetry.update();
 
         double x = -gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
@@ -116,6 +124,10 @@ public class teleOpRed extends OpMode {
             shooting = false;
             robot.blueBoiClosed();
             follower.startTeleopDrive();
+        }
+
+        if (gamepad1.xWasPressed() && follower.getVelocity().getMagnitude() < 1.5) {
+            robot.relocalize();
         }
 
         if (gamepad1.yWasPressed()) {

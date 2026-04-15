@@ -54,7 +54,7 @@ public class closeBlue15Friendly extends OpMode {
         follower.update();
         pathState = autonomousPathUpdate();
         ShotParameters shotParameters = robot.updateShooting();
-        robot.setShooterVelocity(shotParameters.flywheelTicks);
+        robot.setShooterVelocity(shotParameters.flywheelTicks + 10);
     }
 
     private void Shoot() {
@@ -71,8 +71,6 @@ public class closeBlue15Friendly extends OpMode {
             }
         }
     }
-
-
 
     public static class Paths {
         public PathChain Path1;
@@ -93,7 +91,7 @@ public class closeBlue15Friendly extends OpMode {
 
                                     new Pose(58.000, 80.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(323.5), Math.toRadians(316))
+                    ).setLinearHeadingInterpolation(Math.toRadians(323.5), Math.toRadians(314))
 
                     .build();
 
@@ -103,7 +101,7 @@ public class closeBlue15Friendly extends OpMode {
                                     new Pose(55.000, 59.000),
                                     new Pose(10.000, 58.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(316), Math.toRadians(200), 0.15)
+                    ).setLinearHeadingInterpolation(Math.toRadians(314), Math.toRadians(200), 0.15)
 
                     .build();
 
@@ -113,7 +111,7 @@ public class closeBlue15Friendly extends OpMode {
                                     new Pose(39.000, 61.000),
                                     new Pose(58.000, 80.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(200), Math.toRadians(316))
+                    ).setLinearHeadingInterpolation(Math.toRadians(200), Math.toRadians(314))
 
                     .build();
 
@@ -123,7 +121,7 @@ public class closeBlue15Friendly extends OpMode {
                                     new Pose(60.000, 69.000),
                                     new Pose(4.500, 56.500) //was 57
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(316), Math.toRadians(155), 0.15)
+                    ).setLinearHeadingInterpolation(Math.toRadians(314), Math.toRadians(155), 0.15)
 
                     .build();
 
@@ -133,7 +131,7 @@ public class closeBlue15Friendly extends OpMode {
                                     new Pose(40.000, 62.000),
                                     new Pose(58.000, 80.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(120), Math.toRadians(316))
+                    ).setLinearHeadingInterpolation(Math.toRadians(120), Math.toRadians(314))
 
                     .build();
 
@@ -143,7 +141,7 @@ public class closeBlue15Friendly extends OpMode {
                                     new Pose(60.000, 69.000),
                                     new Pose(4.500, 56.500) //was 57
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(316), Math.toRadians(155), 0.15)
+                    ).setLinearHeadingInterpolation(Math.toRadians(314), Math.toRadians(155), 0.15)
 
                     .build();
 
@@ -153,7 +151,7 @@ public class closeBlue15Friendly extends OpMode {
                                     new Pose(40.000, 62.000),
                                     new Pose(58.000, 80.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(155), Math.toRadians(316))
+                    ).setLinearHeadingInterpolation(Math.toRadians(155), Math.toRadians(314))
 
                     .build();
 
@@ -163,7 +161,7 @@ public class closeBlue15Friendly extends OpMode {
 
                                     new Pose(18.000, 84.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(316), Math.toRadians(175), 0.15)
+                    ).setLinearHeadingInterpolation(Math.toRadians(314), Math.toRadians(175), 0.15)
 
                     .build();
 
@@ -173,7 +171,7 @@ public class closeBlue15Friendly extends OpMode {
 
                                     new Pose(58.000, 80.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(175), Math.toRadians(316))
+                    ).setLinearHeadingInterpolation(Math.toRadians(175), Math.toRadians(314))
 
                     .build();
 
@@ -183,7 +181,7 @@ public class closeBlue15Friendly extends OpMode {
 
                                     new Pose(25.000, 70.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(316), Math.toRadians(270))
+                    ).setLinearHeadingInterpolation(Math.toRadians(314), Math.toRadians(270))
 
                     .build();
         }

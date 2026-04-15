@@ -54,7 +54,7 @@ public class closeRed15Friendly extends OpMode {
         follower.update();
         pathState = autonomousPathUpdate();
         ShotParameters shotParameters = robot.updateShooting();
-        robot.setShooterVelocity(shotParameters.flywheelTicks);
+        robot.setShooterVelocity(shotParameters.flywheelTicks + 10);
     }
 
     private void Shoot() {
@@ -90,7 +90,7 @@ public class closeRed15Friendly extends OpMode {
                                     new Pose(119.500, 128.000),
                                     new Pose(86.000, 80.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(216.5), Math.toRadians(224))
+                    ).setLinearHeadingInterpolation(Math.toRadians(216.5), Math.toRadians(226))
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
@@ -99,7 +99,7 @@ public class closeRed15Friendly extends OpMode {
                                     new Pose(89.000, 59.000),
                                     new Pose(134.000, 58.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(224), Math.toRadians(340), 0.15)
+                    ).setLinearHeadingInterpolation(Math.toRadians(226), Math.toRadians(340), 0.15)
                     .build();
 
             Path3 = follower.pathBuilder().addPath(
@@ -108,43 +108,43 @@ public class closeRed15Friendly extends OpMode {
                                     new Pose(105.000, 61.000),
                                     new Pose(86.000, 80.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(340), Math.toRadians(224))
+                    ).setLinearHeadingInterpolation(Math.toRadians(340), Math.toRadians(226))
                     .build();
 
             Path4 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(86.000, 80.000),
                                     new Pose(84.000, 69.000),
-                                    new Pose(137.000, 56.000) //was 57
+                                    new Pose(139.500, 56.500)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(224), Math.toRadians(400), 0.15)
+                    ).setLinearHeadingInterpolation(Math.toRadians(226), Math.toRadians(385), 0.15)
                     .build();
 
             Path5 = follower.pathBuilder().addPath(
                             new BezierCurve(
-                                    new Pose(137.000, 58.000),
+                                    new Pose(139.500, 56.500),
                                     new Pose(104.000, 62.000),
                                     new Pose(86.000, 80.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(400), Math.toRadians(224))
+                    ).setLinearHeadingInterpolation(Math.toRadians(420), Math.toRadians(226))
                     .build();
 
             Path6 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(86.000, 80.000),
                                     new Pose(84.000, 69.000),
-                                    new Pose(137.000, 56.000) //was 57
+                                    new Pose(139.500, 56.500)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(224), Math.toRadians(400), 0.15)
+                    ).setLinearHeadingInterpolation(Math.toRadians(226), Math.toRadians(385), 0.15)
                     .build();
 
             Path7 = follower.pathBuilder().addPath(
                             new BezierCurve(
-                                    new Pose(137.000, 58.000),
+                                    new Pose(139.500, 56.500),
                                     new Pose(104.000, 62.000),
                                     new Pose(86.000, 80.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(400), Math.toRadians(224))
+                    ).setLinearHeadingInterpolation(Math.toRadians(385), Math.toRadians(226))
                     .build();
 
             Path8 = follower.pathBuilder().addPath(
@@ -152,7 +152,7 @@ public class closeRed15Friendly extends OpMode {
                                     new Pose(86.000, 80.000),
                                     new Pose(126.000, 84.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(224), Math.toRadians(365), 0.15)
+                    ).setLinearHeadingInterpolation(Math.toRadians(226), Math.toRadians(365), 0.15)
                     .build();
 
             Path9 = follower.pathBuilder().addPath(
@@ -160,7 +160,7 @@ public class closeRed15Friendly extends OpMode {
                                     new Pose(126.000, 84.000),
                                     new Pose(86.000, 80.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(365), Math.toRadians(224))
+                    ).setLinearHeadingInterpolation(Math.toRadians(365), Math.toRadians(226))
                     .build();
 
             Path10 = follower.pathBuilder().addPath(
@@ -168,7 +168,7 @@ public class closeRed15Friendly extends OpMode {
                                     new Pose(86.000, 80.000),
                                     new Pose(119.000, 70.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(224), Math.toRadians(270))
+                    ).setLinearHeadingInterpolation(Math.toRadians(226), Math.toRadians(270))
                     .build();
         }
     }
@@ -179,30 +179,36 @@ public class closeRed15Friendly extends OpMode {
                 follower.followPath(paths.Path1, true);
                 pathState++;
                 break;
+
             case 1:
                 Shoot();
                 break;
+
             case 2:
                 if (follower.getCurrentTValue() > 0.95) {
                     follower.followPath(paths.Path2, true);
                     pathState++;
                 }
                 break;
+
             case 3:
                 if (follower.getCurrentTValue() > 0.95 && follower.getCurrentTValue() != 1.0) {
                     follower.followPath(paths.Path3, true);
                     pathState++;
                 }
                 break;
+
             case 4:
                 Shoot();
                 break;
+
             case 5:
                 if (follower.getCurrentTValue() > 0.95) {
                     follower.followPath(paths.Path4, true);
                     pathState++;
                 }
                 break;
+
             case 6:
                 if (!gateWait) {
                     gateWait = true;
@@ -214,15 +220,18 @@ public class closeRed15Friendly extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 7:
                 Shoot();
                 break;
+
             case 8:
                 if (follower.getCurrentTValue() > 0.95) {
                     follower.followPath(paths.Path6, true);
                     pathState++;
                 }
                 break;
+
             case 9:
                 if (!gateWait) {
                     gateWait = true;
@@ -230,27 +239,33 @@ public class closeRed15Friendly extends OpMode {
                 }
                 if (timer.seconds() > 4.0) {
                     follower.followPath(paths.Path7, true);
+                    gateWait = false;
                     pathState++;
                 }
                 break;
+
             case 10:
                 Shoot();
                 break;
+
             case 11:
                 if (follower.getCurrentTValue() > 0.95) {
                     follower.followPath(paths.Path8, true);
                     pathState++;
                 }
                 break;
+
             case 12:
                 if (follower.getCurrentTValue() > 0.95 && follower.getCurrentTValue() != 1.0) {
                     follower.followPath(paths.Path9, true);
                     pathState++;
                 }
                 break;
+
             case 13:
                 Shoot();
                 break;
+
             case 14:
                 if (follower.getCurrentTValue() > 0.95) {
                     follower.followPath(paths.Path10, true);
@@ -258,6 +273,7 @@ public class closeRed15Friendly extends OpMode {
                 if (!follower.isBusy())
                     pathState++;
                 break;
+
             default:
                 robot.shooterStop();
                 robot.intakeOff();

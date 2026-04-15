@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.control.passthrough;
 import org.firstinspires.ftc.teamcode.control.robotControl;
 
-@Disabled
+//@Disabled
 @Configurable
 @TeleOp(name = "teleOpBlueTest", group = "TeleOp")
 public class teleOpBlueTest extends OpMode {
@@ -35,6 +35,7 @@ public class teleOpBlueTest extends OpMode {
     private double flywheelTicks = 1000;
     private double kickstand1Position = 0.65;
     private double kickstand2Position = 0.65;
+    private double kickstand3Position = 1.0;
     private TelemetryManager panelsTelemetry;
     private Supplier<PathChain> endgameParkBlue;
 
@@ -71,7 +72,7 @@ public class teleOpBlueTest extends OpMode {
     @Override
     public void start() {
         follower.startTeleopDrive();
-        robot.intakeOff();
+        //robot.intakeOff();
         robot.beltOff();
     }
 
@@ -80,34 +81,29 @@ public class teleOpBlueTest extends OpMode {
         follower.update();
         ShotParameters shotParameters = robot.updateShooting();
 
-        if (gamepad1.dpadUpWasPressed())
-            flywheelTicks += 10;
-        else if (gamepad1.dpadDownWasPressed())
-            flywheelTicks -= 10;
-
-        robot.setShooterVelocity(flywheelTicks);
-
-//        if (gamepad1.dpadLeftWasPressed()) {
-//            robot.kickstandUp();
-//            robot.setLightColor(1.0);
-//        }
-//        else if (gamepad1.dpadRightWasPressed()) {
-//            robot.kickstandDown();
-//            robot.setLightColor(0.52);
-//        }
-
 //        if (gamepad1.dpadUpWasPressed())
-//            kickstand1Position += 0.01;
+//            flywheelTicks += 10;
 //        else if (gamepad1.dpadDownWasPressed())
-//            kickstand1Position -= 0.01;
+//            flywheelTicks -= 10;
 //
-//        if (gamepad1.dpadRightWasPressed())
-//            kickstand2Position += 0.01;
-//        else if (gamepad1.dpadLeftWasPressed())
-//            kickstand2Position -= 0.01;
-//
-//        robot.kickstand1.setPosition(kickstand1Position);
-//        robot.kickstand2.setPosition(kickstand2Position);
+//        robot.setShooterVelocity(flywheelTicks);
+
+        if (gamepad1.dpadLeftWasPressed()) {
+            robot.kickstandUp();
+            robot.setLightColor(1.0);
+        }
+        else if (gamepad1.dpadRightWasPressed()) {
+            robot.kickstandDown();
+            robot.setLightColor(0.52);
+        }
+
+        if (gamepad1.dpadUpWasPressed())
+            kickstand3Position += 0.01;
+        else if (gamepad1.dpadDownWasPressed())
+            kickstand3Position -= 0.01;
+
+
+        robot.kickstand3.setPosition(kickstand3Position);
 
         telemetry.addData("target ticks", flywheelTicks);
         telemetry.addData("ShooterL ticks", robot.ShooterL.getVelocity());
@@ -115,6 +111,7 @@ public class teleOpBlueTest extends OpMode {
         telemetry.addData("flywheel inches/sec", robot.flywheelInchesPerSec);
         telemetry.addData("kickstand1 position", kickstand1Position);
         telemetry.addData("kickstand2 position", kickstand2Position);
+        telemetry.addData("kickstand3 position", kickstand3Position);
         telemetry.addData("belt ticks", robot.belt.getVelocity());
         telemetry.update();
 
