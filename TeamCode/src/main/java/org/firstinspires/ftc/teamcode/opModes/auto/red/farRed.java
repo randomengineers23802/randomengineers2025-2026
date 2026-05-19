@@ -1,93 +1,41 @@
 package org.firstinspires.ftc.teamcode.opModes.auto.red;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.telemetry.PanelsTelemetry;
-import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.base.AutoOpMode;
 import org.firstinspires.ftc.teamcode.control.Alliance;
-import org.firstinspires.ftc.teamcode.control.ShotParameters;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.control.passthrough;
-import org.firstinspires.ftc.teamcode.control.robotControl;
 
-@Autonomous(name = "farRedFriendly", group = "Autonomous")
+@Autonomous
 @Configurable
-public class farRedFriendly extends OpMode {
-
-    private robotControl robot;
-    private TelemetryManager panelsTelemetry;
-    public Follower follower;
-    private int pathState;
+public class farRed extends AutoOpMode {
     private Paths paths;
     private ElapsedTime timer = new ElapsedTime();
     private boolean wallWait = false;
 
     @Override
     public void init() {
-        follower = Constants.createFollower(hardwareMap);
-        // X mirrored over 72: (72 - 56.875) + 72 = 87.125
-        // Heading mirrored over 270: (270 - 0) + 270 = 540 -> 180
+        super.init();
         follower.setStartingPose(new Pose(87.125, 8.5625, Math.toRadians(180)));
         paths = new Paths(follower);
-        robot = new robotControl(hardwareMap, follower);
         robot.setAlliance(Alliance.RED);
-        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-        panelsTelemetry.debug("Status", "Initialized");
-        panelsTelemetry.update(telemetry);
-    }
-
-    @Override
-    public void start() {
-        robot.intakeOn();
-        robot.beltOnShoot();
-        robot.blueBoiClosed();
     }
 
     @Override
     public void loop() {
-        follower.update();
+        super.loop();
         pathState = autonomousPathUpdate();
-        ShotParameters shotParameters = robot.updateShooting();
-        robot.setShooterVelocity(shotParameters.flywheelTicks + 30);
-    }
-
-    private void Shoot() {
-        if (follower.isBusy())
-            timer.reset();
-        else {
-            double t = timer.seconds();
-            if (t <= 1.0) {
-                robot.blueBoiOpen();
-            }
-            else {
-                robot.blueBoiClosed();
-                pathState++;
-            }
-        }
+        robot.shooter.setVelocity(shotParameters.flywheelTicks + 30);
     }
 
     public static class Paths {
-        public PathChain Path1;
-        public PathChain Path2;
-        public PathChain Path3;
-        public PathChain Path4;
-        public PathChain Path5;
-        public PathChain Path6;
-        public PathChain Path7;
-        public PathChain Path8;
-        public PathChain Path9;
-        public PathChain Path10;
-        public PathChain Path11;
-        public PathChain Path12;
-        public PathChain Path13;
+        public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9, Path10, Path11, Path12, Path13;
 
         public Paths(Follower follower) {
             Path1 = follower.pathBuilder().addPath(
@@ -203,42 +151,46 @@ public class farRedFriendly extends OpMode {
                 follower.followPath(paths.Path1, true);
                 pathState++;
                 break;
+
             case 1:
                 Shoot();
                 break;
+
             case 2:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.Path2, true);
-                    pathState++;
-                }
+                follower.followPath(paths.Path2, true);
+                pathState++;
                 break;
+
             case 3:
                 if (!follower.isBusy()) {
                     follower.followPath(paths.Path3, true);
                     pathState++;
                 }
                 break;
+
             case 4:
                 Shoot();
                 break;
+
             case 5:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.Path4, true);
-                    pathState++;
-                }
+                follower.followPath(paths.Path4, true);
+                pathState++;
                 break;
+
             case 6:
                 if (follower.getCurrentTValue() > 0.95) {
                     follower.followPath(paths.Path5, true);
                     pathState++;
                 }
                 break;
+
             case 7:
                 if (follower.getCurrentTValue() > 0.95) {
                     follower.followPath(paths.Path6, true);
                     pathState++;
                 }
                 break;
+
             case 8:
                 if (!wallWait) {
                     wallWait = true;
@@ -250,6 +202,7 @@ public class farRedFriendly extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 9:
                 if (!wallWait) {
                     wallWait = true;
@@ -261,15 +214,16 @@ public class farRedFriendly extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 10:
                 Shoot();
                 break;
+
             case 11:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.Path9, true);
-                    pathState++;
-                }
+                follower.followPath(paths.Path9, true);
+                pathState++;
                 break;
+
             case 12:
                 if (!wallWait) {
                     wallWait = true;
@@ -281,15 +235,16 @@ public class farRedFriendly extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 13:
                 Shoot();
                 break;
+
             case 14:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.Path11, true);
-                    pathState++;
-                }
+                follower.followPath(paths.Path11, true);
+                pathState++;
                 break;
+
             case 15:
                 if (!wallWait) {
                     wallWait = true;
@@ -301,25 +256,21 @@ public class farRedFriendly extends OpMode {
                     pathState++;
                 }
                 break;
+
             case 16:
                 Shoot();
                 break;
+
             case 17:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.Path13, true);
-                    pathState++;
-                }
+                follower.followPath(paths.Path13, true);
+                pathState++;
                 break;
+
             default:
-                robot.intakeOff();
-                robot.beltOff();
+                robot.intake.off();
+                robot.belt.off();
                 break;
         }
         return pathState;
-    }
-
-    @Override
-    public void stop() {
-        passthrough.startPose = follower.getPose();
     }
 }

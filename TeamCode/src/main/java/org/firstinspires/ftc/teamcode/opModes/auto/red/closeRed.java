@@ -1,88 +1,41 @@
 package org.firstinspires.ftc.teamcode.opModes.auto.red;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.telemetry.PanelsTelemetry;
-import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.base.AutoOpMode;
 import org.firstinspires.ftc.teamcode.control.Alliance;
-import org.firstinspires.ftc.teamcode.control.ShotParameters;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.control.passthrough;
-import org.firstinspires.ftc.teamcode.control.robotControl;
 
-@Autonomous(name = "closeRed15friendly", group = "Autonomous")
+@Autonomous
 @Configurable
-public class closeRed15Friendly extends OpMode {
-
-    private robotControl robot;
-    private TelemetryManager panelsTelemetry;
-    public Follower follower;
-    private int pathState;
+public class closeRed extends AutoOpMode {
     private Paths paths;
-    private ElapsedTime timer = new ElapsedTime();
+    private ElapsedTime gateTimer = new ElapsedTime();
     private boolean gateWait = false;
 
     @Override
     public void init() {
-        follower = Constants.createFollower(hardwareMap);
+        super.init();
         follower.setStartingPose(new Pose(119.500, 128.000, Math.toRadians(216.5)));
         paths = new Paths(follower);
-        robot = new robotControl(hardwareMap, follower);
         robot.setAlliance(Alliance.RED);
-        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-        panelsTelemetry.debug("Status", "Initialized");
-        panelsTelemetry.update(telemetry);
-    }
-
-    @Override
-    public void start() {
-        robot.intakeOn();
-        robot.beltOnShoot();
-        robot.blueBoiClosed();
     }
 
     @Override
     public void loop() {
-        follower.update();
+        super.loop();
         pathState = autonomousPathUpdate();
-        ShotParameters shotParameters = robot.updateShooting();
-        robot.setShooterVelocity(shotParameters.flywheelTicks + 10);
-    }
-
-    private void Shoot() {
-        if (follower.isBusy())
-            timer.reset();
-        else {
-            double t = timer.seconds();
-            if (t <= 1.0) {
-                robot.blueBoiOpen();
-            }
-            else {
-                robot.blueBoiClosed();
-                pathState++;
-            }
-        }
+        robot.shooter.setVelocity(shotParameters.flywheelTicks + 10);
     }
 
     public static class Paths {
-        public PathChain Path1;
-        public PathChain Path2;
-        public PathChain Path3;
-        public PathChain Path4;
-        public PathChain Path5;
-        public PathChain Path6;
-        public PathChain Path7;
-        public PathChain Path8;
-        public PathChain Path9;
-        public PathChain Path10;
+        public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9, Path10;
 
         public Paths(Follower follower) {
             Path1 = follower.pathBuilder().addPath(
@@ -185,10 +138,8 @@ public class closeRed15Friendly extends OpMode {
                 break;
 
             case 2:
-                if (follower.getCurrentTValue() > 0.95) {
-                    follower.followPath(paths.Path2, true);
-                    pathState++;
-                }
+                follower.followPath(paths.Path2, true);
+                pathState++;
                 break;
 
             case 3:
@@ -203,18 +154,16 @@ public class closeRed15Friendly extends OpMode {
                 break;
 
             case 5:
-                if (follower.getCurrentTValue() > 0.95) {
-                    follower.followPath(paths.Path4, true);
-                    pathState++;
-                }
+                follower.followPath(paths.Path4, true);
+                pathState++;
                 break;
 
             case 6:
                 if (!gateWait) {
                     gateWait = true;
-                    timer.reset();
+                    gateTimer.reset();
                 }
-                if (timer.seconds() > 4.0) {
+                if (gateTimer.seconds() > 4.0) {
                     follower.followPath(paths.Path5, true);
                     gateWait = false;
                     pathState++;
@@ -226,20 +175,17 @@ public class closeRed15Friendly extends OpMode {
                 break;
 
             case 8:
-                if (follower.getCurrentTValue() > 0.95) {
-                    follower.followPath(paths.Path6, true);
-                    pathState++;
-                }
+                follower.followPath(paths.Path6, true);
+                pathState++;
                 break;
 
             case 9:
                 if (!gateWait) {
                     gateWait = true;
-                    timer.reset();
+                    gateTimer.reset();
                 }
-                if (timer.seconds() > 4.0) {
+                if (gateTimer.seconds() > 4.0) {
                     follower.followPath(paths.Path7, true);
-                    gateWait = false;
                     pathState++;
                 }
                 break;
@@ -249,10 +195,8 @@ public class closeRed15Friendly extends OpMode {
                 break;
 
             case 11:
-                if (follower.getCurrentTValue() > 0.95) {
-                    follower.followPath(paths.Path8, true);
-                    pathState++;
-                }
+                follower.followPath(paths.Path8, true);
+                pathState++;
                 break;
 
             case 12:
@@ -267,27 +211,20 @@ public class closeRed15Friendly extends OpMode {
                 break;
 
             case 14:
-                if (follower.getCurrentTValue() > 0.95) {
-                    follower.followPath(paths.Path10, true);
-                }
+                follower.followPath(paths.Path10, true);
                 if (!follower.isBusy())
                     pathState++;
                 break;
 
             default:
-                robot.shooterStop();
-                robot.intakeOff();
-                robot.beltOff();
+                robot.shooter.off();
+                robot.intake.off();
+                robot.belt.off();
                 follower.breakFollowing();
                 panelsTelemetry.debug("Status", "Autonomous Complete");
                 panelsTelemetry.update(telemetry);
                 break;
         }
         return pathState;
-    }
-
-    @Override
-    public void stop() {
-        passthrough.startPose = follower.getPose();
     }
 }

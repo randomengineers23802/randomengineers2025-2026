@@ -1,43 +1,41 @@
 package org.firstinspires.ftc.teamcode.control;
 
-import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.util.Range;
-import com.pedropathing.math.Vector;
 
 import org.firstinspires.ftc.robotcore.external.function.Supplier;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.subsystems.Belt;
+import org.firstinspires.ftc.teamcode.subsystems.BlueBoi;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Kickstand;
+import org.firstinspires.ftc.teamcode.subsystems.Light;
+import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
-public class robotControl {
-    public DcMotorEx ShooterL;
-    public DcMotorEx ShooterR;
+public class RobotControl {
+    public Shooter shooter;
+    public Intake intake;
+    public Belt belt;
+    public BlueBoi blueBoi;
+    public Kickstand kickstand;
     public Limelight3A limelight;
-    private DcMotor intake;
-    public DcMotorEx belt;
-    private Servo BlueBoi;
-    public Servo kickstand1;
-    public Servo kickstand2;
-    public Servo kickstand3;
     private Follower follower;
     private Pose goalTarget;
     public Supplier<PathChain> endgamePark;
     private ElapsedTime timer = new ElapsedTime();
-    private Servo light;
+    public Light light;
     private double lastError = 0;
 
     private static final double flywheelMinSpeed = 940;
@@ -46,35 +44,18 @@ public class robotControl {
     private static final double passthroughPointRadius = 2;
 
     public double flywheelInchesPerSec;
+    public double teleOpHeadingOffset;
 
-    PIDFCoefficients shooterLPIDF = new PIDFCoefficients(120.0, 0.0, 0.0, 13.1);
-    PIDFCoefficients shooterRPIDF = new PIDFCoefficients(120.0, 0.0, 0.0, 12.5);
-    PIDFCoefficients beltPIDF = new PIDFCoefficients(0.0, 0.0, 0.0, 12.7);
     PIDFCoefficients aimPIDF = new PIDFCoefficients(1.2, 0.0, 0.1, 0.02); //may need to increase for shooting on the move
 
-    public robotControl(HardwareMap hardwareMap, Follower follower) {
+    public RobotControl(HardwareMap hardwareMap, Follower follower) {
         this.follower = follower;
-        ShooterL = hardwareMap.get(DcMotorEx.class, "ShooterL");
-        ShooterR = hardwareMap.get(DcMotorEx.class, "ShooterR");
-        ShooterL.setDirection(DcMotorEx.Direction.REVERSE);
-        ShooterR.setDirection(DcMotorEx.Direction.FORWARD);
-        ShooterL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        ShooterR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        ShooterL.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterLPIDF);
-        ShooterR.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, shooterRPIDF);
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        belt = hardwareMap.get(DcMotorEx.class, "belt");
-        belt.setDirection(DcMotor.Direction.REVERSE);
-        belt.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        belt.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, beltPIDF);
-        BlueBoi = hardwareMap.get(Servo.class, "BlueBoi");
-        BlueBoi.setPosition(0.65);
-        kickstand1 = hardwareMap.get(Servo.class, "kickstand1");
-        kickstand2 = hardwareMap.get(Servo.class, "kickstand2");
-        kickstand3 = hardwareMap.get(Servo.class, "kickstand3");
-        light = hardwareMap.get(Servo.class, "light");
-
+        this.shooter = new Shooter(hardwareMap);
+        this.intake = new Intake(hardwareMap);
+        this.belt = new Belt(hardwareMap);
+        this.blueBoi = new BlueBoi(hardwareMap);
+        this.kickstand = new Kickstand(hardwareMap);
+        this.light = new Light(hardwareMap);
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0);
         limelight.start();
@@ -116,34 +97,7 @@ public class robotControl {
                 targetVelocity = 1180;
                 break;
         }
-        ShooterL.setVelocity(targetVelocity);
-        ShooterR.setVelocity(targetVelocity);
-    }
-
-    public void setShooterVelocity(double ticks) {
-        ShooterL.setVelocity(ticks);
-        ShooterR.setVelocity(ticks);
-    }
-
-    public void shooterStop() {
-        ShooterL.setPower(0);
-        ShooterR.setPower(0);
-    }
-
-    public void setLightColor(double value) {
-        light.setPosition(value);
-    }
-
-    public void kickstandUp() {
-        kickstand1.setPosition(0.16);
-        kickstand2.setPosition(0.86);
-        kickstand3.setPosition(0.16);
-    }
-
-    public void kickstandDown() {
-        kickstand1.setPosition(0.58);
-        kickstand2.setPosition(0.44);
-        kickstand3.setPosition(0.58);
+        shooter.setVelocity(targetVelocity);
     }
 
 //    public void relocalize() {
@@ -159,7 +113,7 @@ public class robotControl {
 //                //Limelight degrees to pedro radians
 //                //double yawRadians = Math.toRadians(limelightPose.getOrientation().getYaw(Angle));
 //
-//                Pose pedroPose = new Pose(xInches, yInches, limelightPose.getOrientation().getYaw(AngleUnit.RADIANS), FTCCoordinates.INSTANCE)
+//                pose pedroPose = new pose(xInches, yInches, limelightPose.getOrientation().getYaw(AngleUnit.RADIANS), FTCCoordinates.INSTANCE)
 //                        .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
 //                follower.setPose(pedroPose);
 //            }
@@ -193,7 +147,7 @@ public class robotControl {
                 //Limelight degrees to pedro radians
                 //double yawRadians = Math.toRadians(limelightPose.getOrientation().getYaw(Angle));
 
-//                Pose pedroPose = new Pose(xInches, yInches, limelightPose.getOrientation().getYaw(AngleUnit.RADIANS), FTCCoordinates.INSTANCE)
+//                pose pedroPose = new pose(xInches, yInches, limelightPose.getOrientation().getYaw(AngleUnit.RADIANS), FTCCoordinates.INSTANCE)
 //                        .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
 
                 return new Pose(xInches, yInches, limelightPose.getOrientation().getYaw(AngleUnit.RADIANS));
@@ -223,6 +177,7 @@ public class robotControl {
                         .addPath(new Path(new BezierLine(follower::getPose, new Pose(112, 29))))
                         .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(135), 0.6))
                         .build();
+                teleOpHeadingOffset = Math.toRadians(0);
                 break;
             case RED:
                 goalTarget = new Pose(140, 140);
@@ -230,8 +185,10 @@ public class robotControl {
                         .addPath(new Path(new BezierLine(follower::getPose, new Pose(32, 29))))
                         .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.6))
                         .build();
+                teleOpHeadingOffset = Math.toRadians(180);
                 break;
         }
+        passthrough.alliance = alliance;
     }
 
     private Vector robotToGoalVector(Pose currentPose) {
@@ -274,12 +231,4 @@ public class robotControl {
 
         return new ShotParameters(flywheelTicks, heading);
     }
-
-    public void beltOnShoot() { belt.setVelocity(1600); }
-    public void beltOnIntake() { belt.setVelocity(2600); }
-    public void beltOff() { belt.setPower(0.0); }
-    public void intakeOn() { intake.setPower(1.0); }
-    public void intakeOff() { intake.setPower(0.10); }
-    public void blueBoiOpen() { BlueBoi.setPosition(1.0); }
-    public void blueBoiClosed() { BlueBoi.setPosition(0.65); }
 }

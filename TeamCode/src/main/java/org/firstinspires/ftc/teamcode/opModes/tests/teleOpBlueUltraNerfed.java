@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.opModes.teleop;
+package org.firstinspires.ftc.teamcode.opModes.tests;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -10,39 +11,42 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.control.Alliance;
 import org.firstinspires.ftc.teamcode.control.ShotParameters;
 import org.firstinspires.ftc.teamcode.control.passthrough;
-import org.firstinspires.ftc.teamcode.control.robotControl;
+import org.firstinspires.ftc.teamcode.control.RobotControl;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@TeleOp(name = "teleOpRed", group = "TeleOp")
-public class teleOpRed extends OpMode {
+@Disabled
+@TeleOp(name = "teleOpBlueUltraNerfed", group = "TeleOp")
+public class teleOpBlueUltraNerfed extends OpMode {
     private Follower follower;
     private boolean slowMode = false;
     private final double slowModeMultiplier = 0.25;
     private boolean shooting = false;
-    private robotControl robot;
+    private RobotControl robot;
     private ElapsedTime timer = new ElapsedTime();
     private boolean prevRightTrigger = false;
+    private double flywheelSpeed = 1000;
+    //private Supplier<PathChain> endgameParkBlue;
     private boolean endgame;
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         follower.update();
-        robot = new robotControl(hardwareMap, follower);
-        robot.setAlliance(Alliance.RED);
-        follower.setStartingPose(passthrough.startPose);
-        robot.kickstandUp();
+        robot = new RobotControl(hardwareMap, follower);
+        robot.setAlliance(Alliance.BLUE);
+        follower.setStartingPose(passthrough.pose);
+        robot.kickstand.raise();
     }
 
     private void Shoot() {
-        robot.beltOnShoot();
-        robot.intakeOn();
+        robot.belt.onShoot();
+        robot.intake.on();
         double t = timer.seconds();
         if (t <= 1.0)
-            robot.blueBoiOpen();
+            robot.blueBoi.open();
         else {
-            robot.blueBoiClosed();
+            robot.blueBoi.close();
             shooting = false;
         }
     }
@@ -50,60 +54,50 @@ public class teleOpRed extends OpMode {
     @Override
     public void start() {
         follower.startTeleopDrive();
-        robot.intakeOff();
-        robot.beltOff();
-        robot.setLightColor(1.0);
+        robot.intake.off();
+        robot.belt.off();
+        robot.light.setColor(1.0);
     }
 
     @Override
     public void loop() {
         follower.update();
         ShotParameters shotParameters = robot.updateShooting();
-        if (!endgame) { robot.setShooterVelocity(shotParameters.flywheelTicks + 20); }
+        //if (!endgame) { robot.shooter.setVelocity(shotParameters.flywheelTicks + 20); }
+        robot.shooter.setVelocity(flywheelSpeed); //No calculated shooting speed
+        if (gamepad2.dpadUpWasPressed()) {flywheelSpeed += 20;}
+        else if (gamepad2.dpadDownWasPressed()) {flywheelSpeed -= 20;}
         Pose currentPose = follower.getPose();
-        telemetry.addData("Pose x",currentPose.getX());
-        telemetry.addData("Pose y",currentPose.getY());
+        telemetry.addData("pose x",currentPose.getX());
+        telemetry.addData("pose y",currentPose.getY());
         telemetry.addData("heading", Math.toDegrees(currentPose.getHeading()));
         telemetry.addData("limelight raw pose", robot.relocalizeTest());
         telemetry.addData("limelihgt raw converted to pedro", robot.relocalizeConvert());
+        telemetry.addData("flywheel speed", flywheelSpeed);
         telemetry.update();
 
-        double x = -gamepad1.left_stick_x;
-        double y = -gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x;
+        double y = gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
-        if (gamepad1.left_trigger > 0.2) {
-            if (!slowMode) {
-                follower.setTeleOpDrive(y, x, shotParameters.heading, false);
-            } else {
-                follower.setTeleOpDrive(
-                        y * slowModeMultiplier,
-                        x * slowModeMultiplier,
-                        shotParameters.heading,
-                        false
-                );
-            }
-        }
-        else {
-            if (!slowMode) {
-                follower.setTeleOpDrive(y, x, turn, false);
-            } else {
-                follower.setTeleOpDrive(
-                        y * slowModeMultiplier,
-                        x * slowModeMultiplier,
-                        turn * slowModeMultiplier,
-                        false
-                );
-            }
+        if (!slowMode) {
+            follower.setTeleOpDrive(y * 0.5, x * 0.5, turn * 0.5, true);
+        } else {
+            follower.setTeleOpDrive(
+                    y * slowModeMultiplier,
+                    x * slowModeMultiplier,
+                    turn * slowModeMultiplier,
+                    true
+            );
         }
 
         if (!shooting) {
             if (gamepad1.right_bumper) {
-                robot.intakeOn();
-                robot.beltOnIntake();
+                robot.intake.on();
+                robot.belt.onIntake();
             }
             else {
-                robot.intakeOff();
-                robot.beltOff();
+                robot.intake.off();
+                robot.belt.off();
             }
         }
 
@@ -122,7 +116,7 @@ public class teleOpRed extends OpMode {
 
         if (gamepad1.bWasPressed()) {
             shooting = false;
-            robot.blueBoiClosed();
+            robot.blueBoi.close();
             follower.startTeleopDrive();
         }
 
@@ -132,18 +126,18 @@ public class teleOpRed extends OpMode {
 
         if (gamepad1.yWasPressed()) {
             follower.followPath(robot.endgamePark.get());
-            robot.shooterStop();
+            robot.shooter.off();
             slowMode = true;
             endgame = true;
         }
 
         if (gamepad1.dpadDownWasPressed()) {
-            robot.kickstandDown();
-            robot.setLightColor(0.444);
+            robot.kickstand.lower();
+            robot.light.setColor(0.444);
         }
         else if (gamepad1.dpadUpWasPressed()) {
-            robot.kickstandUp();
-            robot.setLightColor(1.0);
+            robot.kickstand.raise();
+            robot.light.setColor(1.0);
         }
 
         if (gamepad1.leftBumperWasPressed()) {
@@ -153,6 +147,6 @@ public class teleOpRed extends OpMode {
 
     @Override
     public void stop() {
-        passthrough.startPose = follower.getPose();
+        passthrough.pose = follower.getPose();
     }
 }
